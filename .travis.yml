@@ -16,8 +16,10 @@ install:
   - ./gradlew assemble
 
 script:
-  - ./gradlew test
-  - ./gradlew jacocoTestReport
+  - ./gradlew test jacocoTestReport
 
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - JACOCO_SOURCE_PATH=core/src/main/java ./cc-test-reporter \
+      format-coverage core/build/reports/jacoco/test/jacocoTestReport.xml     \
+      --input-type jacoco
+    ./cc-test-reporter upload-coverage
