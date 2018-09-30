@@ -1,0 +1,23 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=71d7d0806902b83787f19821c112f2ee48135ce26a10c0ee82363e1fb2715925
+
+language: java
+
+jdk:
+  - openjdk10
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+install:
+  - ./gradlew assemble
+
+script:
+  - ./gradlew test
+  - ./gradlew jacocoTestReport
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
