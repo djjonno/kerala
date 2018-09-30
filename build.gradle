@@ -4,5 +4,10 @@ subprojects {
     repositories {
         mavenCentral()
     }
-}
 
+    dependencies {
+        compile group: 'joda-time', name: 'joda-time', version: '2.3'
+        testCompile 'junit:junit:4.11'
+        implementation 'com.google.code.gson:gson:2.8.5'
+    }
+}
