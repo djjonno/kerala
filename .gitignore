@@ -1,4 +1,8 @@
 .gradle/
 .idea/
 build/
+coverage/
+out/
 *.iml
+cc-test-reporter
+
