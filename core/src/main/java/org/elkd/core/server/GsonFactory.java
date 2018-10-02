@@ -4,12 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.elkd.core.log.Document;
-import org.elkd.core.log.Event;
+import org.elkd.core.log.Entry;
 import org.elkd.shared.json.GsonUtils;
 
 public final class GsonFactory {
   private static GsonFactory mGsonFactory;
   private static Gson mGson;
+
   public static synchronized GsonFactory getInstance() {
     if (mGsonFactory == null) {
       mGsonFactory = new GsonFactory();
@@ -37,14 +38,14 @@ public final class GsonFactory {
 
   private void registerSerializers(final GsonBuilder gsonBuilder) {
     GsonUtils.registerSerializers(gsonBuilder, ImmutableMap.of(
-        Event.class, new Event.Serializer(),
+        Entry.class, new Entry.Serializer(),
         Document.class, new Document.Serializer<>(Object.class)
     ));
   }
 
   private void registerDeserializers(final GsonBuilder gsonBuilder) {
     GsonUtils.registerDeserializers(gsonBuilder, ImmutableMap.of(
-        Event.class, new Event.Deserializer(),
+        Entry.class, new Entry.Deserializer(),
         Document.class, new Document.Deserializer<>(Object.class)
     ));
   }

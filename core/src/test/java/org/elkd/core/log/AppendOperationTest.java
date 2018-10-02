@@ -11,14 +11,14 @@ public class AppendOperationTest {
   @Test
   public void should_return_event() {
     // Given
-    final Event event = Event.builder(EVENT_TYPE_1).build();
+    final Entry entry = Entry.builder(EVENT_TYPE_1).build();
 
     // When
-    final AppendOperation operation = new AppendOperation(event);
+    final AppendOperation operation = new AppendOperation(entry);
 
     // Then
-    assertEquals(event, operation.getEvent());
-    assertEquals(EVENT_TYPE_1, operation.getEvent().getType());
+    assertEquals(entry, operation.getEntry());
+    assertEquals(EVENT_TYPE_1, operation.getEntry().getType());
   }
 
   @Test(expected = NullPointerException.class)
@@ -32,8 +32,8 @@ public class AppendOperationTest {
   @Test
   public void should_return_append_operation_type() {
     // Given / When
-    final Event event = Event.builder(EVENT_TYPE_1).build();
-    final AppendOperation operation = new AppendOperation(event);
+    final Entry entry = Entry.builder(EVENT_TYPE_1).build();
+    final AppendOperation operation = new AppendOperation(entry);
     
     // Then
     assertEquals(LogOperationType.APPEND, operation.getType());
@@ -42,11 +42,11 @@ public class AppendOperationTest {
   @Test
   public void should_be_equivalent_with_same_event_object() {
     // Given
-    final Event event = Event.builder(EVENT_TYPE_1).build();
+    final Entry entry = Entry.builder(EVENT_TYPE_1).build();
 
     // When
-    final AppendOperation first = new AppendOperation(event);
-    final AppendOperation second = new AppendOperation(event);
+    final AppendOperation first = new AppendOperation(entry);
+    final AppendOperation second = new AppendOperation(entry);
 
     // Then
     assertEquals(first, second);
@@ -56,12 +56,12 @@ public class AppendOperationTest {
   @Test
   public void should_not_be_equivalent_with_different_event_object() {
     // Given
-    final Event firstEvent = Event.builder(EVENT_TYPE_1).build();
-    final Event secondEvent = Event.builder(EVENT_TYPE_2).build();
+    final Entry firstEntry = Entry.builder(EVENT_TYPE_1).build();
+    final Entry secondEntry = Entry.builder(EVENT_TYPE_2).build();
 
     // When
-    final AppendOperation first = new AppendOperation(firstEvent);
-    final AppendOperation second = new AppendOperation(secondEvent);
+    final AppendOperation first = new AppendOperation(firstEntry);
+    final AppendOperation second = new AppendOperation(secondEntry);
 
     // Then
     assertNotEquals(first, second);

@@ -18,8 +18,8 @@ public class LogCommandBuilder {
     mReason = Preconditions.checkNotNull(reason, "reason");
   }
 
-  public LogCommandBuilder withAppendOperation(final Event event) {
-    mOperations.add(new AppendOperation(event));
+  public LogCommandBuilder withAppendOperation(final Entry entry) {
+    mOperations.add(new AppendOperation(entry));
     return this;
   }
 

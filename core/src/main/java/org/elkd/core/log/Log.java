@@ -3,11 +3,11 @@ package org.elkd.core.log;
 import java.util.List;
 
 public interface Log {
-  void append(Event event);
+  void append(Entry entry);
 
-  Event read(long index);
+  Entry read(long index);
 
-  List<Event> read(long from, long to);
+  List<Entry> read(long from, long to);
 
   void commit(long index);
 

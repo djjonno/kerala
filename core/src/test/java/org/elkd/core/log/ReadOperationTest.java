@@ -44,7 +44,6 @@ public class ReadOperationTest {
     final ReadOperation first = new ReadOperation(INDEX_1);
     final ReadOperation second = new ReadOperation(INDEX_2);
 
-
     // Then
     assertNotEquals(first, second);
     assertNotEquals(first.hashCode(), second.hashCode());

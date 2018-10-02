@@ -5,10 +5,10 @@ import com.google.common.base.Preconditions;
 import java.util.Objects;
 
 public class AppendOperation implements LogOperation {
-  private Event mEvent;
+  private Entry mEntry;
 
-  public AppendOperation(final Event event) {
-    mEvent = Preconditions.checkNotNull(event, "event");
+  public AppendOperation(final Entry entry) {
+    mEntry = Preconditions.checkNotNull(entry, "entry");
   }
 
   @Override
@@ -16,8 +16,8 @@ public class AppendOperation implements LogOperation {
     return LogOperationType.APPEND;
   }
 
-  public Event getEvent() {
-    return mEvent;
+  public Entry getEntry() {
+    return mEntry;
   }
 
   @Override
@@ -25,18 +25,18 @@ public class AppendOperation implements LogOperation {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     AppendOperation that = (AppendOperation) o;
-    return Objects.equals(mEvent, that.mEvent);
+    return Objects.equals(mEntry, that.mEntry);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mEvent);
+    return Objects.hash(mEntry);
   }
 
   @Override
   public String toString() {
     return "AppendOperation{" +
-        "mEvent=" + mEvent +
+        "mEntry=" + mEntry +
         '}';
   }
 }

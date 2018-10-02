@@ -1,7 +1,6 @@
 package org.elkd.core.log;
 
-public final class LogCommands {
-  public static final String APPEND = "append";
+public class LogCommands {
+  public static final String APPEND_ENTRIES = "appendEntries";
   public static final String READ = "read";
-  public static final String COMMIT = "commit";
 }
