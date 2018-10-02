@@ -1,6 +1,5 @@
 package org.elkd.core.server;
 
-import com.google.common.collect.ImmutableMap;
 import org.elkd.core.log.Event;
 
 import java.util.logging.Logger;

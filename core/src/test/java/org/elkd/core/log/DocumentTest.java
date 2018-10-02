@@ -3,6 +3,7 @@ package org.elkd.core.log;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.elkd.core.server.GsonFactory;
 import org.junit.Before;
 import org.junit.Test;
 

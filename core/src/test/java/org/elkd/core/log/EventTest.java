@@ -1,6 +1,7 @@
 package org.elkd.core.log;
 
 import com.google.gson.Gson;
+import org.elkd.core.server.GsonFactory;
 import org.junit.Before;
 import org.junit.Test;
 
