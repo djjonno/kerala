@@ -19,10 +19,14 @@ public class ReadOperation implements LogOperation {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    ReadOperation that = (ReadOperation) o;
+  public boolean equals(final Object rhs) {
+    if (this == rhs) {
+      return true;
+    }
+    if (rhs == null || getClass() != rhs.getClass()) {
+      return false;
+    }
+    final ReadOperation that = (ReadOperation) rhs;
     return mIndex == that.mIndex;
   }
 

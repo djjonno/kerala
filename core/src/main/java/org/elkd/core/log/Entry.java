@@ -79,10 +79,14 @@ public final class Entry {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Entry entry = (Entry) o;
+  public boolean equals(final Object rhs) {
+    if (this == rhs) {
+      return true;
+    }
+    if (rhs == null || getClass() != rhs.getClass()) {
+      return false;
+    }
+    final Entry entry = (Entry) rhs;
     return Objects.equals(mEvent, entry.mEvent) &&
         Objects.equals(mDocument, entry.mDocument);
   }
@@ -93,10 +97,10 @@ public final class Entry {
   }
 
   public static class Serializer implements JsonSerializer<Entry> {
-    static String EVENT_KEY = "event";
-    static String TIME_KEY = "time";
-    static String DOCUMENT_KEY = "document";
-    static Type DOCUMENT_CONTEXT_TYPE = new TypeToken<Document<Object>>() { }.getType();
+    private static final String EVENT_KEY = "event";
+    private static final String TIME_KEY = "time";
+    private static final String DOCUMENT_KEY = "document";
+    private static final Type DOCUMENT_CONTEXT_TYPE = new TypeToken<Document<Object>>() { }.getType();
 
     @Override
     public JsonElement serialize(final Entry entry, final Type type, final JsonSerializationContext context) {

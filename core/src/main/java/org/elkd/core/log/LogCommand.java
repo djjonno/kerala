@@ -49,10 +49,14 @@ public class LogCommand {
     return new LogCommand(commandName, reason, ImmutableList.copyOf(operations));
   }
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    LogCommand that = (LogCommand) o;
+  public boolean equals(final Object rhs) {
+    if (this == rhs) {
+      return true;
+    }
+    if (rhs == null || getClass() != rhs.getClass()) {
+      return false;
+    }
+    final LogCommand that = (LogCommand) rhs;
     return Objects.equals(mCommandName, that.mCommandName) &&
         Objects.equals(mOperations, that.mOperations) &&
         Objects.equals(mReason, that.mReason);

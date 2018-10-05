@@ -21,10 +21,14 @@ public class AppendOperation implements LogOperation {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    AppendOperation that = (AppendOperation) o;
+  public boolean equals(final Object rhs) {
+    if (this == rhs) {
+      return true;
+    }
+    if (rhs == null || getClass() != rhs.getClass()) {
+      return false;
+    }
+    final AppendOperation that = (AppendOperation) rhs;
     return Objects.equals(mEntry, that.mEntry);
   }
 

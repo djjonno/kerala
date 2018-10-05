@@ -11,16 +11,16 @@ public final class GsonFactory {
   private static GsonFactory mGsonFactory;
   private static Gson mGson;
 
+  private GsonFactory() {
+    mGson = configureGson();
+  }
+
   public static synchronized GsonFactory getInstance() {
     if (mGsonFactory == null) {
       mGsonFactory = new GsonFactory();
     }
 
     return mGsonFactory;
-  }
-
-  private GsonFactory() {
-    mGson = configureGson();
   }
 
   public Gson getGson() {

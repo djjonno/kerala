@@ -50,10 +50,14 @@ public final class Document<V> {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Document<?> document = (Document<?>) o;
+  public boolean equals(final Object rhs) {
+    if (this == rhs) {
+      return true;
+    }
+    if (rhs == null || getClass() != rhs.getClass()) {
+      return false;
+    }
+    final Document<?> document = (Document<?>) rhs;
     return Objects.equals(mEntries, document.mEntries);
   }
 

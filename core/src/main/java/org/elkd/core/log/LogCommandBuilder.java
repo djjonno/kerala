@@ -9,13 +9,13 @@ public class LogCommandBuilder {
   private final LogChangeReason mReason;
   private final ImmutableList.Builder<LogOperation> mOperations = new ImmutableList.Builder<>();
 
-  public static LogCommandBuilder builder(final String commandName, final LogChangeReason reason) {
-    return new LogCommandBuilder(commandName, reason);
-  }
-
   public LogCommandBuilder(final String commandName, final LogChangeReason reason) {
     mCommandName = Preconditions.checkNotNull(commandName, "commandName");
     mReason = Preconditions.checkNotNull(reason, "reason");
+  }
+
+  public static LogCommandBuilder builder(final String commandName, final LogChangeReason reason) {
+    return new LogCommandBuilder(commandName, reason);
   }
 
   public LogCommandBuilder withAppendOperation(final Entry entry) {
