@@ -1,6 +1,7 @@
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
  
     repositories {
         mavenCentral()
@@ -18,5 +19,12 @@ subprojects {
         compile group: 'joda-time', name: 'joda-time', version: '2.3'
         testCompile 'junit:junit:4.11'
         implementation 'com.google.code.gson:gson:2.8.5'
+    }
+
+    tasks.withType(Checkstyle) {
+        reports {
+            xml.enabled false
+            html.enabled true
+        }
     }
 }
