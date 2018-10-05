@@ -11,20 +11,21 @@ import com.google.gson.reflect.TypeToken;
 import org.elkd.shared.json.GsonUtils;
 import org.joda.time.DateTime;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-public final class Entry {
+public class Entry {
   private String mEvent;
   private Long mTime;
   private Document<Object> mDocument;
 
-  private Entry(final String type, final Document<Object> document) {
+  private Entry(@Nonnull  final String type, @Nonnull final Document<Object> document) {
     this(type, document, DateTime.now().getMillis());
   }
 
-  private Entry(final String type, final Document<Object> document, final Long time) {
+  private Entry(@Nonnull final String type, @Nonnull final Document<Object> document, @Nonnull final Long time) {
     mEvent = Preconditions.checkNotNull(type, "type");
     mDocument = Preconditions.checkNotNull(document, "document");
     mTime = Preconditions.checkNotNull(time);
@@ -38,7 +39,7 @@ public final class Entry {
     private String mType;
     private Document.Builder<Object> mDocumentBuilder;
 
-    Builder(final String type) {
+    Builder(@Nonnull final String type) {
       mType = Preconditions.checkNotNull(type, "type");
       mDocumentBuilder = Document.builder();
     }

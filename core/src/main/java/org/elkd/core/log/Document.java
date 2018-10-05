@@ -11,12 +11,13 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class Document<V> {
+public class Document<V> {
   private final Map<String, V> mEntries;
 
   private Document(final ImmutableMap<String, V> values) {
@@ -30,7 +31,7 @@ public final class Document<V> {
   static class Builder<V> {
     private final Map<String, V> mEntries = new HashMap<>();
 
-    Builder<V> put(final String key, final V value) {
+    Builder<V> put(@Nonnull final String key, @Nonnull final V value) {
       mEntries.put(key, value);
       return this;
     }
