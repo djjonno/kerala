@@ -12,9 +12,9 @@ public class EntryTest {
   private static final String EVENT_TYPE = "eventType";
   private static final String KEY = "key";
   private static final String VAL = "val";
+  private static final Gson GSON = GsonFactory.getInstance().getGson();
 
   private Entry.Builder mEventBuilder;
-  private static final Gson mGson = GsonFactory.getInstance().getGson();
 
   @Before
   public void setUp() throws Exception {
@@ -69,8 +69,8 @@ public class EntryTest {
         .build();
 
     // When
-    final String serialized = mGson.toJson(entry);
-    final Entry deSerializedEntry = mGson.fromJson(serialized, Entry.class);
+    final String serialized = GSON.toJson(entry);
+    final Entry deSerializedEntry = GSON.fromJson(serialized, Entry.class);
 
     // Then
     assertEquals(entry, deSerializedEntry);

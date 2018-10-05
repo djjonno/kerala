@@ -28,7 +28,7 @@ public class AppendEntriesCommandTest {
 
     // Then
     final List<Entry> entries = command.getOperations().stream()
-        .map(logOperation -> (AppendOperation)logOperation)
+        .map(logOperation -> (AppendOperation) logOperation)
         .map(AppendOperation::getEntry).collect(Collectors.toList());
     assertThat(entries, hasItems(ENTRY_1, ENTRY_2));
   }

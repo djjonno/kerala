@@ -34,7 +34,7 @@ public class AppendOperationTest {
     // Given / When
     final Entry entry = Entry.builder(EVENT_TYPE_1).build();
     final AppendOperation operation = new AppendOperation(entry);
-    
+
     // Then
     assertEquals(LogOperationType.APPEND, operation.getType());
   }

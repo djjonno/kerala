@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class GsonUtils {
 
+  private GsonUtils() { }
+
   public static JsonObjectBuilder builder() {
     return new JsonObjectBuilder();
   }
