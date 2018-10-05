@@ -29,12 +29,6 @@
         <property name="file" value="config/checkstyle/suppressions.xml"/>
     </module>
 
-    <module name="SuppressionCommentFilter">
-        <property name="offCommentFormat" value="CHECKSTYLE\:SUPPRESS\:([\w\|]+)"/>
-        <property name="onCommentFormat" value="CHECKSTYLE\:UNSUPPRESS\:([\w\|]+)$"/>
-        <property name="checkFormat" value="$1"/>
-    </module>
-
     <module name="TreeWalker">
         <!-- Make comments available for the suppression comment filter. -->
         <module name="FileContentsHolder"/>
