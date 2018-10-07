@@ -7,8 +7,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static org.hamcrest.core.AllOf.allOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class LogTest {
   @Mock Entry mEntry1;
