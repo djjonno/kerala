@@ -2,14 +2,14 @@ package org.elkd.core.log;
 
 import java.util.List;
 
-public interface Log {
-  long append(Entry entry);
+public interface Log<T> {
+  long append(T object);
 
-  Entry read(long index);
+  T read(long index);
 
-  List<Entry> read(long from, long to);
+  List<T> read(long from, long to);
 
   void commit(long index);
 
-  void rollback(long index);
+  void revert(long index);
 }

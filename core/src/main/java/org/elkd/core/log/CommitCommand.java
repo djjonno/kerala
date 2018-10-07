@@ -9,12 +9,12 @@ import javax.annotation.Nonnull;
 public class CommitCommand implements LogCommand<Void> {
   private final long mIndex;
   private final LogCommandReason mReason;
-  private final Log mReceiver;
+  private final Log<Entry> mReceiver;
 
-  public CommitCommand(@Nonnull final long index,
+  public CommitCommand(final long index,
                        @Nonnull final CommitReason reason,
-                       @Nonnull final Log receiver) {
-    mIndex = Preconditions.checkNotNull(index, "index");
+                       @Nonnull final Log<Entry> receiver) {
+    mIndex = index;
     mReason = Preconditions.checkNotNull(reason, "reason");
     mReceiver = Preconditions.checkNotNull(receiver, "receiver");
   }
@@ -28,10 +28,5 @@ public class CommitCommand implements LogCommand<Void> {
   public Void execute() {
     mReceiver.commit(mIndex);
     return null;
-  }
-
-  @Override
-  public void rollback() {
-    mReceiver.rollback(mIndex);
   }
 }

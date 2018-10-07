@@ -13,7 +13,7 @@ public class ReadCommandTest {
   private static final ReadReason COMMAND_REASON = ReadReason.REPLICATION;
   private static final long READ_INDEX = 1;
 
-  @Mock Log mReceiver;
+  @Mock Log<Entry> mReceiver;
   @Mock Entry mEntry;
 
   private ReadCommand mUnitUnderTest;
@@ -58,14 +58,5 @@ public class ReadCommandTest {
 
     // Then
     assertEquals(mEntry, entry);
-  }
-
-  @Test
-  public void should_no_op_for_rollback() {
-    // Given / When
-    mUnitUnderTest.rollback();
-
-    // Then
-    verifyZeroInteractions(mReceiver);
   }
 }

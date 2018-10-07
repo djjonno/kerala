@@ -19,7 +19,7 @@ subprojects {
         compile group: 'joda-time', name: 'joda-time', version: '2.3'
         implementation 'com.google.code.gson:gson:2.8.5'
         testCompile 'junit:junit:4.11'
-        testCompile 'org.mockito:mockito-core:1.+'
+        testCompile 'org.mockito:mockito-core:2.+'
     }
 
     tasks.withType(Checkstyle) {

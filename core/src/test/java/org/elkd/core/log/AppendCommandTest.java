@@ -15,7 +15,7 @@ public class AppendCommandTest {
 
   @Mock Entry mEntry1;
   @Mock Entry mEntry2;
-  @Mock Log mReceiver;
+  @Mock Log<Entry> mReceiver;
 
   private AppendCommand mUnitUnderTest;
 
@@ -62,14 +62,5 @@ public class AppendCommandTest {
 
     // Then
     assertEquals(second, index);
-  }
-
-  @Test
-  public void should_no_op_for_rollback() {
-    // Given / When
-    mUnitUnderTest.rollback();
-
-    // Then
-    verifyZeroInteractions(mReceiver);
   }
 }

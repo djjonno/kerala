@@ -11,11 +11,11 @@ import java.util.List;
 public class AppendCommand implements LogCommand<Long> {
   private final List<Entry> mEntries;
   private final AppendReason mReason;
-  private final Log mReceiver;
+  private final Log<Entry> mReceiver;
 
   public AppendCommand(@Nonnull final ImmutableList<Entry> entries,
                        @Nonnull final AppendReason reason,
-                       @Nonnull final Log receiver) {
+                       @Nonnull final Log<Entry> receiver) {
     mEntries = Preconditions.checkNotNull(entries, "entries");
     mReason = Preconditions.checkNotNull(reason, "reason");
     mReceiver = Preconditions.checkNotNull(receiver, "receiver");
@@ -34,10 +34,5 @@ public class AppendCommand implements LogCommand<Long> {
     }
 
     return index;
-  }
-
-  @Override
-  public void rollback() {
-    // No-op, log is append-only
   }
 }
