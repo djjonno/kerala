@@ -30,7 +30,7 @@ public class CommitCommandTest {
 
   @Test
   public void should_return_reason() {
-    // Given / When - new ReadCommand
+    // Given / When - new CommitCommand
 
     // Then
     assertEquals(COMMAND_REASON, mUnitUnderTest.getReason());
