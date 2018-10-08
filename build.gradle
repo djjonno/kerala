@@ -30,6 +30,6 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion = "8.13"
+        toolVersion = '8.13'
     }
 }
