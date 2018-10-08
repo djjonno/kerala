@@ -10,7 +10,7 @@ public class CandidateState implements State {
 
   private final Consensus mConsensus;
 
-  public CandidateState(@Nonnull final Consensus consensus) {
+  CandidateState(@Nonnull final Consensus consensus) {
     mConsensus = Preconditions.checkNotNull(consensus, "consensus");
   }
 

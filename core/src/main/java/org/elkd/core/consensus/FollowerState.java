@@ -9,7 +9,7 @@ public class FollowerState implements State {
   private static final Logger LOG = Logger.getLogger(FollowerState.class.getName());
   private final Consensus mConsensus;
 
-  public FollowerState(@Nonnull final Consensus consensus) {
+  FollowerState(@Nonnull final Consensus consensus) {
     mConsensus = Preconditions.checkNotNull(consensus, "consensus");
   }
 

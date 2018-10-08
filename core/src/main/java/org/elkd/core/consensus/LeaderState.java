@@ -9,7 +9,7 @@ public class LeaderState implements State {
   private static final Logger LOG = Logger.getLogger(CandidateState.class.getName());
   private final Consensus mConsensus;
 
-  public LeaderState(@Nonnull final Consensus consensus) {
+  LeaderState(@Nonnull final Consensus consensus) {
     mConsensus = Preconditions.checkNotNull(consensus, "consensus");
   }
 
