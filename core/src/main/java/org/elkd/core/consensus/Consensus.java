@@ -6,12 +6,12 @@ import javax.annotation.Nonnull;
 
 public class Consensus {
   private State mState;
-  private Context mContext;
+  private ConsensusContext mConsensusContext;
   private AbstractStateFactory mStateFactory;
 
-  public Consensus(@Nonnull final Context context,
+  public Consensus(@Nonnull final ConsensusContext consensusContext,
                    @Nonnull final AbstractStateFactory abstractStateFactory) {
-    mContext = Preconditions.checkNotNull(context, "context");
+    mConsensusContext = Preconditions.checkNotNull(consensusContext, "consensusContext");
     mStateFactory = Preconditions.checkNotNull(abstractStateFactory, "abstractStateFactory");
   }
 
@@ -34,7 +34,7 @@ public class Consensus {
     mState.on();
   }
 
-  Context getContext() {
-    return mContext;
+  ConsensusContext getContext() {
+    return mConsensusContext;
   }
 }

@@ -4,17 +4,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ContextTest {
+public class ConsensusContextTest {
   private static final Integer DEFAULT_CURRENT_TERM = 0;
   private static final Integer DEFAULT_VOTED_FOR = null;
 
   @Test
   public void should_have_default_values() {
     // Given / When
-    final Context context = new Context();
+    final ConsensusContext consensusContext = new ConsensusContext();
 
     // Then
-    assertEquals(DEFAULT_CURRENT_TERM, context.getCurrentTerm());
-    assertEquals(DEFAULT_VOTED_FOR, context.getVotedFor());
+    assertEquals(DEFAULT_CURRENT_TERM, consensusContext.getCurrentTerm());
+    assertEquals(DEFAULT_VOTED_FOR, consensusContext.getVotedFor());
   }
 }

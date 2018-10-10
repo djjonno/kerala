@@ -1,10 +1,10 @@
 package org.elkd.core.consensus;
 
-public class Context {
+public class ConsensusContext {
   private Integer mCurrentTerm = 0;
   private Integer mVotedFor = null;
 
-  public Context() { }
+  public ConsensusContext() { }
 
   public Integer getCurrentTerm() {
     return mCurrentTerm;
