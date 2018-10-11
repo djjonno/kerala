@@ -1,25 +1,31 @@
 package org.elkd.core.consensus;
 
+import javax.annotation.Nullable;
+
 public class ConsensusContext {
-  private Integer mCurrentTerm = 0;
-  private Integer mVotedFor = null;
+  private int mCurrentTerm;
+  private Integer mVotedFor;
 
-  public ConsensusContext() { }
+  public ConsensusContext() {
+    mCurrentTerm = 0;
+    mVotedFor = null;
+  }
 
-  public Integer getCurrentTerm() {
+  int getCurrentTerm() {
     return mCurrentTerm;
   }
 
-  public void setCurrentTerm(final Integer currentTerm) {
+  void setCurrentTerm(final int currentTerm) {
     mCurrentTerm = currentTerm;
     commit();
   }
 
-  public Integer getVotedFor() {
+  @Nullable
+  Integer getVotedFor() {
     return mVotedFor;
   }
 
-  public void setVotedFor(final Integer votedFor) {
+  void setVotedFor(final Integer votedFor) {
     mVotedFor = votedFor;
     commit();
   }

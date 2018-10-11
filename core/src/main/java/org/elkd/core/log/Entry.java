@@ -19,7 +19,7 @@ import java.util.Objects;
 public class Entry {
   private String mEvent;
   private Long mTime;
-  private Document<Object> mDocument;
+  private Document<Object> mDocument; // TODO: change Document to be a list of StateMachine commands
 
   private Entry(@Nonnull  final String type, @Nonnull final Document<Object> document) {
     this(type, document, DateTime.now().getMillis());
