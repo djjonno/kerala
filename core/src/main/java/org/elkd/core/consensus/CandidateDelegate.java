@@ -25,12 +25,12 @@ public class CandidateDelegate implements Delegate {
   }
 
   @Override
-  public AppendEntriesResponse delegateAppendEntries(AppendEntriesRequest request) {
+  public AppendEntriesResponse delegateAppendEntries(final AppendEntriesRequest request) {
     return null;
   }
 
   @Override
-  public RequestVotesResponse delegateRequestVotes(RequestVotesRequest request) {
+  public RequestVotesResponse delegateRequestVotes(final RequestVotesRequest request) {
     return null;
   }
 }

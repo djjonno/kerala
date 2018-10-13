@@ -1,7 +1,7 @@
 package org.elkd.core.log;
 
 public class LogCommandReasons {
-  public interface LogCommandReason { }
+  interface LogCommandReason { }
 
   public enum AppendReason implements LogCommandReason {
     REPLICATION,

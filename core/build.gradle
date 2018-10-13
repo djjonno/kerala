@@ -5,8 +5,7 @@ applicationName = "elkd"
 
 buildscript {
     repositories {
-        maven { // The google mirror is less flaky than mavenCentral()
-            url "https://maven-central.storage-download.googleapis.com/repos/central/data/" }
+        mavenCentral()
     }
     dependencies { // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier
         // gradle versions
