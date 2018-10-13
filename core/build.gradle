@@ -1,13 +1,63 @@
-apply plugin: 'application'
+apply plugin: "application"
+apply plugin: "com.google.protobuf"
 
-applicationName = 'elkd'
+applicationName = "elkd"
 
-dependencies {
-    compile 'log4j:log4j:1.2.17'
-    compile project(':shared')
+buildscript {
+    repositories {
+        maven { // The google mirror is less flaky than mavenCentral()
+            url "https://maven-central.storage-download.googleapis.com/repos/central/data/" }
+    }
+    dependencies { // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier
+        // gradle versions
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5' }
 }
 
-mainClassName = 'org.elkd.core.server.Main'
+def grpcVersion = "1.15.1"
+def protobufVersion = "3.5.1"
+def protocVersion = "3.5.1-1"
+
+dependencies {
+    compile project(":shared")
+
+    compile "log4j:log4j:1.2.17"
+    compile "com.google.api.grpc:proto-google-common-protos:1.0.0"
+    compile "io.grpc:grpc-alts:${grpcVersion}"
+    compile "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    compile "io.grpc:grpc-protobuf:${grpcVersion}"
+    compile "io.grpc:grpc-stub:${grpcVersion}"
+    compile "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    compileOnly "javax.annotation:javax.annotation-api:1.2"
+
+    testCompile "io.grpc:grpc-testing:${grpcVersion}"
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'core/build/generated/source/proto/main/grpc'
+            srcDirs 'core/build/generated/source/proto/main/java'
+        }
+    }
+}
+
+mainClassName = "org.elkd.core.server.ElkdServer"
 
 task copyLicense {
     outputs.file new File("$buildDir/LICENSE")
@@ -21,4 +71,8 @@ task copyLicense {
 
 applicationDistribution.from(copyLicense) {
     into ""
+}
+
+applicationDistribution.into("bin") {
+    fileMode = 0755
 }

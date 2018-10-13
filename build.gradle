@@ -1,10 +1,14 @@
 subprojects {
+    apply plugin: 'idea'
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
- 
+
     repositories {
-        mavenCentral()
+        maven {
+            url "https://maven-central.storage-download.googleapis.com/repos/central/data/"
+        }
+        mavenLocal()
     }
 
     jacocoTestReport {

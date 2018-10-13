@@ -13,7 +13,7 @@ before_script:
   - ./cc-test-reporter before-build
 
 install:
-  - ./gradlew assemble
+  - ./gradlew build
 
 script:
   - ./gradlew test jacocoTestReport
