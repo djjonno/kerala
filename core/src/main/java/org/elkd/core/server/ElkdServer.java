@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import org.elkd.core.cluster.StaticClusterConfig;
 import org.elkd.core.consensus.Consensus;
 import org.elkd.core.consensus.ConsensusContext;
-import org.elkd.core.consensus.DefaultStateFactory;
+import org.elkd.core.consensus.DefaultDelegateFactory;
 
 import java.util.logging.Logger;
 
@@ -26,7 +26,7 @@ public class ElkdServer {
     final Consensus consensus = new Consensus(
         clusterMembership,
         new ConsensusContext(),
-        new DefaultStateFactory()
+        new DefaultDelegateFactory()
     );
 
     consensus.initialize();

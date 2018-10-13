@@ -5,11 +5,12 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import java.util.logging.Logger;
 
-public class LeaderState implements State {
-  private static final Logger LOG = Logger.getLogger(CandidateState.class.getName());
+public class CandidateDelegate implements Delegate {
+  private static final Logger LOG = Logger.getLogger(CandidateDelegate.class.getName());
+
   private final Consensus mConsensus;
 
-  LeaderState(@Nonnull final Consensus consensus) {
+  CandidateDelegate(@Nonnull final Consensus consensus) {
     mConsensus = Preconditions.checkNotNull(consensus, "consensus");
   }
 
@@ -24,12 +25,12 @@ public class LeaderState implements State {
   }
 
   @Override
-  public AppendEntriesResponse handleAppendEntries(final AppendEntriesRequest request) {
+  public AppendEntriesResponse delegateAppendEntries(AppendEntriesRequest request) {
     return null;
   }
 
   @Override
-  public RequestVotesResponse handleRequestVotes(final RequestVotesRequest request) {
+  public RequestVotesResponse delegateRequestVotes(RequestVotesRequest request) {
     return null;
   }
 }

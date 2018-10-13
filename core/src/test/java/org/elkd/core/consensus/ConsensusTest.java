@@ -13,11 +13,11 @@ import static org.mockito.Mockito.verify;
 
 public class ConsensusTest {
 
-  @Mock State mState1;
-  @Mock State mState2;
+  @Mock Delegate mDelegate1;
+  @Mock Delegate mDelegate2;
   @Mock ClusterConfig mClusterConfig;
   @Mock ConsensusContext mConsensusContext;
-  @Mock AbstractStateFactory mStateFactory;
+  @Mock AbstractDelegateFactory mStateFactory;
   @Mock AppendEntriesRequest mAppendEntriesRequest;
   @Mock AppendEntriesResponse mAppendEntriesResponse;
   @Mock RequestVotesRequest mRequestVotesRequest;
@@ -39,19 +39,19 @@ public class ConsensusTest {
   }
 
   private void setupCommonExpectations() {
-    doReturn(mState1)
+    doReturn(mDelegate1)
         .when(mStateFactory)
-        .getInitialState(any());
-    doReturn(mState2)
+        .getInitialDelegate(any());
+    doReturn(mDelegate2)
         .when(mStateFactory)
-        .getState(any(), any());
+        .getDelegate(any(), any());
 
     doReturn(mAppendEntriesResponse)
-        .when(mState1)
-        .handleAppendEntries(mAppendEntriesRequest);
+        .when(mDelegate1)
+        .delegateAppendEntries(mAppendEntriesRequest);
     doReturn(mRequestVotesResponse)
-        .when(mState1)
-        .handleRequestVotes(mRequestVotesRequest);
+        .when(mDelegate1)
+        .delegateRequestVotes(mRequestVotesRequest);
   }
 
   @Test
@@ -60,23 +60,23 @@ public class ConsensusTest {
     mUnitUnderTest.initialize();
 
     // Then
-    verify(mStateFactory).getInitialState(mUnitUnderTest);
-    verify(mState1).on();
+    verify(mStateFactory).getInitialDelegate(mUnitUnderTest);
+    verify(mDelegate1).on();
   }
 
   @Test
   public void should_transition_state_on_off_on_transition() {
     // Given
     mUnitUnderTest.initialize();
-    final Class<? extends State> state = LeaderState.class;
+    final Class<? extends State> state = LeaderDelegate.class;
 
     // When
     mUnitUnderTest.transition(state);
 
     // Then
-    verify(mState1).off();
-    verify(mStateFactory).getState(mUnitUnderTest, state);
-    verify(mState2).on();
+    verify(mDelegate1).off();
+    verify(mStateFactory).getDelegate(mUnitUnderTest, state);
+    verify(mDelegate2).on();
   }
 
   @Test
@@ -85,10 +85,10 @@ public class ConsensusTest {
     mUnitUnderTest.initialize();
 
     // When
-    final AppendEntriesResponse response = mUnitUnderTest.routeAppendEntries(mAppendEntriesRequest);
+    final AppendEntriesResponse response = mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest);
 
     // Then
-    verify(mState1).handleAppendEntries(mAppendEntriesRequest);
+    verify(mDelegate1).delegateAppendEntries(mAppendEntriesRequest);
     assertEquals(mAppendEntriesResponse, response);
   }
 
@@ -98,10 +98,10 @@ public class ConsensusTest {
     mUnitUnderTest.initialize();
 
     // When
-    final RequestVotesResponse response = mUnitUnderTest.routeRequestVotes(mRequestVotesRequest);
+    final RequestVotesResponse response = mUnitUnderTest.delegateRequestVotes(mRequestVotesRequest);
 
     // Then
-    verify(mState1).handleRequestVotes(mRequestVotesRequest);
+    verify(mDelegate1).delegateRequestVotes(mRequestVotesRequest);
     assertEquals(mRequestVotesResponse, response);
   }
 
