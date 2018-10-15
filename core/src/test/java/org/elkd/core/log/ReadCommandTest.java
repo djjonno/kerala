@@ -1,6 +1,6 @@
 package org.elkd.core.log;
 
-import org.elkd.core.log.LogCommandReasons.ReadReason;
+import org.elkd.core.log.LogChangeReasons.ReadReason;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -24,8 +24,7 @@ public class ReadCommandTest {
 
     mUnitUnderTest = new ReadCommand(
         READ_INDEX,
-        COMMAND_REASON,
-        mReceiver
+        mReceiver, COMMAND_REASON
     );
   }
 

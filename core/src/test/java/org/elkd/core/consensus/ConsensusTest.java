@@ -16,7 +16,8 @@ public class ConsensusTest {
   @Mock Delegate mDelegate1;
   @Mock Delegate mDelegate2;
   @Mock ClusterConfig mClusterConfig;
-  @Mock ConsensusContext mConsensusContext;
+  @Mock
+  NodeState mNodeState;
   @Mock AbstractDelegateFactory mStateFactory;
   @Mock AppendEntriesRequest mAppendEntriesRequest;
   @Mock AppendEntriesResponse mAppendEntriesResponse;
@@ -31,7 +32,7 @@ public class ConsensusTest {
 
     mUnitUnderTest = new Consensus(
         mClusterConfig,
-        mConsensusContext,
+        mNodeState,
         mStateFactory
     );
 
@@ -68,14 +69,14 @@ public class ConsensusTest {
   public void should_transition_state_on_off_on_transition() {
     // Given
     mUnitUnderTest.initialize();
-    final Class<? extends State> state = LeaderDelegate.class;
+    final Class<? extends Delegate> delegate = LeaderDelegate.class;
 
     // When
-    mUnitUnderTest.transition(state);
+    mUnitUnderTest.transition(delegate);
 
     // Then
     verify(mDelegate1).off();
-    verify(mStateFactory).getDelegate(mUnitUnderTest, state);
+    verify(mStateFactory).getDelegate(mUnitUnderTest, delegate);
     verify(mDelegate2).on();
   }
 
@@ -110,7 +111,7 @@ public class ConsensusTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mConsensusContext, mUnitUnderTest.getContext());
+    assertEquals(mNodeState, mUnitUnderTest.getContext());
   }
 
   @Test

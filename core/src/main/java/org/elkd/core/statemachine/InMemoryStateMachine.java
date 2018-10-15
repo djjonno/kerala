@@ -25,4 +25,11 @@ public class InMemoryStateMachine implements StateMachine {
   public Object get(final String key) {
     return mState.get(key);
   }
+
+  @Override
+  public String toString() {
+    return "InMemoryStateMachine{" +
+        "mState=" + mState +
+        '}';
+  }
 }

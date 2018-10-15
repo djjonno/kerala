@@ -2,11 +2,11 @@ package org.elkd.core.consensus;
 
 import javax.annotation.Nullable;
 
-public class ConsensusContext {
+public class NodeState {
   private int mCurrentTerm;
   private Integer mVotedFor;
 
-  public ConsensusContext() {
+  public NodeState() {
     mCurrentTerm = 0;
     mVotedFor = null;
   }

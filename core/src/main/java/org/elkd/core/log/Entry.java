@@ -69,4 +69,12 @@ public class Entry {
   public int hashCode() {
     return Objects.hash(mEvent, mCommands);
   }
+
+  @Override
+  public String toString() {
+    return "Entry{" +
+        "mEvent='" + mEvent + '\'' +
+        ", mCommands=" + mCommands +
+        '}';
+  }
 }

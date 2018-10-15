@@ -1,8 +1,8 @@
 package org.elkd.core.log;
 
-import org.elkd.core.log.LogCommandReasons.LogCommandReason;
+import org.elkd.core.log.LogChangeReasons.LogChangeReason;
 
 public interface LogCommand<T> {
-  LogCommandReason getReason();
+  LogChangeReason getReason();
   T execute();
 }

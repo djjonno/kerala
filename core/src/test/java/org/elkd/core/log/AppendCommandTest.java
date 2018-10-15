@@ -1,7 +1,7 @@
 package org.elkd.core.log;
 
 import com.google.common.collect.ImmutableList;
-import org.elkd.core.log.LogCommandReasons.AppendReason;
+import org.elkd.core.log.LogChangeReasons.AppendReason;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -24,7 +24,7 @@ public class AppendCommandTest {
     MockitoAnnotations.initMocks(this);
     mUnitUnderTest = new AppendCommand(ImmutableList.of(
         mEntry1, mEntry2
-    ), COMMAND_REASON, mReceiver);
+    ), mReceiver, COMMAND_REASON);
   }
 
   @Test
@@ -33,6 +33,18 @@ public class AppendCommandTest {
 
     // Then
     assertEquals(COMMAND_REASON, mUnitUnderTest.getReason());
+  }
+
+  @Test
+  public void should_append_single_entry() {
+    // Given
+    final AppendCommand command = new AppendCommand(mEntry1, mReceiver, COMMAND_REASON);
+
+    // When
+    command.execute();
+
+    // Then
+    verify(mReceiver, times(1)).append(mEntry1);
   }
 
   @Test

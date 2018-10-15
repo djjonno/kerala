@@ -1,17 +1,20 @@
 package org.elkd.core.log;
 
-import org.elkd.core.log.LogCommandReasons.CommitReason;
+import org.elkd.core.log.LogChangeReasons.CommitReason;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class CommitCommandTest {
   private static final CommitReason COMMAND_REASON = CommitReason.REPLICATION;
-  private static final long COMMIT_INDEX = 1;
+  private static final long COMMIT_INDEX = 0;
 
   @Mock Log<Entry> mReceiver;
 
@@ -23,8 +26,7 @@ public class CommitCommandTest {
 
     mUnitUnderTest = new CommitCommand(
         COMMIT_INDEX,
-        COMMAND_REASON,
-        mReceiver
+        mReceiver, COMMAND_REASON
     );
   }
 
@@ -43,5 +45,20 @@ public class CommitCommandTest {
 
     // Then
     verify(mReceiver).commit(COMMIT_INDEX);
+  }
+
+  @Test
+  public void should_return_commit_result() {
+    // Given
+    final CommitResult expected = mock(CommitResult.class);
+    doReturn(expected)
+        .when(mReceiver)
+        .commit(COMMIT_INDEX);
+
+    // When
+    final CommitResult<Entry> commit = mUnitUnderTest.execute();
+
+    // Then
+    assertSame(expected, commit);
   }
 }

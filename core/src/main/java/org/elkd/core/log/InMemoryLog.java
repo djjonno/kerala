@@ -22,10 +22,18 @@ public class InMemoryLog implements Log<Entry> {
     Preconditions.checkNotNull(entry, "entry");
 
     mIndex++;
-
     mLogStore.add((int) mIndex, entry);
 
     return mIndex;
+  }
+
+  @Override
+  public long append(final List<Entry> entries) {
+    long index = 0;
+    for (Entry entry : entries) {
+      index = append(entry);
+    }
+    return index;
   }
 
   @Override
@@ -38,7 +46,7 @@ public class InMemoryLog implements Log<Entry> {
 
   @Override
   public List<Entry> read(final long from, final long to) {
-    Preconditions.checkState(START_INDEX <= from && from < to && to <= mCommitIndex);
+    Preconditions.checkState(START_INDEX <= from && from <= to && to <= mCommitIndex);
 
     final List<Entry> subList = new ArrayList<>();
     for (int i = (int) from; i <= to; ++i) {
@@ -49,10 +57,14 @@ public class InMemoryLog implements Log<Entry> {
   }
 
   @Override
-  public void commit(final long index) {
+  public CommitResult<Entry> commit(final long index) {
     Preconditions.checkState(START_INDEX <= index && index <= mIndex);
-
+    final long oldCommit = mCommitIndex;
     mCommitIndex = index;
+
+    final List<Entry> entries = read(oldCommit + 1, index);
+
+    return new CommitResult<>(entries, index);
   }
 
   @Override

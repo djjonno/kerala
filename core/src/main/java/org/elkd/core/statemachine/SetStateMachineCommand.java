@@ -35,4 +35,9 @@ public class SetStateMachineCommand implements StateMachineCommand {
   public int hashCode() {
     return Objects.hash(mKey, mValue);
   }
+
+  @Override
+  public String toString() {
+    return "Set{" + mKey + " -> " + mValue + "}";
+  }
 }

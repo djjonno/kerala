@@ -8,14 +8,14 @@ import javax.annotation.Nonnull;
 public class Consensus {
   private Delegate mDelegate;
   private ClusterConfig mClusterConfig;
-  private ConsensusContext mConsensusContext;
+  private NodeState mNodeState;
   private AbstractDelegateFactory mStateFactory;
 
   public Consensus(@Nonnull final ClusterConfig clusterConfig,
-                   @Nonnull final ConsensusContext consensusContext,
+                   @Nonnull final NodeState nodeState,
                    @Nonnull final AbstractDelegateFactory delegateFactory) {
     mClusterConfig = Preconditions.checkNotNull(clusterConfig, "clusterConfig");
-    mConsensusContext = Preconditions.checkNotNull(consensusContext, "consensusContext");
+    mNodeState = Preconditions.checkNotNull(nodeState, "nodeState");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
   }
 
@@ -32,14 +32,14 @@ public class Consensus {
     return mDelegate.delegateRequestVotes(request);
   }
 
-  void transition(@Nonnull final Class<? extends State> newState) {
+  void transition(@Nonnull final Class<? extends Delegate> newDelegate) {
     mDelegate.off();
-    mDelegate = mStateFactory.getDelegate(this, newState);
+    mDelegate = mStateFactory.getDelegate(this, newDelegate);
     mDelegate.on();
   }
 
-  /* package-private */ ConsensusContext getContext() {
-    return mConsensusContext;
+  /* package-private */ NodeState getContext() {
+    return mNodeState;
   }
 
   /* package-private */ ClusterConfig getClusterConfig() {

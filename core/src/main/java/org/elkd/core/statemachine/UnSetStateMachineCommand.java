@@ -30,6 +30,11 @@ public class UnSetStateMachineCommand implements StateMachineCommand {
 
   @Override
   public int hashCode() {
+
     return Objects.hash(mKey);
+  }
+  @Override
+  public String toString() {
+    return "UnSet{" + mKey + "}";
   }
 }
