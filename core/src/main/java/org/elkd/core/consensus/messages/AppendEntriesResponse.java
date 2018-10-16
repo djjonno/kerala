@@ -1,4 +1,4 @@
-package org.elkd.core.consensus.payload;
+package org.elkd.core.consensus.messages;
 
 import com.google.common.base.Preconditions;
 

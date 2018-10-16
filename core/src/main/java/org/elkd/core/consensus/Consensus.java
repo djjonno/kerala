@@ -3,10 +3,10 @@ package org.elkd.core.consensus;
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.elkd.core.cluster.ClusterConfig;
-import org.elkd.core.consensus.payload.AppendEntriesRequest;
-import org.elkd.core.consensus.payload.AppendEntriesResponse;
-import org.elkd.core.consensus.payload.RequestVotesRequest;
-import org.elkd.core.consensus.payload.RequestVotesResponse;
+import org.elkd.core.consensus.messages.AppendEntriesRequest;
+import org.elkd.core.consensus.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.RequestVotesRequest;
+import org.elkd.core.consensus.messages.RequestVotesResponse;
 import org.elkd.core.log.Entry;
 import org.elkd.core.log.LogInvoker;
 

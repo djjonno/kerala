@@ -1,5 +1,6 @@
 package org.elkd.core.consensus.payload;
 
+import org.elkd.core.consensus.messages.RequestVotesRequest;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

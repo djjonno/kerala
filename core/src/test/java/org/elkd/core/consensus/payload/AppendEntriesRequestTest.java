@@ -1,5 +1,6 @@
 package org.elkd.core.consensus.payload;
 
+import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.log.Entry;
 import org.junit.Test;
 

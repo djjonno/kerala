@@ -1,4 +1,4 @@
-package org.elkd.core.consensus.payload;
+package org.elkd.core.consensus.messages;
 
 public class RequestVotesResponse {
   private final int mTerm;
