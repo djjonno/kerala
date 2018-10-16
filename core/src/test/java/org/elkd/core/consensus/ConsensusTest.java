@@ -1,10 +1,13 @@
 package org.elkd.core.consensus;
 
+import io.grpc.stub.StreamObserver;
 import org.elkd.core.cluster.ClusterConfig;
 import org.elkd.core.consensus.payload.AppendEntriesRequest;
 import org.elkd.core.consensus.payload.AppendEntriesResponse;
 import org.elkd.core.consensus.payload.RequestVotesRequest;
 import org.elkd.core.consensus.payload.RequestVotesResponse;
+import org.elkd.core.log.Entry;
+import org.elkd.core.log.LogInvoker;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -17,20 +20,18 @@ import static org.mockito.Mockito.verify;
 
 public class ConsensusTest {
 
+  @Mock LogInvoker<Entry> mLogInvoker;
   @Mock Delegate mDelegate1;
   @Mock Delegate mDelegate2;
   @Mock ClusterConfig mClusterConfig;
-  @Mock
-  NodeState mNodeState;
+  @Mock NodeState mNodeState;
   @Mock AbstractDelegateFactory mStateFactory;
-  @Mock
-  AppendEntriesRequest mAppendEntriesRequest;
-  @Mock
-  AppendEntriesResponse mAppendEntriesResponse;
-  @Mock
-  RequestVotesRequest mRequestVotesRequest;
-  @Mock
-  RequestVotesResponse mRequestVotesResponse;
+  @Mock AppendEntriesRequest mAppendEntriesRequest;
+  @Mock AppendEntriesResponse mAppendEntriesResponse;
+  @Mock RequestVotesRequest mRequestVotesRequest;
+  @Mock RequestVotesResponse mRequestVotesResponse;
+  @Mock StreamObserver<AppendEntriesResponse> mAppendEntriesResponseObserver;
+  @Mock StreamObserver<RequestVotesResponse> mRequestVotesResponseObserver;
 
   private Consensus mUnitUnderTest;
 
@@ -39,6 +40,7 @@ public class ConsensusTest {
     MockitoAnnotations.initMocks(this);
 
     mUnitUnderTest = new Consensus(
+        mLogInvoker,
         mClusterConfig,
         mNodeState,
         mStateFactory
@@ -57,10 +59,10 @@ public class ConsensusTest {
 
     doReturn(mAppendEntriesResponse)
         .when(mDelegate1)
-        .delegateAppendEntries(mAppendEntriesRequest);
+        .delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
     doReturn(mRequestVotesResponse)
         .when(mDelegate1)
-        .delegateRequestVotes(mRequestVotesRequest);
+        .delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
   }
 
   @Test
@@ -94,10 +96,10 @@ public class ConsensusTest {
     mUnitUnderTest.initialize();
 
     // When
-    final AppendEntriesResponse response = mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest);
+    final AppendEntriesResponse response = mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
 
     // Then
-    verify(mDelegate1).delegateAppendEntries(mAppendEntriesRequest);
+    verify(mDelegate1).delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
     assertEquals(mAppendEntriesResponse, response);
   }
 
@@ -107,10 +109,10 @@ public class ConsensusTest {
     mUnitUnderTest.initialize();
 
     // When
-    final RequestVotesResponse response = mUnitUnderTest.delegateRequestVotes(mRequestVotesRequest);
+    final RequestVotesResponse response = mUnitUnderTest.delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
 
     // Then
-    verify(mDelegate1).delegateRequestVotes(mRequestVotesRequest);
+    verify(mDelegate1).delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
     assertEquals(mRequestVotesResponse, response);
   }
 

@@ -17,10 +17,10 @@ public class AppendCommand implements LogCommand<Long> {
     this(ImmutableList.of(entry), receiver, reason);
   }
 
-  public AppendCommand(@Nonnull final ImmutableList<Entry> entries,
+  public AppendCommand(@Nonnull final List<Entry> entries,
                        @Nonnull final Log<Entry> receiver,
                        @Nonnull final LogChangeReason reason) {
-    mEntries = Preconditions.checkNotNull(entries, "entries");
+    mEntries = ImmutableList.copyOf(Preconditions.checkNotNull(entries, "entries"));
     mReceiver = Preconditions.checkNotNull(receiver, "receiver");
     mReason = Preconditions.checkNotNull(reason, "reason");
   }

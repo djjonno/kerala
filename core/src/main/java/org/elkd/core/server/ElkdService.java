@@ -4,7 +4,7 @@ import io.grpc.stub.StreamObserver;
 
 public class ElkdService extends ElkdServiceGrpc.ElkdServiceImplBase {
   @Override
-  public void sayHello(final HelloRequest request, final StreamObserver<HelloReply> responseObserver) {
-    super.sayHello(request, responseObserver);
+  public StreamObserver<HelloRequest> sayHello(final StreamObserver<HelloReply> responseObserver) {
+    return super.sayHello(responseObserver);
   }
 }

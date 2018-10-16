@@ -1,6 +1,7 @@
 package org.elkd.core.consensus;
 
 import com.google.common.base.Preconditions;
+import io.grpc.stub.StreamObserver;
 import org.elkd.core.consensus.payload.AppendEntriesRequest;
 import org.elkd.core.consensus.payload.AppendEntriesResponse;
 import org.elkd.core.consensus.payload.RequestVotesRequest;
@@ -29,12 +30,14 @@ public class CandidateDelegate implements Delegate {
   }
 
   @Override
-  public AppendEntriesResponse delegateAppendEntries(final AppendEntriesRequest request) {
+  public AppendEntriesResponse delegateAppendEntries(final AppendEntriesRequest request,
+                                                     final StreamObserver<AppendEntriesResponse> response) {
     return null;
   }
 
   @Override
-  public RequestVotesResponse delegateRequestVotes(final RequestVotesRequest request) {
+  public RequestVotesResponse delegateRequestVotes(final RequestVotesRequest request,
+                                                   final StreamObserver<RequestVotesResponse> response) {
     return null;
   }
 }
