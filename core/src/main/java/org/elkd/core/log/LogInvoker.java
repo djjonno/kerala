@@ -2,7 +2,6 @@ package org.elkd.core.log;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import org.elkd.core.log.listener.LogChangeListener;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;

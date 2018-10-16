@@ -1,7 +1,6 @@
 package org.elkd.core.log;
 
 import com.google.common.collect.ImmutableList;
-import org.elkd.core.log.listener.LogChangeListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

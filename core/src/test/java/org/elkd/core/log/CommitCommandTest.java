@@ -1,6 +1,5 @@
 package org.elkd.core.log;
 
-import org.elkd.core.log.LogChangeReasons.CommitReason;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -8,12 +7,10 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class CommitCommandTest {
-  private static final CommitReason COMMAND_REASON = CommitReason.REPLICATION;
+  private static final LogChangeReason COMMAND_REASON = LogChangeReason.REPLICATION;
   private static final long COMMIT_INDEX = 0;
 
   @Mock Log<Entry> mReceiver;

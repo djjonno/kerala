@@ -1,16 +1,16 @@
 package org.elkd.core.log;
 
-import org.elkd.core.log.LogChangeReasons.ReadReason;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 public class ReadCommandTest {
-  private static final ReadReason COMMAND_REASON = ReadReason.REPLICATION;
+  private static final LogChangeReason COMMAND_REASON = LogChangeReason.REPLICATION;
   private static final long READ_INDEX = 1;
 
   @Mock Log<Entry> mReceiver;

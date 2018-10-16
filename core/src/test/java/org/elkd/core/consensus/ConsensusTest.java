@@ -1,6 +1,10 @@
 package org.elkd.core.consensus;
 
 import org.elkd.core.cluster.ClusterConfig;
+import org.elkd.core.consensus.payload.AppendEntriesRequest;
+import org.elkd.core.consensus.payload.AppendEntriesResponse;
+import org.elkd.core.consensus.payload.RequestVotesRequest;
+import org.elkd.core.consensus.payload.RequestVotesResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -19,10 +23,14 @@ public class ConsensusTest {
   @Mock
   NodeState mNodeState;
   @Mock AbstractDelegateFactory mStateFactory;
-  @Mock AppendEntriesRequest mAppendEntriesRequest;
-  @Mock AppendEntriesResponse mAppendEntriesResponse;
-  @Mock RequestVotesRequest mRequestVotesRequest;
-  @Mock RequestVotesResponse mRequestVotesResponse;
+  @Mock
+  AppendEntriesRequest mAppendEntriesRequest;
+  @Mock
+  AppendEntriesResponse mAppendEntriesResponse;
+  @Mock
+  RequestVotesRequest mRequestVotesRequest;
+  @Mock
+  RequestVotesResponse mRequestVotesResponse;
 
   private Consensus mUnitUnderTest;
 
