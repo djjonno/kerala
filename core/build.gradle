@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies { // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier
         // gradle versions
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"
     }
 }
 
@@ -30,7 +30,7 @@ dependencies {
     compileOnly "javax.annotation:javax.annotation-api:1.2"
 
     testCompile "io.grpc:grpc-testing:${grpcVersion}"
-    testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testCompile "org.hamcrest:hamcrest-junit:2.0.0.0"
 }
 
 protobuf {
@@ -52,8 +52,8 @@ protobuf {
 sourceSets {
     main {
         java {
-            srcDirs 'core/build/generated/source/proto/main/grpc'
-            srcDirs 'core/build/generated/source/proto/main/java'
+            srcDirs "core/build/generated/source/proto/main/grpc"
+            srcDirs "core/build/generated/source/proto/main/java"
         }
     }
 }

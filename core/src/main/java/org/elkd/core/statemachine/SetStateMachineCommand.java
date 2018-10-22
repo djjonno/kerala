@@ -19,19 +19,6 @@ public class SetStateMachineCommand implements StateMachineCommand {
   }
 
   @Override
-  public boolean equals(final Object rhs) {
-    if (this == rhs) {
-      return true;
-    }
-    if (rhs == null || getClass() != rhs.getClass()) {
-      return false;
-    }
-    final SetStateMachineCommand that = (SetStateMachineCommand) rhs;
-    return Objects.equals(mKey, that.mKey) &&
-        Objects.equals(mValue, that.mValue);
-  }
-
-  @Override
   public int hashCode() {
     return Objects.hash(mKey, mValue);
   }

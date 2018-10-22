@@ -5,4 +5,4 @@ coverage/
 out/
 *.iml
 cc-test-reporter
-
+elkd.properties

@@ -1,5 +1,6 @@
 package org.elkd.core.consensus.payload;
 
+import com.google.common.collect.ImmutableList;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.log.Entry;
 import org.junit.Test;
@@ -13,7 +14,7 @@ public class AppendEntriesRequestTest {
   private static final int PREV_LOG_TERM = 1;
   private static final int LEADER_ID = 2;
   private static final long LEADER_COMMIT = 3L;
-  private static final List<Entry> ENTRIES = List.of(Entry.builder("event").build());
+  private static final List<Entry> ENTRIES = ImmutableList.of(Entry.builder("event").build());
 
   @Test
   public void should_build_with_properties() {

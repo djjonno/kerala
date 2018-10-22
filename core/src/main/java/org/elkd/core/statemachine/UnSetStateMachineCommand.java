@@ -17,22 +17,10 @@ public class UnSetStateMachineCommand implements StateMachineCommand {
   }
 
   @Override
-  public boolean equals(final Object rhs) {
-    if (this == rhs) {
-      return true;
-    }
-    if (rhs == null || getClass() != rhs.getClass()) {
-      return false;
-    }
-    final UnSetStateMachineCommand that = (UnSetStateMachineCommand) rhs;
-    return Objects.equals(mKey, that.mKey);
-  }
-
-  @Override
   public int hashCode() {
-
     return Objects.hash(mKey);
   }
+
   @Override
   public String toString() {
     return "UnSet{" + mKey + "}";

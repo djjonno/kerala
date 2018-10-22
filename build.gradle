@@ -1,8 +1,8 @@
 subprojects {
-    apply plugin: 'idea'
-    apply plugin: 'java'
-    apply plugin: 'jacoco'
-    apply plugin: 'checkstyle'
+    apply plugin: "idea"
+    apply plugin: "java"
+    apply plugin: "jacoco"
+    apply plugin: "checkstyle"
 
     repositories {
         mavenCentral()
@@ -18,10 +18,12 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'joda-time', name: 'joda-time', version: '2.3'
-        implementation 'com.google.code.gson:gson:2.8.5'
-        testCompile 'junit:junit:4.11'
-        testCompile 'org.mockito:mockito-core:2.+'
+        compile group: "joda-time", name: "joda-time", version: "2.3"
+        compile group: "org.apache.logging.log4j", name: "log4j-api", version: "2.11.1"
+        compile group: "org.apache.logging.log4j", name: "log4j-core", version: "2.11.1"
+        implementation "com.google.code.gson:gson:2.8.5"
+        testCompile "junit:junit:4.11"
+        testCompile "org.mockito:mockito-core:2.+"
     }
 
     tasks.withType(Checkstyle) {
@@ -32,6 +34,7 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion = '8.13'
+        toolVersion = "8.13"
+        configFile = "config/checkstyle/checkstyle.xml" as File
     }
 }
