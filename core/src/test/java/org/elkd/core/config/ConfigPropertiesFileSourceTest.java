@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.elkd.core.config.ConfigPropertiesFileSource.ELKD_CONFIG_NAME;
@@ -165,5 +166,15 @@ public class ConfigPropertiesFileSourceTest {
 
     // Then
     assertEquals(expected, mConfig.get(KEY_1));
+  }
+
+  @Test
+  public void should_return_compiled_config() {
+    // Given / When
+    final Map<String, String> config = mUnitUnderTest.apply(mConfig);
+
+    // Then
+    assertEquals(VALUE_1, config.get(KEY_1));
+    assertEquals(VALUE_2, config.get(KEY_2));
   }
 }

@@ -2,8 +2,6 @@ package org.elkd.core.statemachine;
 
 import com.google.common.base.Preconditions;
 
-import java.util.Objects;
-
 public class SetStateMachineCommand implements StateMachineCommand {
   private final String mKey;
   private final Object mValue;
@@ -16,11 +14,6 @@ public class SetStateMachineCommand implements StateMachineCommand {
   @Override
   public void apply(final StateMachine receiver) {
     receiver.set(mKey, mValue);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(mKey, mValue);
   }
 
   @Override

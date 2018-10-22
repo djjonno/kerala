@@ -35,6 +35,5 @@ subprojects {
 
     checkstyle {
         toolVersion = "8.13"
-        configFile = "config/checkstyle/checkstyle.xml" as File
     }
 }

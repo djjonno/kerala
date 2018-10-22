@@ -9,8 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -23,7 +21,6 @@ public class ConfigProviderTest {
 
   @Mock Source mSource1;
   @Mock Source mSource2;
-  private ConfigProvider mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
@@ -47,7 +44,7 @@ public class ConfigProviderTest {
   @Test
   public void should_load_all_sources_in_order() {
     // Given / When
-    mUnitUnderTest = new ConfigProvider(getSources());
+    ConfigProvider.getConfig(getSources());
 
     // Then
     final InOrder inOrder = Mockito.inOrder(mSource1, mSource2);
@@ -57,11 +54,8 @@ public class ConfigProviderTest {
 
   @Test
   public void should_combine_config_from_sources() {
-    // Given
-    mUnitUnderTest = new ConfigProvider(getSources());
-
-    // When
-    final Config config = mUnitUnderTest.getConfig();
+    // Given / When
+    final Config config = ConfigProvider.getConfig(getSources());
 
     // Then
     assertEquals(VALUE_1, config.get(KEY_1));
@@ -81,9 +75,9 @@ public class ConfigProviderTest {
     )).when(mSource2).apply(any());
 
     // When
-    mUnitUnderTest = new ConfigProvider(getSources());
+    final Config config = ConfigProvider.getConfig(getSources());
 
     // Then
-    assertEquals(second, mUnitUnderTest.getConfig().get(KEY_1));
+    assertEquals(second, config.get(KEY_1));
   }
 }

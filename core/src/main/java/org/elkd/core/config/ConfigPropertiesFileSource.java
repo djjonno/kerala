@@ -40,7 +40,7 @@ class ConfigPropertiesFileSource implements Source {
 
   @Override
   public Map<String, String> apply(final Map<String, String> map) {
-    try (final InputStream input = mInputStreamProvider.getStream(mConfigFilePath)) {
+    try (InputStream input = mInputStreamProvider.getStream(mConfigFilePath)) {
       mProperties.load(input);
       for (final String key : mKeys) {
         final String value = mProperties.getProperty(key);

@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Config {
-  private static final Logger LOG = Logger.getLogger(Config.class);
-  private final Map<String, String> mConfig;
 
   /**
    * Data storage location.
    */
   @Key(defaultValue = "/usr/local/elkd") public static final String KEY_DATA_DIR = "data.dir";
+
+  private static final Logger LOG = Logger.getLogger(Config.class);
+  private final Map<String, String> mConfig;
 
   Config(final Map<String, String> config) {
     mConfig = config;
@@ -41,11 +42,15 @@ public class Config {
     return keys;
   }
 
-  static Map<String, String> getKeyDefaults() throws IllegalAccessException {
+  static Map<String, String> getKeyDefaults() {
     final Map<String, String> defaultConfig = new HashMap<>();
     for (Field field : Config.class.getDeclaredFields()) {
       if (field.isAnnotationPresent(Key.class)) {
-        defaultConfig.put((String) field.get(null), field.getAnnotation(Key.class).defaultValue());
+        try {
+          defaultConfig.put((String) field.get(null), field.getAnnotation(Key.class).defaultValue());
+        } catch (IllegalAccessException e) {
+          LOG.error("wtf - could not access field", e);
+        }
       }
     }
     return defaultConfig;

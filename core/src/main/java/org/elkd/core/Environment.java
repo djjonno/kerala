@@ -5,21 +5,21 @@ import org.elkd.shared.io.File;
 
 /* Singleton */
 public class Environment {
-  private static final String ELKD_DEFAULT_HOME = "/usr/local/elkd";
-  private static final String ELKD_HOME_VAR = "ELKD_HOME";
+  @VisibleForTesting static final String ELKD_DEFAULT_HOME = "/usr/local/elkd";
+  @VisibleForTesting static final String ELKD_HOME_VAR = "ELKD_HOME";
 
-  private static Environment instance = null;
+  private static Environment mInstance;
+
+  private Environment() { }
 
   public static Environment getInstance() {
     synchronized (Environment.class) {
-      if (instance == null) {
-        instance = new Environment();
+      if (mInstance == null) {
+        mInstance = new Environment();
       }
-      return instance;
+      return mInstance;
     }
   }
-
-  private Environment() { }
 
   public String getHome() {
     final String value = getEnv(ELKD_HOME_VAR);
