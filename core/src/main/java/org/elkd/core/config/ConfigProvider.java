@@ -13,12 +13,12 @@ public class ConfigProvider {
 
   public static Config getConfig() {
     final Map<String, String> config = load(ImmutableList.of(
-        /* 
+        /*
          * Configuration `Source`s in order of ascending precendence.
-         * 
-         * Add additional sources to bootstrap on startup. 
-         * E.g Cloud Settings source provider.
-        */
+         *
+         * Add additional sources to bootstrap on startup.
+         * E.g Cloud-Settings source provider.
+         */
         new ConfigDefaultsSource(),
         new ConfigPropertiesFileSource()
     ));

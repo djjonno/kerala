@@ -15,7 +15,13 @@ public class Config {
    */
   @Key(defaultValue = "/usr/local/elkd") public static final String KEY_DATA_DIR = "data.dir";
 
+  /**
+   * Server port
+   */
+  @Key(defaultValue = "9191") public static final String KEY_SERVER_PORT = "server.port";
+
   private static final Logger LOG = Logger.getLogger(Config.class);
+
   private final Map<String, String> mConfig;
 
   Config(final Map<String, String> config) {
@@ -24,6 +30,18 @@ public class Config {
 
   public String get(final String key) {
     return mConfig.get(key);
+  }
+
+  public Integer getInteger(final String key) {
+    return Integer.parseInt(mConfig.get(key));
+  }
+
+  public Double getDouble(final String key) {
+    return Double.parseDouble(mConfig.get(key));
+  }
+
+  public Boolean getBoolean(final String key) {
+    return Boolean.parseBoolean(mConfig.get(key));
   }
 
   /* Helpers */

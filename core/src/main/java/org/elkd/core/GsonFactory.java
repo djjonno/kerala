@@ -1,4 +1,4 @@
-package org.elkd.core.server;
+package org.elkd.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,7 +25,6 @@ public final class GsonFactory {
 
   private Gson configureGson() {
     final GsonBuilder gsonBuilder = new GsonBuilder();
-
     return gsonBuilder.create();
   }
 }
