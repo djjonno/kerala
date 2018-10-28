@@ -32,15 +32,15 @@ public class Config {
     return mConfig.get(key);
   }
 
-  public Integer getInteger(final String key) {
+  public Integer getAsInteger(final String key) {
     return Integer.parseInt(mConfig.get(key));
   }
 
-  public Double getDouble(final String key) {
+  public Double getAsDouble(final String key) {
     return Double.parseDouble(mConfig.get(key));
   }
 
-  public Boolean getBoolean(final String key) {
+  public Boolean getAsBoolean(final String key) {
     return Boolean.parseBoolean(mConfig.get(key));
   }
 

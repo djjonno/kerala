@@ -56,7 +56,7 @@ public class ConfigTest {
   @Test
   public void should_return_integer() {
     // Given / When
-    final Integer integer = mConfig.getInteger(INTEGER_KEY);
+    final Integer integer = mConfig.getAsInteger(INTEGER_KEY);
 
     // Then
     assertEquals(INTEGER_VALUE, integer);
@@ -65,7 +65,7 @@ public class ConfigTest {
   @Test
   public void should_return_double() {
     // Given / When
-    final Double dub = mConfig.getDouble(DOUBLE_KEY);
+    final Double dub = mConfig.getAsDouble(DOUBLE_KEY);
 
     // Then
     assertEquals(DOUBLE_VALUE, dub);
@@ -74,7 +74,7 @@ public class ConfigTest {
   @Test
   public void should_return_boolean() {
     // Given / When
-    final Boolean bool = mConfig.getBoolean(BOOLEAN_KEY);
+    final Boolean bool = mConfig.getAsBoolean(BOOLEAN_KEY);
 
     // Then
     assertEquals(BOOLEAN_VALUE, bool);

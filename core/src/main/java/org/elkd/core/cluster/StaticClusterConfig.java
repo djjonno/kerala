@@ -5,29 +5,28 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
 public final class StaticClusterConfig implements ClusterConfig {
-  private final ImmutableSet<String> mMembers;
+  private final ImmutableSet<Node> mNodes;
 
-  public StaticClusterConfig(final Set<String> members) {
-    mMembers = ImmutableSet.copyOf(members);
+  public StaticClusterConfig(final Set<Node> nodes) {
+    mNodes = ImmutableSet.copyOf(nodes);
   }
 
-  @Override
-  public void addClusterMember(final String member) {
+  public void addNode(final Node node) {
     // no-op, membership is static
   }
 
   @Override
-  public void removeClusterMember(final String uri) {
+  public void removeNode(final Node node) {
     // no-op, membership is static
   }
 
   @Override
-  public Set<String> getMembers() {
-    return mMembers;
+  public Set<Node> getNodes() {
+    return mNodes;
   }
 
   @Override
   public int clusterSize() {
-    return mMembers.size();
+    return mNodes.size();
   }
 }

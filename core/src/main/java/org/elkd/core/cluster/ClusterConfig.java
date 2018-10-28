@@ -3,13 +3,11 @@ package org.elkd.core.cluster;
 import java.util.Set;
 
 public interface ClusterConfig {
-
   int clusterSize();
 
-  void addClusterMember(String uri);
+  void addNode(Node uri);
 
-  void removeClusterMember(String uri);
+  void removeNode(Node uri);
 
-  Set<String> getMembers();
-
+  Set<Node> getNodes();
 }

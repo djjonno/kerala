@@ -27,7 +27,7 @@ public class Elkd {
   void start() {
     LOG.info("booting");
 
-    final int port = mConfig.getInteger(Config.KEY_SERVER_PORT);
+    final int port = mConfig.getAsInteger(Config.KEY_SERVER_PORT);
 
     mElkdServer.start(port);
   }

@@ -30,7 +30,7 @@ public class ElkdTest {
     // Given
     doReturn(PORT)
         .when(mConfig)
-        .getInteger(Config.KEY_SERVER_PORT);
+        .getAsInteger(Config.KEY_SERVER_PORT);
 
     // When
     mUnitUnderTest.start();
