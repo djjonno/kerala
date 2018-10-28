@@ -4,13 +4,48 @@ option java_multiple_files = true;
 option java_package = "org.elkd.core.server";
 
 service ElkdService {
-    rpc SayHello (stream HelloRequest) returns (stream HelloReply) {}
+    rpc AppendEntries (AppendEntriesRequest) returns (stream AppendEntriesResponse) {}
+    rpc RequestVotes (RequestVotesRequest) returns (stream RequestVotesResponse) {}
 }
 
-message HelloRequest {
-    string name = 1;
+message AppendEntriesRequest {
+    int32 term = 1;
+    string leaderId = 2;
+    int32 prevLogIndex = 3;
+    int32 prevLogTerm = 4;
+    repeated Entry entries = 5;
+    int32 leaderCommit = 6;
 }
 
-message HelloReply {
-    string message = 1;
+message AppendEntriesResponse {
+    int32 term = 1;
+    bool success = 2;
+}
+
+message StateMachineCommand {
+    message SetStateMachineCommand {
+        string key = 1;
+        string value = 2;
+    }
+
+    message UnSetStateMachineCommand {
+        string key = 1;
+    }
+}
+
+message Entry {
+    string event = 1;
+    repeated StateMachineCommand commands = 2;
+}
+
+message RequestVotesRequest {
+    int32 term = 1;
+    string candidateId = 2;
+    int32 lastLogIndex = 3;
+    int32 lastLogTerm = 4;
+}
+
+message RequestVotesResponse {
+    int32 term = 1;
+    bool voteGranted = 2;
 }
