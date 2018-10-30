@@ -42,7 +42,7 @@ public class ElkdTest {
   @Test
   public void should_shutdown_server() {
     // Given / When
-    mUnitUnderTest.shutdown();
+    mUnitUnderTest.stop();
 
     // Then
     verify(mElkdServer).shutdown();

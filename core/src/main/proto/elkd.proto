@@ -9,16 +9,16 @@ service ElkdService {
 }
 
 message AppendEntriesRequest {
-    int32 term = 1;
+    uint32 term = 1;
     string leaderId = 2;
-    int32 prevLogIndex = 3;
-    int32 prevLogTerm = 4;
+    uint32 prevLogIndex = 3;
+    uint32 prevLogTerm = 4;
     repeated Entry entries = 5;
-    int32 leaderCommit = 6;
+    uint32 leaderCommit = 6;
 }
 
 message AppendEntriesResponse {
-    int32 term = 1;
+    uint32 term = 1;
     bool success = 2;
 }
 
@@ -39,13 +39,13 @@ message Entry {
 }
 
 message RequestVotesRequest {
-    int32 term = 1;
+    uint32 term = 1;
     string candidateId = 2;
-    int32 lastLogIndex = 3;
-    int32 lastLogTerm = 4;
+    uint32 lastLogIndex = 3;
+    uint32 lastLogTerm = 4;
 }
 
 message RequestVotesResponse {
-    int32 term = 1;
+    uint32 term = 1;
     bool voteGranted = 2;
 }

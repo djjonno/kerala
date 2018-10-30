@@ -32,8 +32,8 @@ public class Elkd {
     mElkdServer.start(port);
   }
 
-  void shutdown() {
-    LOG.info("shutdown");
+  void stop() {
+    LOG.info("stop");
     mElkdServer.shutdown();
   }
 
@@ -41,6 +41,6 @@ public class Elkd {
     /* bootstrap */
     final Elkd elkd = new Elkd(ConfigProvider.getConfig());
     elkd.start();
-    Runtime.getRuntime().addShutdownHook(new Thread(elkd::shutdown));
+    Runtime.getRuntime().addShutdownHook(new Thread(elkd::stop));
   }
 }
