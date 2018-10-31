@@ -1,7 +1,7 @@
 package org.elkd.core;
 
 import org.elkd.core.config.Config;
-import org.elkd.core.server.ElkdServer;
+import org.elkd.core.server.Server;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,7 +14,8 @@ public class ElkdTest {
   private static final int PORT = 10000;
 
   @Mock Config mConfig;
-  @Mock ElkdServer mElkdServer;
+  @Mock
+  Server mServer;
 
   private Elkd mUnitUnderTest;
 
@@ -22,7 +23,7 @@ public class ElkdTest {
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    mUnitUnderTest = new Elkd(mConfig, mElkdServer);
+    mUnitUnderTest = new Elkd(mConfig, mServer);
   }
 
   @Test
@@ -36,7 +37,7 @@ public class ElkdTest {
     mUnitUnderTest.start();
 
     // Then
-    verify(mElkdServer).start(PORT);
+    verify(mServer).start(PORT);
   }
 
   @Test
@@ -45,6 +46,6 @@ public class ElkdTest {
     mUnitUnderTest.stop();
 
     // Then
-    verify(mElkdServer).shutdown();
+    verify(mServer).shutdown();
   }
 }

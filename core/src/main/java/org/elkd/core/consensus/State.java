@@ -1,6 +1,6 @@
 package org.elkd.core.consensus;
 
-public interface State {
+interface State {
   void on();
   void off();
 }

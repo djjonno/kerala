@@ -5,23 +5,23 @@ import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
-import org.elkd.core.server.ElkdServer;
+import org.elkd.core.server.Server;
 
 public class Elkd {
   private static final Logger LOG = Logger.getLogger(Elkd.class);
 
   private final Config mConfig;
-  private final ElkdServer mElkdServer;
+  private final Server mServer;
 
   private Elkd(final Config config) {
-    this(config, new ElkdServer());
+    this(config, new Server());
   }
 
   @VisibleForTesting
   Elkd(final Config config,
-       final ElkdServer elkdServer) {
+       final Server server) {
     mConfig = Preconditions.checkNotNull(config, "config");
-    mElkdServer = Preconditions.checkNotNull(elkdServer, "elkdServer");
+    mServer = Preconditions.checkNotNull(server, "server");
   }
 
   void start() {
@@ -29,12 +29,12 @@ public class Elkd {
 
     final int port = mConfig.getAsInteger(Config.KEY_SERVER_PORT);
 
-    mElkdServer.start(port);
+    mServer.start(port);
   }
 
   void stop() {
     LOG.info("stop");
-    mElkdServer.shutdown();
+    mServer.shutdown();
   }
 
   public static void main(final String[] args) {

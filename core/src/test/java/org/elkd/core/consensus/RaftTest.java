@@ -18,28 +18,26 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-public class ConsensusTest {
+public class RaftTest {
 
   @Mock LogInvoker<Entry> mLogInvoker;
-  @Mock Delegate mDelegate1;
-  @Mock Delegate mDelegate2;
+  @Mock RaftState mRaft1;
+  @Mock RaftState mRaft2;
   @Mock ClusterConfig mClusterConfig;
   @Mock NodeState mNodeState;
-  @Mock AbstractDelegateFactory mStateFactory;
+  @Mock AbstractStateFactory mStateFactory;
   @Mock AppendEntriesRequest mAppendEntriesRequest;
-  @Mock AppendEntriesResponse mAppendEntriesResponse;
   @Mock RequestVotesRequest mRequestVotesRequest;
-  @Mock RequestVotesResponse mRequestVotesResponse;
   @Mock StreamObserver<AppendEntriesResponse> mAppendEntriesResponseObserver;
   @Mock StreamObserver<RequestVotesResponse> mRequestVotesResponseObserver;
 
-  private Consensus mUnitUnderTest;
+  private Raft mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    mUnitUnderTest = new Consensus(
+    mUnitUnderTest = new Raft(
         mLogInvoker,
         mClusterConfig,
         mNodeState,
@@ -50,19 +48,12 @@ public class ConsensusTest {
   }
 
   private void setupCommonExpectations() {
-    doReturn(mDelegate1)
+    doReturn(mRaft1)
         .when(mStateFactory)
         .getInitialDelegate(any());
-    doReturn(mDelegate2)
+    doReturn(mRaft2)
         .when(mStateFactory)
         .getDelegate(any(), any());
-
-    doReturn(mAppendEntriesResponse)
-        .when(mDelegate1)
-        .delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
-    doReturn(mRequestVotesResponse)
-        .when(mDelegate1)
-        .delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
   }
 
   @Test
@@ -72,22 +63,22 @@ public class ConsensusTest {
 
     // Then
     verify(mStateFactory).getInitialDelegate(mUnitUnderTest);
-    verify(mDelegate1).on();
+    verify(mRaft1).on();
   }
 
   @Test
   public void should_transition_state_on_off_on_transition() {
     // Given
     mUnitUnderTest.initialize();
-    final Class<? extends Delegate> delegate = LeaderDelegate.class;
+    final Class<? extends RaftState> state = RaftLeaderState.class;
 
     // When
-    mUnitUnderTest.transition(delegate);
+    mUnitUnderTest.transition(state);
 
     // Then
-    verify(mDelegate1).off();
-    verify(mStateFactory).getDelegate(mUnitUnderTest, delegate);
-    verify(mDelegate2).on();
+    verify(mRaft1).off();
+    verify(mStateFactory).getDelegate(mUnitUnderTest, state);
+    verify(mRaft2).on();
   }
 
   @Test
@@ -96,11 +87,10 @@ public class ConsensusTest {
     mUnitUnderTest.initialize();
 
     // When
-    final AppendEntriesResponse response = mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
+    mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
 
     // Then
-    verify(mDelegate1).delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
-    assertEquals(mAppendEntriesResponse, response);
+    verify(mRaft1).delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver);
   }
 
   @Test
@@ -109,11 +99,10 @@ public class ConsensusTest {
     mUnitUnderTest.initialize();
 
     // When
-    final RequestVotesResponse response = mUnitUnderTest.delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
+    mUnitUnderTest.delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
 
     // Then
-    verify(mDelegate1).delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
-    assertEquals(mRequestVotesResponse, response);
+    verify(mRaft1).delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
   }
 
   @Test

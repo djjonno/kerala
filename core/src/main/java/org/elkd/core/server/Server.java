@@ -2,10 +2,10 @@ package org.elkd.core.server;
 
 import org.apache.log4j.Logger;
 
-public class ElkdServer {
-  private static final Logger LOG = Logger.getLogger(ElkdServer.class);
+public class Server {
+  private static final Logger LOG = Logger.getLogger(Server.class);
 
-  public ElkdServer() { }
+  public Server() { }
 
   public void start(final int port) {
     LOG.info("starting server on :" + port);
