@@ -12,7 +12,7 @@ import org.elkd.core.log.LogInvoker;
 
 import javax.annotation.Nonnull;
 
-public class Raft {
+public class Raft implements RaftDelegate {
   private RaftState mRaftDelegate;
   private final LogInvoker<Entry> mLogInvoker;
   private final ClusterConfig mClusterConfig;
@@ -54,7 +54,7 @@ public class Raft {
     return mLogInvoker;
   }
 
-  /* package */ NodeState getContext() {
+  /* package */ NodeState getNodeState() {
     return mNodeState;
   }
 

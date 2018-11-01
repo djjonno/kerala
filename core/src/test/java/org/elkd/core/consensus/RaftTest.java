@@ -110,7 +110,7 @@ public class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mNodeState, mUnitUnderTest.getContext());
+    assertEquals(mNodeState, mUnitUnderTest.getNodeState());
   }
 
   @Test
