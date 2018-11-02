@@ -10,6 +10,9 @@ import org.elkd.core.server.RpcEntry;
 import org.elkd.core.server.RpcStateMachineCommand;
 
 class ConverterRegistryFactory {
+  private ConverterRegistryFactory() {
+  }
+
   static ImmutableMap<Class, Converter> getConverters() {
     return new ImmutableMap.Builder<Class, Converter>()
         .put(RpcAppendEntriesRequest.class,  null)

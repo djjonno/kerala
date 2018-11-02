@@ -26,11 +26,11 @@ public class ConverterRegistry {
     }
   }
 
-  public <T> T transform(final Class<T> targetType, final Object source) throws ConverterException {
-    if (!mRegistry.containsKey(targetType)) {
-      throw new ConverterNotFoundException(targetType);
+  public <T> T transform(final Object source) throws ConverterException {
+    if (!mRegistry.containsKey(source.getClass())) {
+      throw new ConverterNotFoundException(source.getClass());
     }
 
-    return mRegistry.get(targetType).convert(targetType, source);
+    return mRegistry.get(source.getClass()).convert(source);
   }
 }

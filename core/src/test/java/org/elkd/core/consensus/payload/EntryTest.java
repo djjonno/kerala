@@ -1,8 +1,6 @@
 package org.elkd.core.consensus.payload;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import org.elkd.core.GsonFactory;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.statemachine.StateMachineCommand;
 import org.junit.Before;

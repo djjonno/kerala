@@ -6,10 +6,11 @@ import org.apache.log4j.Logger;
 import org.elkd.core.ElkdRuntimeException;
 import org.elkd.core.consensus.RaftDelegate;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
+import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVotesRequest;
+import org.elkd.core.consensus.messages.RequestVotesResponse;
 import org.elkd.core.server.messages.ConverterRegistry;
-import org.elkd.core.server.messages.decorators.AppendEntriesResponseStreamDecorator;
-import org.elkd.core.server.messages.decorators.RequestVotesResponseStreamDecorator;
+import org.elkd.core.server.messages.ResponseConverterStreamDecorator;
 
 import javax.annotation.Nonnull;
 
@@ -31,8 +32,9 @@ public class RpcClusterService extends ElkdServiceGrpc.ElkdServiceImplBase {
   public void appendEntries(final RpcAppendEntriesRequest appendEntriesRequest,
                             final StreamObserver<RpcAppendEntriesResponse> responseObserver) {
     try {
-      final AppendEntriesRequest request = mConverterRegistry.transform(AppendEntriesRequest.class, appendEntriesRequest);
-      final AppendEntriesResponseStreamDecorator observer = new AppendEntriesResponseStreamDecorator(responseObserver, mConverterRegistry);
+      final AppendEntriesRequest request = mConverterRegistry.transform(appendEntriesRequest);
+      final ResponseConverterStreamDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> observer =
+          new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
 
       mRaftDelegate.delegateAppendEntries(
           request,
@@ -48,8 +50,9 @@ public class RpcClusterService extends ElkdServiceGrpc.ElkdServiceImplBase {
   public void requestVotes(final RpcRequestVotesRequest requestVotesRequest,
                            final StreamObserver<RpcRequestVotesResponse> responseObserver) {
     try {
-      final RequestVotesRequest request = mConverterRegistry.transform(RequestVotesRequest.class, requestVotesRequest);
-      final RequestVotesResponseStreamDecorator observer = new RequestVotesResponseStreamDecorator(responseObserver, mConverterRegistry);
+      final RequestVotesRequest request = mConverterRegistry.transform(requestVotesRequest);
+      final ResponseConverterStreamDecorator<RequestVotesResponse, RpcRequestVotesResponse> observer =
+          new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
 
       mRaftDelegate.delegateRequestVotes(
           request,
