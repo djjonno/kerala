@@ -1,6 +1,7 @@
 package org.elkd.core.log;
 
 import com.google.common.collect.ImmutableList;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.commands.AppendCommand;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +14,8 @@ import static org.mockito.Mockito.*;
 public class AppendCommandTest {
   private static final LogChangeReason COMMAND_REASON = LogChangeReason.REPLICATION;
 
-  @Mock Entry mEntry1;
+  @Mock
+  Entry mEntry1;
   @Mock Entry mEntry2;
   @Mock Log<Entry> mReceiver;
 

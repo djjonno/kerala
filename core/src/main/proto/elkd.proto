@@ -13,7 +13,7 @@ message RpcAppendEntriesRequest {
     string leaderId = 2;
     uint32 prevLogIndex = 3;
     uint32 prevLogTerm = 4;
-    repeated EPCEntry entries = 5;
+    repeated RpcEntry entries = 5;
     uint32 leaderCommit = 6;
 }
 
@@ -33,7 +33,7 @@ message RpcStateMachineCommand {
     }
 }
 
-message EPCEntry {
+message RpcEntry {
     string event = 1;
     repeated RpcStateMachineCommand commands = 2;
 }

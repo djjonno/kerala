@@ -2,7 +2,7 @@ package org.elkd.core.consensus.payload;
 
 import com.google.common.collect.ImmutableList;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
-import org.elkd.core.log.Entry;
+import org.elkd.core.consensus.messages.Entry;
 import org.junit.Test;
 
 import java.util.List;

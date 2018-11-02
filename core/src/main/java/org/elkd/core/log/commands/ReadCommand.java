@@ -1,7 +1,7 @@
 package org.elkd.core.log.commands;
 
 import com.google.common.base.Preconditions;
-import org.elkd.core.log.Entry;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.Log;
 import org.elkd.core.log.LogChangeReason;
 

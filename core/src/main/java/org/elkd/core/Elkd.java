@@ -1,10 +1,15 @@
 package org.elkd.core;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
+import org.elkd.core.consensus.RaftDelegate;
+import org.elkd.core.consensus.messages.AppendEntriesRequest;
+import org.elkd.core.consensus.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.RequestVotesRequest;
+import org.elkd.core.consensus.messages.RequestVotesResponse;
 import org.elkd.core.server.Server;
 
 public class Elkd {
@@ -13,11 +18,6 @@ public class Elkd {
   private final Config mConfig;
   private final Server mServer;
 
-  private Elkd(final Config config) {
-    this(config, new Server());
-  }
-
-  @VisibleForTesting
   Elkd(final Config config,
        final Server server) {
     mConfig = Preconditions.checkNotNull(config, "config");
@@ -39,7 +39,17 @@ public class Elkd {
 
   public static void main(final String[] args) {
     /* bootstrap */
-    final Elkd elkd = new Elkd(ConfigProvider.getConfig());
+    final Elkd elkd = new Elkd(ConfigProvider.getConfig(), new Server(new RaftDelegate() {
+      @Override
+      public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest, final StreamObserver<AppendEntriesResponse> responseObserver) {
+
+      }
+
+      @Override
+      public void delegateRequestVotes(final RequestVotesRequest requestVotesRequest, final StreamObserver<RequestVotesResponse> responseObserver) {
+
+      }
+    }));
     elkd.start();
     Runtime.getRuntime().addShutdownHook(new Thread(elkd::stop));
   }

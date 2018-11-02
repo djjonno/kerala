@@ -29,12 +29,12 @@ class RaftFollowerState implements RaftState {
   }
 
   @Override
-  public void delegateAppendEntries(final AppendEntriesRequest request,
-                                    final StreamObserver<AppendEntriesResponse> response) {
+  public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
+                                    final StreamObserver<AppendEntriesResponse> responseObserver) {
   }
 
   @Override
-  public void delegateRequestVotes(final RequestVotesRequest request,
-                                   final StreamObserver<RequestVotesResponse> response) {
+  public void delegateRequestVotes(final RequestVotesRequest requestVotesRequest,
+                                   final StreamObserver<RequestVotesResponse> responseObserver) {
   }
 }

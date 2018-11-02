@@ -7,23 +7,23 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVotesRequest;
 import org.elkd.core.consensus.messages.RequestVotesResponse;
-import org.elkd.core.log.Entry;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.LogInvoker;
 
 import javax.annotation.Nonnull;
 
 public class Raft implements RaftDelegate {
   private RaftState mRaftDelegate;
-  private final LogInvoker<Entry> mLogInvoker;
+  private final LogInvoker<Entry> mReplicatedLog;
   private final ClusterConfig mClusterConfig;
   private final NodeState mNodeState;
   private final AbstractStateFactory mStateFactory;
 
-  public Raft(@Nonnull final LogInvoker<Entry> logInvoker,
+  public Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
               @Nonnull final ClusterConfig clusterConfig,
               @Nonnull final NodeState nodeState,
               @Nonnull final AbstractStateFactory delegateFactory) {
-    mLogInvoker = Preconditions.checkNotNull(logInvoker, "logInvoker");
+    mReplicatedLog = Preconditions.checkNotNull(replicatedLog, "replicatedLog");
     mClusterConfig = Preconditions.checkNotNull(clusterConfig, "clusterConfig");
     mNodeState = Preconditions.checkNotNull(nodeState, "nodeState");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
@@ -34,14 +34,14 @@ public class Raft implements RaftDelegate {
     mRaftDelegate.on();
   }
 
-  public void delegateAppendEntries(final AppendEntriesRequest request,
-                                    final StreamObserver<AppendEntriesResponse> response) {
-    mRaftDelegate.delegateAppendEntries(request, response);
+  public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
+                                    final StreamObserver<AppendEntriesResponse> responseObserver) {
+    mRaftDelegate.delegateAppendEntries(appendEntriesRequest, responseObserver);
   }
 
-  public void delegateRequestVotes(final RequestVotesRequest request,
-                                   final StreamObserver<RequestVotesResponse> response) {
-    mRaftDelegate.delegateRequestVotes(request, response);
+  public void delegateRequestVotes(final RequestVotesRequest requestVotesRequest,
+                                   final StreamObserver<RequestVotesResponse> responseObserver) {
+    mRaftDelegate.delegateRequestVotes(requestVotesRequest, responseObserver);
   }
 
   void transition(@Nonnull final Class<? extends RaftState> newDelegate) {
@@ -50,8 +50,8 @@ public class Raft implements RaftDelegate {
     mRaftDelegate.on();
   }
 
-  /* package */ LogInvoker<Entry> getLogInvoker() {
-    return mLogInvoker;
+  /* package */ LogInvoker<Entry> getReplicatedLog() {
+    return mReplicatedLog;
   }
 
   /* package */ NodeState getNodeState() {

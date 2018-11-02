@@ -1,6 +1,7 @@
 package org.elkd.core.log;
 
 import com.google.common.collect.ImmutableList;
+import org.elkd.core.consensus.messages.Entry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -13,7 +14,8 @@ import static org.mockito.Mockito.*;
 
 public class LogInvokerTest {
 
-  @Mock Entry mEntry1;
+  @Mock
+  Entry mEntry1;
   @Mock Entry mEntry2;
   @Mock Log<Entry> mLog;
   @Mock LogChangeListener<Entry> mListener1;

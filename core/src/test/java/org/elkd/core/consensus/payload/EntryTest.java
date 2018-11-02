@@ -1,8 +1,9 @@
-package org.elkd.core.log;
+package org.elkd.core.consensus.payload;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.elkd.core.GsonFactory;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.statemachine.StateMachineCommand;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 
 public class EntryTest {
   private static final String EVENT_TYPE = "eventType";
-  private static final Gson GSON = GsonFactory.getInstance().getGson();
 
   @Mock StateMachineCommand mStateMachineCommand;
 

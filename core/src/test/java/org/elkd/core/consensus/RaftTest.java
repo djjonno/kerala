@@ -6,7 +6,7 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVotesRequest;
 import org.elkd.core.consensus.messages.RequestVotesResponse;
-import org.elkd.core.log.Entry;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.LogInvoker;
 import org.junit.Before;
 import org.junit.Test;

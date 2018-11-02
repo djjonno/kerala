@@ -1,6 +1,7 @@
 package org.elkd.core.log;
 
 import com.google.common.collect.ImmutableList;
+import org.elkd.core.consensus.messages.Entry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,7 +13,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 public class InMemoryLogTest {
-  @Mock Entry mEntry1;
+  @Mock
+  Entry mEntry1;
   @Mock Entry mEntry2;
   @Mock Entry mEntry3;
 

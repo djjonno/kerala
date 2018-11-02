@@ -1,5 +1,6 @@
 package org.elkd.core.log;
 
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.commands.CommitCommand;
 import org.junit.Before;
 import org.junit.Test;

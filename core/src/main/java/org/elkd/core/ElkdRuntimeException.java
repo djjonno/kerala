@@ -5,11 +5,11 @@ public class ElkdRuntimeException extends RuntimeException {
     super();
   }
 
-  public ElkdRuntimeException(String message) {
+  public ElkdRuntimeException(final String message) {
     super(message);
   }
 
-  public ElkdRuntimeException(String message, Throwable cause) {
+  public ElkdRuntimeException(final String message, final Throwable cause) {
     super(message, cause);
   }
 }
