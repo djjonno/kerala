@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -27,7 +29,7 @@ public class ElkdTest {
   }
 
   @Test
-  public void should_start_server_with_port() {
+  public void should_start_server_with_port() throws IOException {
     // Given
     doReturn(PORT)
         .when(mConfig)
