@@ -24,6 +24,8 @@ public class RpcClusterService extends ElkdServiceGrpc.ElkdServiceImplBase {
                                   @Nonnull final ConverterRegistry converterRegistry) {
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
+
+    LOG.info("service ready");
   }
 
   /* Cluster I/O */

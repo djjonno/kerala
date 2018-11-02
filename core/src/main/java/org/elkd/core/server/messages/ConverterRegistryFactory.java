@@ -15,17 +15,17 @@ class ConverterRegistryFactory {
 
   static ImmutableMap<Class, Converter> getConverters() {
     return new ImmutableMap.Builder<Class, Converter>()
-        .put(RpcAppendEntriesRequest.class,  null)
-        .put(RpcAppendEntriesResponse.class, null)
-
-        .put(AppendEntriesRequest.class,     null)
-        .put(AppendEntriesResponse.class,    null)
-
-        .put(RpcEntry.class,                 null)
-        .put(Entry.class,                    null)
-
-        .put(RpcStateMachineCommand.RpcSetStateMachineCommand.class, null)
-        .put(RpcStateMachineCommand.RpcUnSetStateMachineCommand.class, null)
+//        .put(RpcAppendEntriesRequest.class,  null)
+//        .put(RpcAppendEntriesResponse.class, null)
+//
+//        .put(AppendEntriesRequest.class,     null)
+//        .put(AppendEntriesResponse.class,    null)
+//
+//        .put(RpcEntry.class,                 null)
+//        .put(Entry.class,                    null)
+//
+//        .put(RpcStateMachineCommand.RpcSetStateMachineCommand.class, null)
+//        .put(RpcStateMachineCommand.RpcUnSetStateMachineCommand.class, null)
 
         .build();
   }

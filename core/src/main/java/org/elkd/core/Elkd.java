@@ -11,6 +11,9 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVotesRequest;
 import org.elkd.core.consensus.messages.RequestVotesResponse;
 import org.elkd.core.server.Server;
+import org.elkd.core.server.messages.ConverterRegistry;
+
+import java.io.IOException;
 
 public class Elkd {
   private static final Logger LOG = Logger.getLogger(Elkd.class);
@@ -24,7 +27,7 @@ public class Elkd {
     mServer = Preconditions.checkNotNull(server, "server");
   }
 
-  void start() {
+  void start() throws IOException {
     LOG.info("booting");
 
     final int port = mConfig.getAsInteger(Config.KEY_SERVER_PORT);
@@ -35,6 +38,10 @@ public class Elkd {
   void stop() {
     LOG.info("stop");
     mServer.shutdown();
+  }
+
+  void awaitTermination() throws InterruptedException {
+    mServer.awaitTermination();
   }
 
   public static void main(final String[] args) {
@@ -49,8 +56,15 @@ public class Elkd {
       public void delegateRequestVotes(final RequestVotesRequest requestVotesRequest, final StreamObserver<RequestVotesResponse> responseObserver) {
 
       }
-    }));
-    elkd.start();
+    }, new ConverterRegistry()));
+
     Runtime.getRuntime().addShutdownHook(new Thread(elkd::stop));
+
+    try {
+      elkd.start();
+      elkd.awaitTermination();
+    } catch (final Exception e) {
+      e.printStackTrace();
+    }
   }
 }
