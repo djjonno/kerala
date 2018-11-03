@@ -58,7 +58,7 @@ sourceSets {
     }
 }
 
-mainClassName = "org.elkd.core.server.ElkdServer"
+mainClassName = "org.elkd.core.Elkd"
 
 task copyLicense {
     outputs.file new File("$buildDir/LICENSE")
