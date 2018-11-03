@@ -1,6 +1,7 @@
 package org.elkd.core.server.converters;
 
 import io.grpc.stub.StreamObserver;
+import org.elkd.core.ElkdRuntimeException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -66,6 +67,22 @@ public class ResponseConverterStreamDecoratorTest {
     // Then
     verify(mConverterRegistry).convert(mSource);
     verify(mStreamObserver).onNext(mTarget);
+  }
+
+  @Test
+  public void should_delegate_onError_when_onNext_fails() {
+    // Given
+    final ElkdRuntimeException throwable = new ElkdRuntimeException();
+    doThrow(throwable)
+        .when(mConverterRegistry)
+        .convert(any());
+
+    // When
+    mUnitUnderTest.onNext(mSource);
+
+    // Then
+    verify(mStreamObserver, never()).onNext(any());
+    verify(mStreamObserver).onError(throwable);
   }
 
   private static class Source { }
