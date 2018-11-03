@@ -1,4 +1,4 @@
-package org.elkd.core.server.messages.exceptions;
+package org.elkd.core.server.converters.exceptions;
 
 
 public class ConverterNotFoundException extends ConverterException {

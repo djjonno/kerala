@@ -2,13 +2,13 @@ package org.elkd.core.consensus.messages;
 
 import com.google.common.base.Preconditions;
 
-public class RequestVotesRequest {
+public class RequestVoteRequest {
   private final int mTerm;
   private final int mCandidateId;
   private final long mLastLogIndex;
   private final int mLastLogTerm;
 
-  private RequestVotesRequest(final Builder builder) {
+  private RequestVoteRequest(final Builder builder) {
     Preconditions.checkNotNull(builder, "builder");
     mTerm = builder.mTerm;
     mCandidateId = builder.mCandidateId;
@@ -39,8 +39,8 @@ public class RequestVotesRequest {
       mLastLogTerm = lastLogTerm;
     }
 
-    public RequestVotesRequest build() {
-      return new RequestVotesRequest(this);
+    public RequestVoteRequest build() {
+      return new RequestVoteRequest(this);
     }
   }
 

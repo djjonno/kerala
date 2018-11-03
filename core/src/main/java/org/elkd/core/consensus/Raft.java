@@ -5,8 +5,8 @@ import io.grpc.stub.StreamObserver;
 import org.elkd.core.cluster.ClusterConfig;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
-import org.elkd.core.consensus.messages.RequestVotesRequest;
-import org.elkd.core.consensus.messages.RequestVotesResponse;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.LogInvoker;
 
@@ -39,9 +39,9 @@ public class Raft implements RaftDelegate {
     mRaftDelegate.delegateAppendEntries(appendEntriesRequest, responseObserver);
   }
 
-  public void delegateRequestVotes(final RequestVotesRequest requestVotesRequest,
-                                   final StreamObserver<RequestVotesResponse> responseObserver) {
-    mRaftDelegate.delegateRequestVotes(requestVotesRequest, responseObserver);
+  public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
+                                  final StreamObserver<RequestVoteResponse> responseObserver) {
+    mRaftDelegate.delegateRequestVote(requestVoteRequest, responseObserver);
   }
 
   void transition(@Nonnull final Class<? extends RaftState> newDelegate) {

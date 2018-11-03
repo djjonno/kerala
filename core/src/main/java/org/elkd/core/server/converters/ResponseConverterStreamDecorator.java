@@ -1,4 +1,4 @@
-package org.elkd.core.server.messages;
+package org.elkd.core.server.converters;
 
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
@@ -19,7 +19,7 @@ public class ResponseConverterStreamDecorator<Source, Target> implements StreamO
   @Override
   public void onNext(final Source source) {
     try {
-      final Target response = mConverterRegistry.transform(source);
+      final Target response = mConverterRegistry.convert(source);
       mTargetObserver.onNext(response);
     } catch (final ElkdRuntimeException e) {
       onError(e);

@@ -4,8 +4,8 @@ import io.grpc.stub.StreamObserver;
 import org.elkd.core.cluster.ClusterConfig;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
-import org.elkd.core.consensus.messages.RequestVotesRequest;
-import org.elkd.core.consensus.messages.RequestVotesResponse;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.LogInvoker;
 import org.junit.Before;
@@ -27,9 +27,9 @@ public class RaftTest {
   @Mock NodeState mNodeState;
   @Mock AbstractStateFactory mStateFactory;
   @Mock AppendEntriesRequest mAppendEntriesRequest;
-  @Mock RequestVotesRequest mRequestVotesRequest;
+  @Mock RequestVoteRequest mRequestVoteRequest;
   @Mock StreamObserver<AppendEntriesResponse> mAppendEntriesResponseObserver;
-  @Mock StreamObserver<RequestVotesResponse> mRequestVotesResponseObserver;
+  @Mock StreamObserver<RequestVoteResponse> mRequestVotesResponseObserver;
 
   private Raft mUnitUnderTest;
 
@@ -99,10 +99,10 @@ public class RaftTest {
     mUnitUnderTest.initialize();
 
     // When
-    mUnitUnderTest.delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
+    mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver);
 
     // Then
-    verify(mRaft1).delegateRequestVotes(mRequestVotesRequest, mRequestVotesResponseObserver);
+    verify(mRaft1).delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver);
   }
 
   @Test

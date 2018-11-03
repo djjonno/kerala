@@ -4,18 +4,18 @@ import com.google.common.base.Preconditions;
 import io.grpc.ServerBuilder;
 import org.apache.log4j.Logger;
 import org.elkd.core.consensus.RaftDelegate;
-import org.elkd.core.server.messages.ConverterRegistry;
+import org.elkd.core.server.converters.ConverterRegistry;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class Server {
   private static final Logger LOG = Logger.getLogger(Server.class);
-  private final ConverterRegistry mConverterRegistry;
 
   private io.grpc.Server mRpcClusterServer;
 
   private final RaftDelegate mRaftDelegate;
+  private final ConverterRegistry mConverterRegistry;
 
   public Server(@Nonnull final RaftDelegate raftDelegate,
                 @Nonnull final ConverterRegistry converterRegistry) {
@@ -25,7 +25,7 @@ public class Server {
 
   public void start(final int port) throws IOException {
     mRpcClusterServer = ServerBuilder.forPort(port)
-        .addService(new RpcClusterService(mRaftDelegate, mConverterRegistry))
+        .addService(new ClusterService(mRaftDelegate, mConverterRegistry))
         .build()
         .start();
 
@@ -33,7 +33,7 @@ public class Server {
   }
 
   public void shutdown() {
-    LOG.info("shutting down server");
+    LOG.info("stopping server");
     mRpcClusterServer.shutdown();
   }
 

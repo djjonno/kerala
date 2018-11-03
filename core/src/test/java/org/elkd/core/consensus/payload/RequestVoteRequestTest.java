@@ -1,11 +1,11 @@
 package org.elkd.core.consensus.payload;
 
-import org.elkd.core.consensus.messages.RequestVotesRequest;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class RequestVotesRequestTest {
+public class RequestVoteRequestTest {
   private static final int TERM = 0;
   private static final int CANDIDATE_ID = 1;
   private static final long LAST_LOG_INDEX = 2;
@@ -14,7 +14,7 @@ public class RequestVotesRequestTest {
   @Test
   public void should_build_with_properties() {
     // Given / When
-    final RequestVotesRequest request = RequestVotesRequest.builder(
+    final RequestVoteRequest request = RequestVoteRequest.builder(
         TERM,
         CANDIDATE_ID,
         LAST_LOG_INDEX,

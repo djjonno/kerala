@@ -1,9 +1,9 @@
-package org.elkd.core.server.messages;
+package org.elkd.core.server.converters;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.log4j.Logger;
-import org.elkd.core.server.messages.exceptions.ConverterException;
-import org.elkd.core.server.messages.exceptions.ConverterNotFoundException;
+import org.elkd.core.server.converters.exceptions.ConverterException;
+import org.elkd.core.server.converters.exceptions.ConverterNotFoundException;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class ConverterRegistry {
     }
   }
 
-  public <T> T transform(final Object source) throws ConverterException {
+  public <T> T convert(final Object source) throws ConverterException {
     if (!mRegistry.containsKey(source.getClass())) {
       throw new ConverterNotFoundException(source.getClass());
     }

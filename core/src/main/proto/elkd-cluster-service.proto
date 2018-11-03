@@ -3,9 +3,9 @@ syntax = "proto3";
 option java_multiple_files = true;
 option java_package = "org.elkd.core.server";
 
-service ElkdService {
+service ElkdClusterService {
     rpc AppendEntries (RpcAppendEntriesRequest) returns (stream RpcAppendEntriesResponse) {}
-    rpc RequestVotes (RpcRequestVotesRequest) returns (stream RpcRequestVotesResponse) {}
+    rpc RequestVote (RpcRequestVoteRequest) returns (stream RpcRequestVoteResponse) {}
 }
 
 message RpcAppendEntriesRequest {
@@ -38,14 +38,14 @@ message RpcEntry {
     repeated RpcStateMachineCommand commands = 2;
 }
 
-message RpcRequestVotesRequest {
+message RpcRequestVoteRequest {
     uint32 term = 1;
     string candidateId = 2;
     uint32 lastLogIndex = 3;
     uint32 lastLogTerm = 4;
 }
 
-message RpcRequestVotesResponse {
+message RpcRequestVoteResponse {
     uint32 term = 1;
     bool voteGranted = 2;
 }

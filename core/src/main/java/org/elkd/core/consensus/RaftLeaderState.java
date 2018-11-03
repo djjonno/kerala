@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
-import org.elkd.core.consensus.messages.RequestVotesRequest;
-import org.elkd.core.consensus.messages.RequestVotesResponse;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
 
 import javax.annotation.Nonnull;
 import java.util.logging.Logger;
@@ -34,7 +34,7 @@ class RaftLeaderState implements RaftState {
   }
 
   @Override
-  public void delegateRequestVotes(final RequestVotesRequest requestVotesRequest,
-                                   final StreamObserver<RequestVotesResponse> responseObserver) {
+  public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
+                                  final StreamObserver<RequestVoteResponse> responseObserver) {
   }
 }

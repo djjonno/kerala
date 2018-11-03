@@ -1,10 +1,10 @@
 package org.elkd.core.consensus.messages;
 
-public class RequestVotesResponse {
+public class RequestVoteResponse {
   private final int mTerm;
   private final boolean mVoteGranted;
 
-  private RequestVotesResponse(final Builder builder) {
+  private RequestVoteResponse(final Builder builder) {
     mTerm = builder.mTerm;
     mVoteGranted = builder.mVoteGranted;
   }
@@ -22,8 +22,8 @@ public class RequestVotesResponse {
       mVoteGranted = voteGranted;
     }
 
-    public RequestVotesResponse build() {
-      return new RequestVotesResponse(this);
+    public RequestVoteResponse build() {
+      return new RequestVoteResponse(this);
     }
   }
 

@@ -1,4 +1,4 @@
-package org.elkd.core.server.messages;
+package org.elkd.core.server.converters;
 
 import io.grpc.stub.StreamObserver;
 import org.junit.Before;
@@ -25,7 +25,7 @@ public class ResponseConverterStreamDecoratorTest {
 
     doReturn(mTarget)
         .when(mConverterRegistry)
-        .transform(mSource);
+        .convert(mSource);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class ResponseConverterStreamDecoratorTest {
     mUnitUnderTest.onNext(mSource);
 
     // Then
-    verify(mConverterRegistry).transform(mSource);
+    verify(mConverterRegistry).convert(mSource);
     verify(mStreamObserver).onNext(mTarget);
   }
 

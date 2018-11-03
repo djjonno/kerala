@@ -8,10 +8,10 @@ import org.elkd.core.config.ConfigProvider;
 import org.elkd.core.consensus.RaftDelegate;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
-import org.elkd.core.consensus.messages.RequestVotesRequest;
-import org.elkd.core.consensus.messages.RequestVotesResponse;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.server.Server;
-import org.elkd.core.server.messages.ConverterRegistry;
+import org.elkd.core.server.converters.ConverterRegistry;
 
 import java.io.IOException;
 
@@ -29,14 +29,12 @@ public class Elkd {
 
   void start() throws IOException {
     LOG.info("booting");
-
     final int port = mConfig.getAsInteger(Config.KEY_SERVER_PORT);
-
     mServer.start(port);
   }
 
-  void stop() {
-    LOG.info("stop");
+  void shutdown() {
+    LOG.info("shutdown");
     mServer.shutdown();
   }
 
@@ -45,20 +43,25 @@ public class Elkd {
   }
 
   public static void main(final String[] args) {
+
     /* bootstrap */
+
     final Elkd elkd = new Elkd(ConfigProvider.getConfig(), new Server(new RaftDelegate() {
+
+      /* temporary delegate for mocking */
+
       @Override
       public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest, final StreamObserver<AppendEntriesResponse> responseObserver) {
 
       }
 
       @Override
-      public void delegateRequestVotes(final RequestVotesRequest requestVotesRequest, final StreamObserver<RequestVotesResponse> responseObserver) {
+      public void delegateRequestVote(final RequestVoteRequest requestVotesRequest, final StreamObserver<RequestVoteResponse> responseObserver) {
 
       }
     }, new ConverterRegistry()));
 
-    Runtime.getRuntime().addShutdownHook(new Thread(elkd::stop));
+    Runtime.getRuntime().addShutdownHook(new Thread(elkd::shutdown));
 
     try {
       elkd.start();

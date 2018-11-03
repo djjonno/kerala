@@ -16,8 +16,7 @@ public class ElkdTest {
   private static final int PORT = 10000;
 
   @Mock Config mConfig;
-  @Mock
-  Server mServer;
+  @Mock Server mServer;
 
   private Elkd mUnitUnderTest;
 
@@ -45,9 +44,18 @@ public class ElkdTest {
   @Test
   public void should_shutdown_server() {
     // Given / When
-    mUnitUnderTest.stop();
+    mUnitUnderTest.shutdown();
 
     // Then
     verify(mServer).shutdown();
+  }
+
+  @Test
+  public void should_awaitTermination_on_awaitTermination() throws InterruptedException {
+    // Given / When
+    mUnitUnderTest.awaitTermination();
+
+    // Then
+    verify(mServer).awaitTermination();
   }
 }

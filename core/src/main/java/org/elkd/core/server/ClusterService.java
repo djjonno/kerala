@@ -7,21 +7,21 @@ import org.elkd.core.ElkdRuntimeException;
 import org.elkd.core.consensus.RaftDelegate;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
-import org.elkd.core.consensus.messages.RequestVotesRequest;
-import org.elkd.core.consensus.messages.RequestVotesResponse;
-import org.elkd.core.server.messages.ConverterRegistry;
-import org.elkd.core.server.messages.ResponseConverterStreamDecorator;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
+import org.elkd.core.server.converters.ConverterRegistry;
+import org.elkd.core.server.converters.ResponseConverterStreamDecorator;
 
 import javax.annotation.Nonnull;
 
-public class RpcClusterService extends ElkdServiceGrpc.ElkdServiceImplBase {
-  private static final Logger LOG = Logger.getLogger(RpcClusterService.class);
+public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImplBase {
+  private static final Logger LOG = Logger.getLogger(ClusterService.class);
 
   private final RaftDelegate mRaftDelegate;
   private final ConverterRegistry mConverterRegistry;
 
-  /* package */ RpcClusterService(@Nonnull final RaftDelegate raftDelegate,
-                                  @Nonnull final ConverterRegistry converterRegistry) {
+  /* package */ ClusterService(@Nonnull final RaftDelegate raftDelegate,
+                               @Nonnull final ConverterRegistry converterRegistry) {
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
 
@@ -34,7 +34,7 @@ public class RpcClusterService extends ElkdServiceGrpc.ElkdServiceImplBase {
   public void appendEntries(final RpcAppendEntriesRequest appendEntriesRequest,
                             final StreamObserver<RpcAppendEntriesResponse> responseObserver) {
     try {
-      final AppendEntriesRequest request = mConverterRegistry.transform(appendEntriesRequest);
+      final AppendEntriesRequest request = mConverterRegistry.convert(appendEntriesRequest);
       final ResponseConverterStreamDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> observer =
           new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
 
@@ -49,14 +49,14 @@ public class RpcClusterService extends ElkdServiceGrpc.ElkdServiceImplBase {
   }
 
   @Override
-  public void requestVotes(final RpcRequestVotesRequest requestVotesRequest,
-                           final StreamObserver<RpcRequestVotesResponse> responseObserver) {
+  public void requestVote(final RpcRequestVoteRequest requestVotesRequest,
+                          final StreamObserver<RpcRequestVoteResponse> responseObserver) {
     try {
-      final RequestVotesRequest request = mConverterRegistry.transform(requestVotesRequest);
-      final ResponseConverterStreamDecorator<RequestVotesResponse, RpcRequestVotesResponse> observer =
+      final RequestVoteRequest request = mConverterRegistry.convert(requestVotesRequest);
+      final ResponseConverterStreamDecorator<RequestVoteResponse, RpcRequestVoteResponse> observer =
           new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
 
-      mRaftDelegate.delegateRequestVotes(
+      mRaftDelegate.delegateRequestVote(
           request,
           observer
       );

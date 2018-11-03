@@ -1,8 +1,8 @@
-package org.elkd.core.server.messages;
+package org.elkd.core.server.converters;
 
 import com.google.common.collect.ImmutableMap;
-import org.elkd.core.server.messages.exceptions.ConverterException;
-import org.elkd.core.server.messages.exceptions.ConverterNotFoundException;
+import org.elkd.core.server.converters.exceptions.ConverterException;
+import org.elkd.core.server.converters.exceptions.ConverterNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ public class ConverterRegistryTest {
   @Test
   public void should_transform_object() {
     // Given / When
-    final Object target = mUnitUnderTest.transform(mSource);
+    final Object target = mUnitUnderTest.convert(mSource);
 
     // Then
     assertSame(mTarget, target);
@@ -49,7 +49,7 @@ public class ConverterRegistryTest {
     mUnitUnderTest = new ConverterRegistry(ImmutableMap.of());
 
     // When
-    mUnitUnderTest.transform(mSource);
+    mUnitUnderTest.convert(mSource);
 
 
     // Then - exception thrown
@@ -63,7 +63,7 @@ public class ConverterRegistryTest {
         .convert(mSource);
 
     // When
-    mUnitUnderTest.transform(mSource);
+    mUnitUnderTest.convert(mSource);
 
     // Then - exception thrown
   }
