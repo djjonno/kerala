@@ -23,13 +23,13 @@ message RpcAppendEntriesResponse {
 }
 
 message RpcStateMachineCommand {
-    message RpcSetStateMachineCommand {
-        string key = 1;
-        string value = 2;
-    }
+    string key = 1;
+    string value = 2;
+    Operation operation = 3;
 
-    message RpcUnSetStateMachineCommand {
-        string key = 1;
+    enum Operation {
+        SET = 0;
+        UNSET = 1;
     }
 }
 

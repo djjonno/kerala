@@ -32,10 +32,12 @@ class RaftCandidateState implements RaftState {
   @Override
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
+    responseObserver.onCompleted();
   }
 
   @Override
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
+    responseObserver.onCompleted();
   }
 }

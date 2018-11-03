@@ -1,10 +1,13 @@
 package org.elkd.core.server.converters;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import org.apache.log4j.Logger;
 import org.elkd.core.server.converters.exceptions.ConverterException;
 import org.elkd.core.server.converters.exceptions.ConverterNotFoundException;
 
+import java.util.List;
 import java.util.Map;
 
 public class ConverterRegistry {
@@ -25,13 +28,19 @@ public class ConverterRegistry {
   }
 
   @VisibleForTesting
-  ConverterRegistry(final Map<Class, Converter> registry) {
-    mRegistry = com.google.common.base.Preconditions.checkNotNull(registry, "registry");
+  ConverterRegistry(final List<Converter> converters) {
+    Preconditions.checkNotNull(converters, "converters");
+    LOG.info("registering converters");
 
-    LOG.info("registered converters");
-    for (final Map.Entry<Class, Converter> entry : mRegistry.entrySet()) {
-      LOG.info(entry.toString());
+    final ImmutableMap.Builder<Class, Converter> mapBuilder = ImmutableMap.builder();
+    for (final Converter converter : converters) {
+      for (final Class type : converter.forTypes()) {
+        mapBuilder.put(type, converter);
+        LOG.debug(type + " -> " + converter);
+      }
     }
+
+    mRegistry = mapBuilder.build();
   }
 
   public <T> T convert(final Object source) throws ConverterException {
@@ -39,6 +48,6 @@ public class ConverterRegistry {
       throw new ConverterNotFoundException(source.getClass());
     }
 
-    return mRegistry.get(source.getClass()).convert(source);
+    return mRegistry.get(source.getClass()).convert(source, this);
   }
 }

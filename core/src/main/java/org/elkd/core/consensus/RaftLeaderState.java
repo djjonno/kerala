@@ -14,7 +14,7 @@ class RaftLeaderState implements RaftState {
   private static final Logger LOG = Logger.getLogger(RaftCandidateState.class.getName());
   private final Raft mRaft;
 
-  RaftLeaderState(@Nonnull final Raft raft) {
+  /* package */ RaftLeaderState(@Nonnull final Raft raft) {
     mRaft = Preconditions.checkNotNull(raft, "raft");
   }
 

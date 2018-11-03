@@ -44,7 +44,7 @@ public class Entry {
     }
   }
 
-  public String getType() {
+  public String getEvent() {
     return mEvent;
   }
 

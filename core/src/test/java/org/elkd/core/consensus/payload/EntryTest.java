@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.assertEquals;
 
 public class EntryTest {
-  private static final String EVENT_TYPE = "eventType";
+  private static final String EVENT_NAME = "eventName";
 
   @Mock StateMachineCommand mStateMachineCommand;
 
@@ -20,7 +20,7 @@ public class EntryTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    mEventBuilder = Entry.builder(EVENT_TYPE);
+    mEventBuilder = Entry.builder(EVENT_NAME);
   }
 
   @Test
@@ -29,7 +29,7 @@ public class EntryTest {
     final Entry entry = mEventBuilder.build();
 
     // Then
-    assertEquals(EVENT_TYPE, entry.getType());
+    assertEquals(EVENT_NAME, entry.getEvent());
   }
 
   @Test
@@ -40,15 +40,15 @@ public class EntryTest {
         .build();
 
     // Then
-    assertEquals(EVENT_TYPE, entry.getType());
+    assertEquals(EVENT_NAME, entry.getEvent());
     assertEquals(entry.getCommands(), ImmutableList.of(mStateMachineCommand));
   }
 
   @Test
   public void should_have_equality_given_consistent_builder_args() {
     // Given / When
-    final Entry e1 = Entry.builder(EVENT_TYPE).withCommand(mStateMachineCommand).build();
-    final Entry e2 = Entry.builder(EVENT_TYPE).withCommand(mStateMachineCommand).build();
+    final Entry e1 = Entry.builder(EVENT_NAME).withCommand(mStateMachineCommand).build();
+    final Entry e2 = Entry.builder(EVENT_NAME).withCommand(mStateMachineCommand).build();
 
     // Then
     assertEquals(e1, e2);

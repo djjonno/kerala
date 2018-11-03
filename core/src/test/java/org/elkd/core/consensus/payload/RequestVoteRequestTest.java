@@ -7,9 +7,9 @@ import static org.junit.Assert.*;
 
 public class RequestVoteRequestTest {
   private static final int TERM = 0;
-  private static final int CANDIDATE_ID = 1;
-  private static final long LAST_LOG_INDEX = 2;
-  private static final int LAST_LOG_TERM = 3;
+  private static final String CANDIDATE_ID = "candidateId";
+  private static final int LAST_LOG_INDEX = 1;
+  private static final int LAST_LOG_TERM = 2;
 
   @Test
   public void should_build_with_properties() {

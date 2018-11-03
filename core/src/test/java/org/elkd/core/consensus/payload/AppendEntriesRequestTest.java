@@ -12,8 +12,9 @@ import static org.junit.Assert.assertEquals;
 public class AppendEntriesRequestTest {
   private static final int TERM = 0;
   private static final int PREV_LOG_TERM = 1;
-  private static final int LEADER_ID = 2;
-  private static final long LEADER_COMMIT = 3L;
+  private static final int PREV_LOG_INDEX = 2;
+  private static final String LEADER_ID = "leaderId";
+  private static final int LEADER_COMMIT = 3;
   private static final List<Entry> ENTRIES = ImmutableList.of(Entry.builder("event").build());
 
   @Test
@@ -22,6 +23,7 @@ public class AppendEntriesRequestTest {
     final AppendEntriesRequest request = AppendEntriesRequest.builder(
         TERM,
         PREV_LOG_TERM,
+        PREV_LOG_INDEX,
         LEADER_ID,
         LEADER_COMMIT
     )
@@ -42,6 +44,7 @@ public class AppendEntriesRequestTest {
     final AppendEntriesRequest request = AppendEntriesRequest.builder(
         TERM,
         PREV_LOG_TERM,
+        PREV_LOG_INDEX,
         LEADER_ID,
         LEADER_COMMIT
     )

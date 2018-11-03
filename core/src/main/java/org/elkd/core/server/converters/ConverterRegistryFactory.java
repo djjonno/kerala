@@ -1,15 +1,22 @@
 package org.elkd.core.server.converters;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 class ConverterRegistryFactory {
   private ConverterRegistryFactory() {
   }
 
-  static ImmutableMap<Class, Converter> getConverters() {
-    return new ImmutableMap.Builder<Class, Converter>()
+  static List<Converter> getConverters() {
+    return ImmutableList.of(
         /* Register default converters here */
-
-        .build();
+        new AppendEntriesRequestConverter(),
+        new AppendEntriesResponseConverter(),
+        new RequestVoteRequestConverter(),
+        new RequestVoteResponseConverter(),
+        new EntryConverter(),
+        new StateMachineCommandConverter()
+    );
   }
 }

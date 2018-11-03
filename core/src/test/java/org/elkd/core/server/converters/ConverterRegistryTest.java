@@ -1,6 +1,7 @@
 package org.elkd.core.server.converters;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.elkd.core.server.converters.exceptions.ConverterException;
 import org.elkd.core.server.converters.exceptions.ConverterNotFoundException;
 import org.junit.Before;
@@ -24,13 +25,17 @@ public class ConverterRegistryTest {
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    mUnitUnderTest = new ConverterRegistry(ImmutableMap.of(
-        Source.class, mConverter
-    ));
+    doReturn(ImmutableSet.of(Source.class))
+        .when(mConverter)
+        .forTypes();
 
     doReturn(mTarget)
         .when(mConverter)
-        .convert(mSource);
+        .convert(eq(mSource), any());
+
+    mUnitUnderTest = new ConverterRegistry(ImmutableList.of(
+        mConverter
+    ));
   }
 
   @Test
@@ -40,17 +45,16 @@ public class ConverterRegistryTest {
 
     // Then
     assertSame(mTarget, target);
-    verify(mConverter).convert(mSource);
+    verify(mConverter).convert(eq(mSource), any());
   }
 
   @Test(expected = ConverterNotFoundException.class)
   public void should_throw_exception_when_no_adapter_found() {
     // Given
-    mUnitUnderTest = new ConverterRegistry(ImmutableMap.of());
+    mUnitUnderTest = new ConverterRegistry(ImmutableList.of());
 
     // When
     mUnitUnderTest.convert(mSource);
-
 
     // Then - exception thrown
   }
@@ -60,7 +64,7 @@ public class ConverterRegistryTest {
     // Given
     doThrow(new ConverterException("failed to convert"))
         .when(mConverter)
-        .convert(mSource);
+        .convert(eq(mSource), any());
 
     // When
     mUnitUnderTest.convert(mSource);
