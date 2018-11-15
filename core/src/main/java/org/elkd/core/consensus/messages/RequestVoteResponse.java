@@ -34,4 +34,12 @@ public class RequestVoteResponse {
   public boolean isVoteGranted() {
     return mVoteGranted;
   }
+
+  @Override
+  public String toString() {
+    return "RequestVoteResponse{" +
+        "mTerm=" + mTerm +
+        ", mVoteGranted=" + mVoteGranted +
+        '}';
+  }
 }

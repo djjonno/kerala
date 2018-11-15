@@ -65,6 +65,7 @@ public class Raft implements RaftDelegate {
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
     synchronized (mLock) {
       LOG.info("delegating appendEntries to " + mRaftState);
+      LOG.info("request: " + appendEntriesRequest);
       mRaftState.delegateAppendEntries(appendEntriesRequest, responseObserver);
     }
   }

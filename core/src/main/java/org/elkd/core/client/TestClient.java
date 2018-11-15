@@ -8,9 +8,13 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.server.ElkdClusterServiceGrpc;
 import org.elkd.core.server.RpcAppendEntriesRequest;
 import org.elkd.core.server.RpcAppendEntriesResponse;
+import org.elkd.core.server.RpcEntry;
+import org.elkd.core.server.RpcStateMachineCommand;
 
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
+
+import static org.elkd.core.server.RpcStateMachineCommand.Operation.SET;
 
 public class TestClient {
   private static final Logger LOG = Logger.getLogger(TestClient.class);
@@ -40,6 +44,11 @@ public class TestClient {
         .setPrevLogTerm(1)
         .setLeaderId("node-1")
         .setLeaderCommit(0)
+        .addEntries(
+            RpcEntry.newBuilder().setEvent("amznStock").addCommands(
+              RpcStateMachineCommand.newBuilder().setOperation(SET).setKey("price").setValue(String.valueOf(Math.random() * 2000)).build()
+            ).build()
+        )
         .build();
     Iterator<RpcAppendEntriesResponse> response;
     try {

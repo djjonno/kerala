@@ -91,4 +91,16 @@ public class AppendEntriesRequest {
   public List<Entry> getEntries() {
     return mEntries;
   }
+
+  @Override
+  public String toString() {
+    return "AppendEntriesRequest{" +
+        "mTerm=" + mTerm +
+        ", mPrevLogTerm=" + mPrevLogTerm +
+        ", mPrevLogIndex=" + mPrevLogIndex +
+        ", mLeaderId='" + mLeaderId + '\'' +
+        ", mLeaderCommit=" + mLeaderCommit +
+        ", mEntries=" + mEntries +
+        '}';
+  }
 }

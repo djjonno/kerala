@@ -59,4 +59,14 @@ public class RequestVoteRequest {
   public int getLastLogTerm() {
     return mLastLogTerm;
   }
+
+  @Override
+  public String toString() {
+    return "RequestVoteRequest{" +
+        "mTerm=" + mTerm +
+        ", mCandidateId='" + mCandidateId + '\'' +
+        ", mLastLogIndex=" + mLastLogIndex +
+        ", mLastLogTerm=" + mLastLogTerm +
+        '}';
+  }
 }

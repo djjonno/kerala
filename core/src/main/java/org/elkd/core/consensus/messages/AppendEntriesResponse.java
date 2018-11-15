@@ -37,4 +37,12 @@ public class AppendEntriesResponse {
   public boolean isSuccessful() {
     return mSuccess;
   }
+
+  @Override
+  public String toString() {
+    return "AppendEntriesResponse{" +
+        "mTerm=" + mTerm +
+        ", mSuccess=" + mSuccess +
+        '}';
+  }
 }
