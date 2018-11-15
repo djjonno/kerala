@@ -30,7 +30,7 @@ public class Raft implements RaftDelegate {
   private final Object mLock = new Object();
 
   /* guarded by mLock */
-  private RaftState mRaftDelegate;
+  private RaftState mRaftState;
 
   public Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
               @Nonnull final ClusterConfig clusterConfig,
@@ -53,9 +53,10 @@ public class Raft implements RaftDelegate {
   }
 
   public void initialize() {
+    LOG.info("initializing raft");
     synchronized (mLock) {
-      mRaftDelegate = mStateFactory.getInitialDelegate(this);
-      mRaftDelegate.on();
+      mRaftState = mStateFactory.getInitialDelegate(this);
+      mRaftState.on();
       mExecutorService.submit(this::performTransition);
     }
   }
@@ -63,14 +64,14 @@ public class Raft implements RaftDelegate {
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
     synchronized (mLock) {
-      mRaftDelegate.delegateAppendEntries(appendEntriesRequest, responseObserver);
+      mRaftState.delegateAppendEntries(appendEntriesRequest, responseObserver);
     }
   }
 
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
     synchronized (mLock) {
-      mRaftDelegate.delegateRequestVote(requestVoteRequest, responseObserver);
+      mRaftState.delegateRequestVote(requestVoteRequest, responseObserver);
     }
   }
 
@@ -96,9 +97,9 @@ public class Raft implements RaftDelegate {
         LOG.info("awaiting next transition");
         final Class<? extends RaftState> next = mTransitions.take();
         synchronized (mLock) {
-          mRaftDelegate.off();
-          mRaftDelegate = mStateFactory.getDelegate(this, next);
-          mRaftDelegate.on();
+          mRaftState.off();
+          mRaftState = mStateFactory.getDelegate(this, next);
+          mRaftState.on();
         }
       } catch (final InterruptedException e) {
         LOG.error("failed to retrieve next transition", e);

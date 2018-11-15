@@ -1,15 +1,17 @@
 package org.elkd.core;
 
 import com.google.common.base.Preconditions;
-import io.grpc.stub.StreamObserver;
+import com.google.common.collect.ImmutableSet;
 import org.apache.log4j.Logger;
+import org.elkd.core.cluster.Node;
+import org.elkd.core.cluster.StaticClusterConfig;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
-import org.elkd.core.consensus.RaftDelegate;
-import org.elkd.core.consensus.messages.AppendEntriesRequest;
-import org.elkd.core.consensus.messages.AppendEntriesResponse;
-import org.elkd.core.consensus.messages.RequestVoteRequest;
-import org.elkd.core.consensus.messages.RequestVoteResponse;
+import org.elkd.core.consensus.DefaultStateFactory;
+import org.elkd.core.consensus.NodeState;
+import org.elkd.core.consensus.Raft;
+import org.elkd.core.log.InMemoryLog;
+import org.elkd.core.log.LogInvoker;
 import org.elkd.core.server.Server;
 import org.elkd.core.server.converters.ConverterRegistry;
 
@@ -46,20 +48,18 @@ public class Elkd {
 
     /* bootstrap */
 
-    final Elkd elkd = new Elkd(ConfigProvider.getConfig(), new Server(new RaftDelegate() {
+    final Raft raft = new Raft(
+        new LogInvoker<>(new InMemoryLog()),
+        new StaticClusterConfig(ImmutableSet.of(
+            new Node("elkd://127.0.0.1:9191"),
+            new Node("elkd://127.0.0.1:9192")
+        )),
+        new NodeState(),
+        new DefaultStateFactory()
+    );
 
-      /* temporary delegate for mocking */
-
-      @Override
-      public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest, final StreamObserver<AppendEntriesResponse> responseObserver) {
-
-      }
-
-      @Override
-      public void delegateRequestVote(final RequestVoteRequest requestVotesRequest, final StreamObserver<RequestVoteResponse> responseObserver) {
-
-      }
-    }, new ConverterRegistry()));
+    final Elkd elkd = new Elkd(ConfigProvider.getConfig(), new Server(raft, new ConverterRegistry()));
+    raft.initialize();
 
     Runtime.getRuntime().addShutdownHook(new Thread(elkd::shutdown));
 
