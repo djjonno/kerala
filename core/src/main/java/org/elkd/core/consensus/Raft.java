@@ -64,6 +64,7 @@ public class Raft implements RaftDelegate {
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
     synchronized (mLock) {
+      LOG.info("delegating appendEntries to " + mRaftState);
       mRaftState.delegateAppendEntries(appendEntriesRequest, responseObserver);
     }
   }
@@ -96,6 +97,7 @@ public class Raft implements RaftDelegate {
       try {
         LOG.info("awaiting next transition");
         final Class<? extends RaftState> next = mTransitions.take();
+        LOG.info("transitioning to -> " + next);
         synchronized (mLock) {
           mRaftState.off();
           mRaftState = mStateFactory.getDelegate(this, next);

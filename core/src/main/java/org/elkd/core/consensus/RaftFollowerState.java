@@ -38,6 +38,8 @@ class RaftFollowerState implements RaftState {
   @Override
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
+    responseObserver.onNext(AppendEntriesResponse.builder(100, true).build());
+    responseObserver.onCompleted();
     restartMonitor();
   }
 

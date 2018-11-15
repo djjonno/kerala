@@ -39,6 +39,8 @@ class RaftLeaderState implements RaftState {
   @Override
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
+    responseObserver.onNext(AppendEntriesResponse.builder(102, true).build());
+    responseObserver.onCompleted();
   }
 
   @Override
