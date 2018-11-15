@@ -1,64 +1,108 @@
 package org.elkd.core.consensus;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
+import org.apache.log4j.Logger;
 import org.elkd.core.cluster.ClusterConfig;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
-import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.LogInvoker;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Raft implements RaftDelegate {
-  private RaftState mRaftDelegate;
+  private static final Logger LOG = Logger.getLogger(Raft.class);
+
   private final LogInvoker<Entry> mReplicatedLog;
   private final ClusterConfig mClusterConfig;
   private final NodeState mNodeState;
   private final AbstractStateFactory mStateFactory;
+  private final BlockingQueue<Class<? extends RaftState>> mTransitions = new LinkedBlockingDeque<>();
+  private final ExecutorService mExecutorService;
+  private final Object mLock = new Object();
+
+  /* guarded by mLock */
+  private RaftState mRaftDelegate;
 
   public Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
               @Nonnull final ClusterConfig clusterConfig,
               @Nonnull final NodeState nodeState,
-              @Nonnull final AbstractStateFactory delegateFactory) {
+              @Nonnull final AbstractStateFactory stateFactory) {
+    this(replicatedLog, clusterConfig, nodeState, stateFactory, Executors.newSingleThreadExecutor());
+  }
+
+  @VisibleForTesting
+  Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
+       @Nonnull final ClusterConfig clusterConfig,
+       @Nonnull final NodeState nodeState,
+       @Nonnull final AbstractStateFactory delegateFactory,
+       @Nonnull final ExecutorService executorService) {
     mReplicatedLog = Preconditions.checkNotNull(replicatedLog, "replicatedLog");
     mClusterConfig = Preconditions.checkNotNull(clusterConfig, "clusterConfig");
     mNodeState = Preconditions.checkNotNull(nodeState, "nodeState");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
+    mExecutorService = Preconditions.checkNotNull(executorService, "executorService");
   }
 
   public void initialize() {
-    mRaftDelegate = mStateFactory.getInitialDelegate(this);
-    mRaftDelegate.on();
+    synchronized (mLock) {
+      mRaftDelegate = mStateFactory.getInitialDelegate(this);
+      mRaftDelegate.on();
+      mExecutorService.submit(this::performTransition);
+    }
   }
 
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
-    mRaftDelegate.delegateAppendEntries(appendEntriesRequest, responseObserver);
+    synchronized (mLock) {
+      mRaftDelegate.delegateAppendEntries(appendEntriesRequest, responseObserver);
+    }
   }
 
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
-    mRaftDelegate.delegateRequestVote(requestVoteRequest, responseObserver);
+    synchronized (mLock) {
+      mRaftDelegate.delegateRequestVote(requestVoteRequest, responseObserver);
+    }
   }
 
   void transition(@Nonnull final Class<? extends RaftState> newDelegate) {
-    mRaftDelegate.off();
-    mRaftDelegate = mStateFactory.getDelegate(this, newDelegate);
-    mRaftDelegate.on();
+    mTransitions.add(newDelegate);
   }
 
   /* package */ LogInvoker<Entry> getReplicatedLog() {
     return mReplicatedLog;
   }
 
+  /* package */ ClusterConfig getClusterConfig() {
+    return mClusterConfig;
+  }
+
   /* package */ NodeState getNodeState() {
     return mNodeState;
   }
 
-  /* package */ ClusterConfig getClusterConfig() {
-    return mClusterConfig;
+  private void performTransition() {
+    for (;;) {
+      try {
+        LOG.info("awaiting next transition");
+        final Class<? extends RaftState> next = mTransitions.take();
+        synchronized (mLock) {
+          mRaftDelegate.off();
+          mRaftDelegate = mStateFactory.getDelegate(this, next);
+          mRaftDelegate.on();
+        }
+      } catch (final InterruptedException e) {
+        LOG.error("failed to retrieve next transition", e);
+      }
+    }
   }
 }

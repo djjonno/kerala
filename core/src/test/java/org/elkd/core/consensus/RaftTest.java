@@ -4,14 +4,18 @@ import io.grpc.stub.StreamObserver;
 import org.elkd.core.cluster.ClusterConfig;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
-import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.LogInvoker;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,29 +23,32 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 public class RaftTest {
-
-  @Mock LogInvoker<Entry> mLogInvoker;
   @Mock RaftState mRaft1;
   @Mock RaftState mRaft2;
-  @Mock ClusterConfig mClusterConfig;
   @Mock NodeState mNodeState;
+  @Mock ClusterConfig mClusterConfig;
+  @Mock LogInvoker<Entry> mLogInvoker;
   @Mock AbstractStateFactory mStateFactory;
-  @Mock AppendEntriesRequest mAppendEntriesRequest;
   @Mock RequestVoteRequest mRequestVoteRequest;
-  @Mock StreamObserver<AppendEntriesResponse> mAppendEntriesResponseObserver;
+  @Mock AppendEntriesRequest mAppendEntriesRequest;
   @Mock StreamObserver<RequestVoteResponse> mRequestVotesResponseObserver;
+  @Mock StreamObserver<AppendEntriesResponse> mAppendEntriesResponseObserver;
 
   private Raft mUnitUnderTest;
+  private ExecutorService mExecutorService;
 
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
+    mExecutorService = Executors.newSingleThreadExecutor();
+
     mUnitUnderTest = new Raft(
         mLogInvoker,
         mClusterConfig,
         mNodeState,
-        mStateFactory
+        mStateFactory,
+        mExecutorService
     );
 
     setupCommonExpectations();
@@ -67,7 +74,7 @@ public class RaftTest {
   }
 
   @Test
-  public void should_transition_state_on_off_on_transition() {
+  public void should_transition_state_for_transition() throws InterruptedException {
     // Given
     mUnitUnderTest.initialize();
     final Class<? extends RaftState> state = RaftLeaderState.class;
@@ -76,6 +83,7 @@ public class RaftTest {
     mUnitUnderTest.transition(state);
 
     // Then
+    mExecutorService.awaitTermination(1, TimeUnit.SECONDS); // TODO: find a better way
     verify(mRaft1).off();
     verify(mStateFactory).getDelegate(mUnitUnderTest, state);
     verify(mRaft2).on();
