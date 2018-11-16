@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 public class NodeStateTest {
   private static final int DEFAULT_CURRENT_TERM = 0;
-  private static final Integer DEFAULT_VOTED_FOR = null;
+  private static final String DEFAULT_VOTED_FOR = null;
 
   @Test
   public void should_have_default_values() {
@@ -22,7 +22,7 @@ public class NodeStateTest {
   public void should_set_votedFor() {
     // Given
     final NodeState nodeState = new NodeState();
-    final Integer votedFor = 10;
+    final String votedFor = "10";
 
     // When
     nodeState.setVotedFor(votedFor);

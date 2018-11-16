@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 public class NodeState {
   private int mCurrentTerm;
-  private Integer mVotedFor;
+  private String mVotedFor;
 
   public NodeState() {
     mCurrentTerm = 0;
@@ -21,11 +21,11 @@ public class NodeState {
   }
 
   @Nullable
-  Integer getVotedFor() {
+  String getVotedFor() {
     return mVotedFor;
   }
 
-  void setVotedFor(final Integer votedFor) {
+  void setVotedFor(final String votedFor) {
     mVotedFor = votedFor;
     commit();
   }
