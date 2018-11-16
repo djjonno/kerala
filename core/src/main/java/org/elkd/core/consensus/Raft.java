@@ -4,7 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
-import org.elkd.core.cluster.ClusterConfig;
+import org.elkd.core.cluster.ClusterSet;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
@@ -22,7 +22,7 @@ public class Raft implements RaftDelegate {
   private static final Logger LOG = Logger.getLogger(Raft.class);
 
   private final LogInvoker<Entry> mReplicatedLog;
-  private final ClusterConfig mClusterConfig;
+  private final ClusterSet mClusterSet;
   private final NodeState mNodeState;
   private final AbstractStateFactory mStateFactory;
   private final BlockingQueue<Class<? extends RaftState>> mTransitions = new LinkedBlockingDeque<>();
@@ -33,20 +33,20 @@ public class Raft implements RaftDelegate {
   private RaftState mRaftState;
 
   public Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
-              @Nonnull final ClusterConfig clusterConfig,
+              @Nonnull final ClusterSet clusterSet,
               @Nonnull final NodeState nodeState,
               @Nonnull final AbstractStateFactory stateFactory) {
-    this(replicatedLog, clusterConfig, nodeState, stateFactory, Executors.newSingleThreadExecutor());
+    this(replicatedLog, clusterSet, nodeState, stateFactory, Executors.newSingleThreadExecutor());
   }
 
   @VisibleForTesting
   Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
-       @Nonnull final ClusterConfig clusterConfig,
+       @Nonnull final ClusterSet clusterSet,
        @Nonnull final NodeState nodeState,
        @Nonnull final AbstractStateFactory delegateFactory,
        @Nonnull final ExecutorService executorService) {
     mReplicatedLog = Preconditions.checkNotNull(replicatedLog, "replicatedLog");
-    mClusterConfig = Preconditions.checkNotNull(clusterConfig, "clusterConfig");
+    mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
     mNodeState = Preconditions.checkNotNull(nodeState, "nodeState");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
     mExecutorService = Preconditions.checkNotNull(executorService, "executorService");
@@ -85,8 +85,8 @@ public class Raft implements RaftDelegate {
     return mReplicatedLog;
   }
 
-  /* package */ ClusterConfig getClusterConfig() {
-    return mClusterConfig;
+  /* package */ ClusterSet getClusterConfig() {
+    return mClusterSet;
   }
 
   /* package */ NodeState getNodeState() {

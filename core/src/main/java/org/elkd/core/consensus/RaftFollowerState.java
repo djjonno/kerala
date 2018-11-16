@@ -14,7 +14,7 @@ import java.util.TimerTask;
 
 class RaftFollowerState implements RaftState {
   private static final Logger LOG = Logger.getLogger(RaftFollowerState.class.getName());
-  private static final int TIMEOUT_MS = 1000;
+  private static final int TIMEOUT_MS = 100000;
   private final Raft mRaft;
 
   private Timer mMonitor;

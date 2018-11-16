@@ -1,7 +1,7 @@
 package org.elkd.core.consensus;
 
 import io.grpc.stub.StreamObserver;
-import org.elkd.core.cluster.ClusterConfig;
+import org.elkd.core.cluster.ClusterSet;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
@@ -26,7 +26,7 @@ public class RaftTest {
   @Mock RaftState mRaft1;
   @Mock RaftState mRaft2;
   @Mock NodeState mNodeState;
-  @Mock ClusterConfig mClusterConfig;
+  @Mock ClusterSet mClusterSet;
   @Mock LogInvoker<Entry> mLogInvoker;
   @Mock AbstractStateFactory mStateFactory;
   @Mock RequestVoteRequest mRequestVoteRequest;
@@ -45,7 +45,7 @@ public class RaftTest {
 
     mUnitUnderTest = new Raft(
         mLogInvoker,
-        mClusterConfig,
+        mClusterSet,
         mNodeState,
         mStateFactory,
         mExecutorService
@@ -126,6 +126,6 @@ public class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mClusterConfig, mUnitUnderTest.getClusterConfig());
+    assertEquals(mClusterSet, mUnitUnderTest.getClusterConfig());
   }
 }

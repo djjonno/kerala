@@ -1,7 +1,7 @@
 apply plugin: "application"
 apply plugin: "com.google.protobuf"
 
-applicationName = "elkd"
+applicationName = "elkd-server"
 
 buildscript {
     repositories {

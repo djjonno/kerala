@@ -1,10 +1,10 @@
 package org.elkd.core;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import org.apache.log4j.Logger;
+import org.elkd.core.cluster.ClusterSet;
 import org.elkd.core.cluster.Node;
-import org.elkd.core.cluster.StaticClusterConfig;
+import org.elkd.core.cluster.StaticClusterSet;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
 import org.elkd.core.consensus.DefaultStateFactory;
@@ -48,12 +48,14 @@ public class Elkd {
 
     /* bootstrap */
 
+    final ClusterSet clusterSet = StaticClusterSet.builder()
+        .withNode(new Node("node-1", "elkd://127.0.0.1:9191"))
+        .withNode(new Node("node-2", "elkd://127.0.0.1:9192"))
+        .build();
+
     final Raft raft = new Raft(
         new LogInvoker<>(new InMemoryLog()),
-        new StaticClusterConfig(ImmutableSet.of(
-            new Node("elkd://127.0.0.1:9191"),
-            new Node("elkd://127.0.0.1:9192")
-        )),
+        clusterSet,
         new NodeState(),
         new DefaultStateFactory()
     );
@@ -61,9 +63,8 @@ public class Elkd {
     final Elkd elkd = new Elkd(ConfigProvider.getConfig(), new Server(raft, new ConverterRegistry()));
     raft.initialize();
 
-    Runtime.getRuntime().addShutdownHook(new Thread(elkd::shutdown));
-
     try {
+      Runtime.getRuntime().addShutdownHook(new Thread(elkd::shutdown));
       elkd.start();
       elkd.awaitTermination();
     } catch (final Exception e) {
