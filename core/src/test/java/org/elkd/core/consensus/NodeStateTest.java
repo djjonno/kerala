@@ -22,7 +22,7 @@ public class NodeStateTest {
   public void should_set_votedFor() {
     // Given
     final NodeState nodeState = new NodeState();
-    final String votedFor = "10";
+    final String votedFor = "node-id";
 
     // When
     nodeState.setVotedFor(votedFor);

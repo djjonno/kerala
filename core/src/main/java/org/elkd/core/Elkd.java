@@ -21,11 +21,14 @@ public class Elkd {
   private static final Logger LOG = Logger.getLogger(Elkd.class);
 
   private final Config mConfig;
+  private final Raft mRaft;
   private final Server mServer;
 
   Elkd(final Config config,
+       final Raft raft,
        final Server server) {
     mConfig = Preconditions.checkNotNull(config, "config");
+    mRaft = Preconditions.checkNotNull(raft, "raft");
     mServer = Preconditions.checkNotNull(server, "server");
   }
 
@@ -33,6 +36,7 @@ public class Elkd {
     LOG.info("booting");
     final int port = mConfig.getAsInteger(Config.KEY_SERVER_PORT);
     mServer.start(port);
+    mRaft.initialize();
   }
 
   void shutdown() {
@@ -60,8 +64,11 @@ public class Elkd {
         new DefaultStateFactory()
     );
 
-    final Elkd elkd = new Elkd(ConfigProvider.getConfig(), new Server(raft, new ConverterRegistry()));
-    raft.initialize();
+    final Elkd elkd = new Elkd(
+        ConfigProvider.getConfig(),
+        raft,
+        new Server(raft, ConverterRegistry.getInstance())
+    );
 
     try {
       Runtime.getRuntime().addShutdownHook(new Thread(elkd::shutdown));

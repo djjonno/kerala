@@ -4,7 +4,6 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import org.apache.log4j.Logger;
-import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.server.ElkdClusterServiceGrpc;
 import org.elkd.core.server.RpcAppendEntriesRequest;
 import org.elkd.core.server.RpcAppendEntriesResponse;
@@ -46,7 +45,7 @@ public class TestClient {
         .setLeaderCommit(0)
         .addEntries(
             RpcEntry.newBuilder().setEvent("amznStock").addCommands(
-              RpcStateMachineCommand.newBuilder().setOperation(SET).setKey("price").setValue(String.valueOf(Math.random() * 2000)).build()
+                RpcStateMachineCommand.newBuilder().setOperation(SET).setKey("price").setValue(String.valueOf(Math.random() * 2000)).build()
             ).build()
         )
         .build();

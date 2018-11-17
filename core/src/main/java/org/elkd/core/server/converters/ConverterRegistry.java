@@ -12,6 +12,16 @@ import java.util.Map;
 
 public class ConverterRegistry {
   private static final Logger LOG = Logger.getLogger(ConverterRegistry.class);
+  private static ConverterRegistry mInstance = null;
+
+  public static ConverterRegistry getInstance() {
+    synchronized (ConverterRegistry.class) {
+      if (mInstance == null) {
+        mInstance = new ConverterRegistry();
+      }
+      return mInstance;
+    }
+  }
 
   /*
    * Registry maps a Class type to its Converter. The converter will convert it
@@ -23,7 +33,7 @@ public class ConverterRegistry {
    */
   private final Map<Class, Converter> mRegistry;
 
-  public ConverterRegistry() {
+  private ConverterRegistry() {
     this(ConverterRegistryFactory.getConverters());
   }
 
