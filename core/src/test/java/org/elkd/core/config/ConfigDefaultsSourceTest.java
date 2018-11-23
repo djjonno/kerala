@@ -18,7 +18,7 @@ public class ConfigDefaultsSourceTest {
   }
 
   @Test
-  public void should_return_defaults() throws IllegalAccessException {
+  public void should_return_defaults() {
     // Given
     final Map<String, String> expected = Config.getKeyDefaults();
 
@@ -28,6 +28,6 @@ public class ConfigDefaultsSourceTest {
 
     // Then
     assertFalse(expected.isEmpty());
-    assertEquals(expected, defaults);
+    assertEquals(expected.keySet(), defaults.keySet());
   }
 }

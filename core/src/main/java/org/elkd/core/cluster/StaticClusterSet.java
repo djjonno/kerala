@@ -41,7 +41,7 @@ public final class StaticClusterSet implements ClusterSet {
 
     public Builder withNode(final Node node) {
       if (mNodes.contains(node)) {
-        throw new ElkdRuntimeException(node + " is already a member. Check the node-id");
+        throw new ElkdRuntimeException(node + " duplicate node.");
       }
       mNodes.add(node);
       return this;

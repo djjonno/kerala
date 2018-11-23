@@ -6,7 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class NodeTest {
-  private static final String ID = "id";
   private static final String HOST = "localhost";
   private static final int PORT = 9191;
   private static final String HOST_URI = "elkd://" + HOST + ":" + PORT;
@@ -15,7 +14,7 @@ public class NodeTest {
 
   @Before
   public void setup() throws Exception {
-    mUnitUnderTest = new Node(ID, HOST_URI);
+    mUnitUnderTest = new Node(HOST_URI);
   }
 
   @Test
@@ -23,7 +22,7 @@ public class NodeTest {
     // Given / When - constructor
 
     // Then
-    assertEquals(ID, mUnitUnderTest.getId());
+    assertNotNull(mUnitUnderTest.getId());
     assertEquals(HOST, mUnitUnderTest.getHost());
     assertEquals(PORT, mUnitUnderTest.getPort());
     assertEquals(HOST_URI, mUnitUnderTest.getHostUri());
@@ -32,9 +31,8 @@ public class NodeTest {
   @Test
   public void should_be_equal() {
     // Given / When
-    final String id = "sameId";
-    final Node first = new Node(id, HOST_URI);
-    final Node second = new Node(id, "differentHost");
+    final Node first = new Node(HOST_URI);
+    final Node second = new Node(HOST_URI);
 
     // Then
     assertEquals(first, second);

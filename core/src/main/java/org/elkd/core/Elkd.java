@@ -52,9 +52,11 @@ public class Elkd {
 
     /* bootstrap */
 
+    final Config config = ConfigProvider.getConfig();
+
     final ClusterSet clusterSet = StaticClusterSet.builder()
-        .withNode(new Node("node-1", "elkd://127.0.0.1:9191"))
-        .withNode(new Node("node-2", "elkd://127.0.0.1:9192"))
+        .withNode(new Node("elkd://127.0.0.1:9191"))
+        .withNode(new Node("elkd://127.0.0.1:9192"))
         .build();
 
     final Raft raft = new Raft(
@@ -65,7 +67,7 @@ public class Elkd {
     );
 
     final Elkd elkd = new Elkd(
-        ConfigProvider.getConfig(),
+        config,
         raft,
         new Server(raft, ConverterRegistry.getInstance())
     );

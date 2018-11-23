@@ -1,6 +1,7 @@
 package org.elkd.core;
 
 import org.elkd.core.config.Config;
+import org.elkd.core.consensus.Raft;
 import org.elkd.core.server.Server;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ public class ElkdTest {
   private static final int PORT = 10000;
 
   @Mock Config mConfig;
+  @Mock Raft mRaft;
   @Mock Server mServer;
 
   private Elkd mUnitUnderTest;
@@ -24,7 +26,7 @@ public class ElkdTest {
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    mUnitUnderTest = new Elkd(mConfig, mServer);
+    mUnitUnderTest = new Elkd(mConfig, mRaft, mServer);
   }
 
   @Test

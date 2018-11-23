@@ -6,18 +6,16 @@ import java.net.URI;
 import java.util.Objects;
 
 public class Node {
-  private String mId;
   private String mHostUri;
   private URI mUri;
 
-  public Node(final String id, final String hostUri) {
-    mId = Preconditions.checkNotNull(id, "id");
+  public Node(final String hostUri) {
     mHostUri = Preconditions.checkNotNull(hostUri, "hostUri");
     mUri = URI.create(hostUri);
   }
 
   public String getId() {
-    return mId;
+    return String.valueOf(Objects.hashCode(mHostUri));
   }
 
   public String getHostUri() {
@@ -41,19 +39,16 @@ public class Node {
       return false;
     }
     final Node node = (Node) o;
-    return Objects.equals(mId, node.mId);
+    return Objects.equals(mHostUri, node.mHostUri);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mId);
+    return Objects.hash(mHostUri);
   }
 
   @Override
   public String toString() {
-    return "Node{" +
-        "mId='" + mId + '\'' +
-        ", mHostUri=" + mHostUri +
-        '}';
+    return "Node{" + mHostUri + '}';
   }
 }

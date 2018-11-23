@@ -9,8 +9,8 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 public class StaticClusterSetTest {
-  private static final Node NODE_1 = new Node("node-1", "elkd://node-1");
-  private static final Node NODE_2 = new Node("node-2", "elkd://node-2");
+  private static final Node NODE_1 = new Node("elkd://node-1");
+  private static final Node NODE_2 = new Node("elkd://node-2");
   private static final Set<Node> MEMBERS = ImmutableSet.of(
       NODE_1, NODE_2
   );
@@ -35,7 +35,7 @@ public class StaticClusterSetTest {
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
-    final Node member = new Node("elkd-3", "elkd://3");
+    final Node member = new Node("elkd://3");
 
     // When
     config.addNode(member);
@@ -75,7 +75,7 @@ public class StaticClusterSetTest {
   @Test(expected = ElkdRuntimeException.class)
   public void should_contain_unique_nodes() {
     // Given
-    final Node duplicate = new Node(NODE_1.getId(), "foo");
+    final Node duplicate = new Node(NODE_1.getHostUri());
 
     // When
     StaticClusterSet.builder()
