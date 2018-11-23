@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Config {
 
-  /* Add Config keys here. Remember to update @{link ConfigCLISource} with config. */
+  /* Add Config keys here. Remember to update @{link ConfigCliSource} with config. */
 
   /**
    * Cluster Set.
@@ -55,6 +55,10 @@ public class Config {
     return mConfig.containsKey(key) && !mConfig.get(key).isEmpty();
   }
 
+  @Override
+  public String toString() {
+    return "Config{" + mConfig + '}';
+  }
   /* Helpers */
 
   static List<String> getSupportedKeys() {

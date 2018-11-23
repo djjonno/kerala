@@ -16,7 +16,7 @@ public class ConfigProvider {
         /* Configuration `Source`s in order of ascending precedence. */
         new ConfigDefaultsSource(),
         new ConfigPropertiesFileSource(),
-        new ConfigCLISource(args)
+        new ConfigCliSource(args)
     ));
     return new Config(ImmutableMap.copyOf(config));
   }

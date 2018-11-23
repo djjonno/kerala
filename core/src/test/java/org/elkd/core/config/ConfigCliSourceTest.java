@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ConfigCLISourceTest {
+public class ConfigCliSourceTest {
 
   private static final Option CLUSTER_SET = Option.builder()
       .required(false)
@@ -27,11 +27,11 @@ public class ConfigCLISourceTest {
       ARG_1, VALUE_1
   };
 
-  private ConfigCLISource mUnitUnderTest;
+  private ConfigCliSource mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
-    mUnitUnderTest = new ConfigCLISource(ARGS, new Option[]{ CLUSTER_SET });
+    mUnitUnderTest = new ConfigCliSource(ARGS, new Option[]{ CLUSTER_SET });
   }
 
   @Test
@@ -60,7 +60,7 @@ public class ConfigCLISourceTest {
   @Test(expected = Exception.class)
   public void should_throw_exception_when_args_contains_help() throws Exception {
     // Given / When
-    mUnitUnderTest = new ConfigCLISource(new String[] {
+    mUnitUnderTest = new ConfigCliSource(new String[] {
         "--help"
     });
 
@@ -70,7 +70,7 @@ public class ConfigCLISourceTest {
   @Test
   public void should_strip_all_hyphens() throws Exception {
     // Given
-    mUnitUnderTest = new ConfigCLISource(new String[] {
+    mUnitUnderTest = new ConfigCliSource(new String[] {
         "--cluster-set", "elkd://0.0.0.0:9191"
     });
 
@@ -84,7 +84,7 @@ public class ConfigCLISourceTest {
   @Test(expected = MissingArgumentException.class)
   public void should_throw_exception_when_invalid_arg() throws Exception {
     // Given / When
-    mUnitUnderTest = new ConfigCLISource(new String[] {
+    mUnitUnderTest = new ConfigCliSource(new String[] {
         ARG_1
     });
 

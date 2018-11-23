@@ -18,58 +18,82 @@ public class StaticClusterSetTest {
   @Test
   public void should_create_cluster_config() {
     // Given / When
-    final StaticClusterSet config = StaticClusterSet.builder()
+    final StaticClusterSet set = StaticClusterSet.builder()
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
 
     // Then
-    assertEquals(MEMBERS.size(), config.clusterSize());
-    assertEquals(MEMBERS, config.getNodes());
+    assertEquals(MEMBERS.size(), set.clusterSize());
+    assertEquals(MEMBERS, set.getNodes());
   }
 
   @Test
   public void should_not_add_member_to_static_config() {
     // Given
-    final StaticClusterSet config = StaticClusterSet.builder()
+    final StaticClusterSet set = StaticClusterSet.builder()
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
     final Node member = new Node("elkd://3");
 
     // When
-    config.addNode(member);
+    set.addNode(member);
 
 
     // Then
-    assertEquals(MEMBERS, config.getNodes());
+    assertEquals(MEMBERS, set.getNodes());
   }
 
   @Test
   public void should_not_remove_member_from_static_config() {
     // Given
-    final StaticClusterSet config = StaticClusterSet.builder()
+    final StaticClusterSet set = StaticClusterSet.builder()
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
 
     // When
-    config.removeNode((Node) MEMBERS.toArray()[0]);
+    set.removeNode((Node) MEMBERS.toArray()[0]);
 
     // Then
-    assertEquals(MEMBERS, config.getNodes());
+    assertEquals(MEMBERS, set.getNodes());
+  }
+
+  @Test
+  public void should_parse_clusterSet_string_into_nodes() {
+    // Given
+    final String clusterSet = NODE_1.getHostUri() + "," + NODE_2.getHostUri();
+
+    // When
+    final StaticClusterSet set = StaticClusterSet.builder().withString(clusterSet).build();
+
+    // Then
+    assertEquals(MEMBERS, set.getNodes());
+  }
+
+  @Test
+  public void should_tolerate_trailing_comma_in_clusterSet_string() {
+    // Given
+    final String clusterSet = NODE_1.getHostUri() + "," + NODE_2.getHostUri() + ",";
+
+    // When
+    final StaticClusterSet set = StaticClusterSet.builder().withString(clusterSet).build();
+
+    // Then
+    assertEquals(MEMBERS, set.getNodes());
   }
 
   @Test
   public void should_have_correct_size() {
     // Given / When
-    final StaticClusterSet config = StaticClusterSet.builder()
+    final StaticClusterSet set = StaticClusterSet.builder()
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
 
     // Then
-    assertEquals(config.clusterSize(), MEMBERS.size());
+    assertEquals(set.clusterSize(), MEMBERS.size());
   }
 
   @Test(expected = ElkdRuntimeException.class)

@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ConfigCLISource implements Source {
+public class ConfigCliSource implements Source {
 
   private static final Option CLUSTER_SET = Option.builder()
       .required(false)
@@ -43,7 +43,7 @@ public class ConfigCLISource implements Source {
   private final Options mOptions = new Options();
   private final HashMap<String, String> mConfig = new HashMap<>();
 
-  /* package */ ConfigCLISource(final String[] args) throws Exception {
+  /* package */ ConfigCliSource(final String[] args) throws Exception {
     this(args, new Option[] {
         CLUSTER_SET,
         DATA_DIR,
@@ -53,7 +53,7 @@ public class ConfigCLISource implements Source {
   }
 
   @VisibleForTesting
-  ConfigCLISource(final String[] args, final Option[] options) throws Exception {
+  ConfigCliSource(final String[] args, final Option[] options) throws Exception {
     Preconditions.checkNotNull(options, "options");
     for (final Option option : options) {
       mOptions.addOption(option);

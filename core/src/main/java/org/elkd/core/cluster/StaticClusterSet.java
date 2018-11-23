@@ -5,6 +5,7 @@ import org.elkd.core.ElkdRuntimeException;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public final class StaticClusterSet implements ClusterSet {
   private final ImmutableSet<Node> mNodes;
@@ -32,12 +33,27 @@ public final class StaticClusterSet implements ClusterSet {
     return mNodes.size();
   }
 
+  @Override
+  public boolean isEmpty() {
+    return mNodes.isEmpty();
+  }
+
   public static Builder builder() {
     return new Builder();
   }
 
   public static class Builder {
     private Set<Node> mNodes = new HashSet<>();
+
+    public Builder withString(final String clusterSet) {
+      Stream.of(clusterSet.split(","))
+          .filter(s -> !s.isEmpty())
+          .forEach(s -> {
+            mNodes.add(new Node(s));
+          });
+
+      return this;
+    }
 
     public Builder withNode(final Node node) {
       if (mNodes.contains(node)) {
@@ -50,5 +66,10 @@ public final class StaticClusterSet implements ClusterSet {
     public StaticClusterSet build() {
       return new StaticClusterSet(mNodes);
     }
+  }
+
+  @Override
+  public String toString() {
+    return "StaticClusterSet{" +  mNodes + '}';
   }
 }

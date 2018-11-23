@@ -3,7 +3,6 @@ package org.elkd.core;
 import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.elkd.core.cluster.ClusterSet;
-import org.elkd.core.cluster.Node;
 import org.elkd.core.cluster.StaticClusterSet;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
@@ -32,7 +31,6 @@ public class Elkd {
   }
 
   void start() throws IOException {
-    LOG.info("booting");
     final int port = mConfig.getAsInteger(Config.KEY_PORT);
     mServer.start(port);
     mRaft.initialize();
@@ -55,11 +53,12 @@ public class Elkd {
     if (config == null) {
       return;
     }
+    LOG.debug("booting with " + config);
 
     final ClusterSet clusterSet = StaticClusterSet.builder()
-        .withNode(new Node("elkd://127.0.0.1:9191"))
-        .withNode(new Node("elkd://127.0.0.1:9192"))
+        .withString(config.get(Config.KEY_CLUSTER_SET))
         .build();
+    LOG.info(clusterSet);
 
     final Raft raft = new Raft(
         new LogInvoker<>(new InMemoryLog()),
@@ -67,7 +66,6 @@ public class Elkd {
         new NodeState(),
         new DefaultStateFactory()
     );
-
     final Elkd elkd = new Elkd(
         config,
         raft,

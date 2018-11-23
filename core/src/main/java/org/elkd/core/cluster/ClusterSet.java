@@ -10,4 +10,6 @@ public interface ClusterSet {
   void removeNode(Node uri);
 
   Set<Node> getNodes();
+
+  boolean isEmpty();
 }
