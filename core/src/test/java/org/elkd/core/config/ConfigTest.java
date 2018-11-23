@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -28,11 +29,11 @@ public class ConfigTest {
       BOOLEAN_KEY, String.valueOf(BOOLEAN_VALUE)
   );
 
-  private Config mConfig;
+  private Config mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
-    mConfig = new Config(CONFIG);
+    mUnitUnderTest = new Config(CONFIG);
   }
 
   @Test
@@ -50,13 +51,13 @@ public class ConfigTest {
     // Given / When - constructor
 
     // Then
-    assertEquals(VALUE_1, mConfig.get(KEY_1));
+    assertEquals(VALUE_1, mUnitUnderTest.get(KEY_1));
   }
 
   @Test
   public void should_return_integer() {
     // Given / When
-    final Integer integer = mConfig.getAsInteger(INTEGER_KEY);
+    final Integer integer = mUnitUnderTest.getAsInteger(INTEGER_KEY);
 
     // Then
     assertEquals(INTEGER_VALUE, integer);
@@ -65,7 +66,7 @@ public class ConfigTest {
   @Test
   public void should_return_double() {
     // Given / When
-    final Double dub = mConfig.getAsDouble(DOUBLE_KEY);
+    final Double dub = mUnitUnderTest.getAsDouble(DOUBLE_KEY);
 
     // Then
     assertEquals(DOUBLE_VALUE, dub);
@@ -74,9 +75,29 @@ public class ConfigTest {
   @Test
   public void should_return_boolean() {
     // Given / When
-    final Boolean bool = mConfig.getAsBoolean(BOOLEAN_KEY);
+    final Boolean bool = mUnitUnderTest.getAsBoolean(BOOLEAN_KEY);
 
     // Then
     assertEquals(BOOLEAN_VALUE, bool);
+  }
+
+  @Test
+  public void should_return_not_set_for_empty_config_value() {
+    // Given / When
+    final String key = "myKey";
+    mUnitUnderTest = new Config(new HashMap<String, String>() {{
+      put(key, "");
+    }});
+
+    // Then
+    assertFalse(mUnitUnderTest.isSet(key));
+  }
+
+  @Test
+  public void should_return_set_for_non_empty_config_value() {
+    // Given / Then - unit
+
+    // Then
+    assertTrue(mUnitUnderTest.isSet(KEY_1));
   }
 }

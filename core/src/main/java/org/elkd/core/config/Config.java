@@ -51,6 +51,10 @@ public class Config {
     return Boolean.parseBoolean(mConfig.get(key));
   }
 
+  public Boolean isSet(final String key) {
+    return mConfig.containsKey(key) && !mConfig.get(key).isEmpty();
+  }
+
   /* Helpers */
 
   static List<String> getSupportedKeys() {
