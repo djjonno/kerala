@@ -13,7 +13,6 @@ import org.elkd.core.consensus.Raft;
 import org.elkd.core.log.InMemoryLog;
 import org.elkd.core.log.LogInvoker;
 import org.elkd.core.server.Server;
-import org.elkd.core.server.converters.ConverterRegistry;
 
 import java.io.IOException;
 
@@ -34,7 +33,7 @@ public class Elkd {
 
   void start() throws IOException {
     LOG.info("booting");
-    final int port = mConfig.getAsInteger(Config.KEY_SERVER_PORT);
+    final int port = mConfig.getAsInteger(Config.KEY_PORT);
     mServer.start(port);
     mRaft.initialize();
   }
@@ -52,7 +51,10 @@ public class Elkd {
 
     /* bootstrap */
 
-    final Config config = ConfigProvider.getConfig();
+    final Config config = getConfig(args);
+    if (config == null) {
+      return;
+    }
 
     final ClusterSet clusterSet = StaticClusterSet.builder()
         .withNode(new Node("elkd://127.0.0.1:9191"))
@@ -69,7 +71,7 @@ public class Elkd {
     final Elkd elkd = new Elkd(
         config,
         raft,
-        new Server(raft, ConverterRegistry.getInstance())
+        new Server(raft)
     );
 
     try {
@@ -79,5 +81,19 @@ public class Elkd {
     } catch (final Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private static Config getConfig(final String[] args) {
+    final Config config;
+    try {
+      config = ConfigProvider.compileConfig(args);
+    } catch (final Exception e) {
+      final String message = e.getMessage();
+      if (message != null) {
+        System.out.println(message);
+      }
+      return null;
+    }
+    return config;
   }
 }

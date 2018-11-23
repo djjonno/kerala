@@ -44,7 +44,7 @@ public class ConfigProviderTest {
   @Test
   public void should_load_all_sources_in_order() {
     // Given / When
-    ConfigProvider.getConfig(getSources());
+    ConfigProvider.compileConfig(getSources());
 
     // Then
     final InOrder inOrder = Mockito.inOrder(mSource1, mSource2);
@@ -55,7 +55,7 @@ public class ConfigProviderTest {
   @Test
   public void should_combine_config_from_sources() {
     // Given / When
-    final Config config = ConfigProvider.getConfig(getSources());
+    final Config config = ConfigProvider.compileConfig(getSources());
 
     // Then
     assertEquals(VALUE_1, config.get(KEY_1));
@@ -75,7 +75,7 @@ public class ConfigProviderTest {
     )).when(mSource2).apply(any());
 
     // When
-    final Config config = ConfigProvider.getConfig(getSources());
+    final Config config = ConfigProvider.compileConfig(getSources());
 
     // Then
     assertEquals(second, config.get(KEY_1));

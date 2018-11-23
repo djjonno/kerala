@@ -59,7 +59,7 @@ public class TestClient {
   }
 
   public static void main(String[] args) throws InterruptedException {
-    final TestClient client = new TestClient("localhost", 9192);
+    final TestClient client = new TestClient("localhost", 9191);
     try {
       for (;;) {
         client.appendEntries();

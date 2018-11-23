@@ -20,6 +20,7 @@ def protocVersion = "3.5.1-1"
 dependencies {
     compile project(":shared")
 
+    compile group: "commons-cli", name: "commons-cli", version: "1.4"
     compile "log4j:log4j:1.2.17"
     compile "com.google.api.grpc:proto-google-common-protos:1.0.0"
     compile "io.grpc:grpc-alts:${grpcVersion}"

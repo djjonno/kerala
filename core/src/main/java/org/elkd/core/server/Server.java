@@ -15,12 +15,10 @@ public class Server {
   private io.grpc.Server mRpcClusterServer;
 
   private final RaftDelegate mRaftDelegate;
-  private final ConverterRegistry mConverterRegistry;
+  private final ConverterRegistry mConverterRegistry = ConverterRegistry.getInstance();
 
-  public Server(@Nonnull final RaftDelegate raftDelegate,
-                @Nonnull final ConverterRegistry converterRegistry) {
+  public Server(@Nonnull final RaftDelegate raftDelegate) {
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
-    mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
   }
 
   public void start(final int port) throws IOException {

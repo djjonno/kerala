@@ -1,16 +1,16 @@
 package org.elkd.core.config;
 
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class Config {
+
+  /* Add Config keys here. Remember to update @{link ConfigCLISource} with config. */
 
   /**
    * Cluster Set.
@@ -23,14 +23,9 @@ public class Config {
   @Key(defaultValue = "/usr/local/elkd") public static final String KEY_DATA_DIR = "data.dir";
 
   /**
-   * Server host.
-   */
-  @Key(defaultValue = "localhost") public static final String KEY_SERVER_HOST = "server.host";
-
-  /**
    * Server port.
    */
-  @Key(defaultValue = "9191") public static final String KEY_SERVER_PORT = "server.port";
+  @Key(defaultValue = "9191") public static final String KEY_PORT = "port";
 
   private static final Logger LOG = Logger.getLogger(Config.class);
 

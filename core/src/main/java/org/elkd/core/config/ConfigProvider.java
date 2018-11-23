@@ -11,21 +11,18 @@ import java.util.Map;
 public class ConfigProvider {
   private ConfigProvider() { }
 
-  public static Config getConfig() {
+  public static Config compileConfig(final String[] args) throws Exception {
     final Map<String, String> config = load(ImmutableList.of(
-        /* Configuration `Source`s in order of ascending precedence.
-         *
-         * Add additional sources to bootstrap on startup.
-         * E.g Cloud-Settings source provider.
-         */
+        /* Configuration `Source`s in order of ascending precedence. */
         new ConfigDefaultsSource(),
-        new ConfigPropertiesFileSource()
+        new ConfigPropertiesFileSource(),
+        new ConfigCLISource(args)
     ));
     return new Config(ImmutableMap.copyOf(config));
   }
 
   @VisibleForTesting
-  static Config getConfig(final List<Source> sources) {
+  static Config compileConfig(final List<Source> sources) {
     return new Config(ImmutableMap.copyOf(load(sources)));
   }
 

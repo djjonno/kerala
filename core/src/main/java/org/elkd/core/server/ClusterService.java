@@ -37,7 +37,7 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
     mThreadPool = Preconditions.checkNotNull(executorService, "executorService");
 
-    LOG.info("service ready");
+    LOG.info("service ready to accept node connections");
   }
 
   /* Cluster I/O */
