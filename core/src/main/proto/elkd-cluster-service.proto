@@ -4,8 +4,8 @@ option java_multiple_files = true;
 option java_package = "org.elkd.core.server";
 
 service ElkdClusterService {
-    rpc AppendEntries (RpcAppendEntriesRequest) returns (stream RpcAppendEntriesResponse) {}
-    rpc RequestVote (RpcRequestVoteRequest) returns (stream RpcRequestVoteResponse) {}
+    rpc AppendEntries (RpcAppendEntriesRequest) returns (RpcAppendEntriesResponse) {}
+    rpc RequestVote (RpcRequestVoteRequest) returns (RpcRequestVoteResponse) {}
 }
 
 message RpcAppendEntriesRequest {

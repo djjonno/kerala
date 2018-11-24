@@ -1,16 +1,20 @@
 package org.elkd.core.client;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import org.apache.log4j.Logger;
 import org.elkd.core.server.ElkdClusterServiceGrpc;
+import org.elkd.core.server.ElkdClusterServiceGrpc.ElkdClusterServiceFutureStub;
 import org.elkd.core.server.RpcAppendEntriesRequest;
 import org.elkd.core.server.RpcAppendEntriesResponse;
 import org.elkd.core.server.RpcEntry;
 import org.elkd.core.server.RpcStateMachineCommand;
 
-import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.elkd.core.server.RpcStateMachineCommand.Operation.SET;
@@ -19,7 +23,8 @@ public class TestClient {
   private static final Logger LOG = Logger.getLogger(TestClient.class);
 
   private final ManagedChannel mManagedChannel;
-  private final ElkdClusterServiceGrpc.ElkdClusterServiceBlockingStub mBlockingStub;
+  private final ElkdClusterServiceFutureStub mStub;
+  private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
   public TestClient(final String host, final int port) {
     this(ManagedChannelBuilder.forAddress(host, port).usePlaintext().build());
@@ -27,7 +32,7 @@ public class TestClient {
 
   TestClient(final ManagedChannel managedChannel) {
     mManagedChannel = managedChannel;
-    mBlockingStub = ElkdClusterServiceGrpc.newBlockingStub(managedChannel);
+    mStub = ElkdClusterServiceGrpc.newFutureStub(managedChannel);
   }
 
   public void shutdown() throws InterruptedException {
@@ -49,10 +54,18 @@ public class TestClient {
             ).build()
         )
         .build();
-    Iterator<RpcAppendEntriesResponse> response;
+    ListenableFuture<RpcAppendEntriesResponse> response;
     try {
-      response = mBlockingStub.appendEntries(request);
-      LOG.info(response.next().getTerm());
+      response = mStub.appendEntries(request);
+      response.addListener(() -> {
+        try {
+          LOG.info(response.get().getTerm());
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        } catch (ExecutionException e) {
+          e.printStackTrace();
+        }
+      }, mExecutor);
     } catch (final StatusRuntimeException e) {
       LOG.error(e);
     }
@@ -63,7 +76,7 @@ public class TestClient {
     try {
       for (;;) {
         client.appendEntries();
-        Thread.sleep((long) (Math.random() * 10));
+        Thread.sleep((long) (Math.random() * 500));
       }
     } finally {
       client.shutdown();

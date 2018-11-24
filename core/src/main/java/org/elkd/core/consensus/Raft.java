@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
+import org.elkd.core.cluster.ClusterConnectionPool;
 import org.elkd.core.cluster.ClusterSet;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
@@ -54,6 +55,9 @@ public class Raft implements RaftDelegate {
 
   public void initialize() {
     LOG.info("initializing raft");
+
+    new ClusterConnectionPool().initialize(mClusterSet);
+
     synchronized (mLock) {
       mRaftState = mStateFactory.getInitialDelegate(this);
       mRaftState.on();
