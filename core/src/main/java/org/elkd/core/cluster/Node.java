@@ -13,7 +13,7 @@ public class Node {
   }
 
   public String getId() {
-    return String.valueOf(mUri.hashCode());
+    return String.valueOf(mUri.getHost());
   }
 
   public URI getURI() {

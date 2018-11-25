@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.elkd.core.server.ElkdClusterServiceGrpc;
 import org.elkd.core.server.ElkdClusterServiceGrpc.ElkdClusterServiceFutureStub;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,16 +25,21 @@ public class ClusterConnectionPool {
     LOG.info("initializing cluster connections with " + mClusterSet.clusterSize() + " nodes");
 
     for (final Node node : mClusterSet.getNodes()) {
-      LOG.info("init channel -> " + node);
       final ManagedChannel channel = ManagedChannelBuilder
           .forTarget(node.getURI().toString())
           .usePlaintext()
           .build();
       mChannelMap.put(node, new Channel(channel));
+      LOG.info("init channel -> " + node + " state " + channel.getState(true));
     }
   }
 
-  private class Channel {
+  @Nullable
+  public Channel getChannel(final Node node) {
+    return mChannelMap.get(node);
+  }
+
+  public static class Channel {
     private ManagedChannel mManagedChannel;
     private ElkdClusterServiceFutureStub mStub;
 
@@ -42,11 +48,11 @@ public class ClusterConnectionPool {
       mStub = ElkdClusterServiceGrpc.newFutureStub(managedChannel);
     }
 
-    private ManagedChannel getManagedChannel() {
+    public ManagedChannel getManagedChannel() {
       return mManagedChannel;
     }
 
-    private ElkdClusterServiceFutureStub getFutureStub() {
+    public ElkdClusterServiceFutureStub getFutureStub() {
       return mStub;
     }
   }

@@ -8,6 +8,7 @@ import org.elkd.core.server.converters.ConverterRegistry;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.net.InetAddress;
 
 public class Server {
   private static final Logger LOG = Logger.getLogger(Server.class);
@@ -27,7 +28,7 @@ public class Server {
         .build()
         .start();
 
-    LOG.info("started server on 0.0.0.0:" + port);
+    LOG.info("started server on " + InetAddress.getLoopbackAddress() + ":" + port);
   }
 
   public void shutdown() {

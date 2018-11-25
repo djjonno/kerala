@@ -24,6 +24,7 @@ public class Raft implements RaftDelegate {
 
   private final LogInvoker<Entry> mReplicatedLog;
   private final ClusterSet mClusterSet;
+  private final ClusterConnectionPool mClusterConnectionPool;
   private final NodeState mNodeState;
   private final AbstractStateFactory mStateFactory;
   private final BlockingQueue<Class<? extends RaftState>> mTransitions = new LinkedBlockingDeque<>();
@@ -51,12 +52,14 @@ public class Raft implements RaftDelegate {
     mNodeState = Preconditions.checkNotNull(nodeState, "nodeState");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
     mExecutorService = Preconditions.checkNotNull(executorService, "executorService");
+
+    mClusterConnectionPool = new ClusterConnectionPool(mClusterSet);
   }
 
   public void initialize() {
     LOG.info("initializing raft");
 
-    new ClusterConnectionPool(mClusterSet).initialize();
+    mClusterConnectionPool.initialize();
 
     synchronized (mLock) {
       mRaftState = mStateFactory.getInitialDelegate(this);
@@ -89,8 +92,12 @@ public class Raft implements RaftDelegate {
     return mReplicatedLog;
   }
 
-  /* package */ ClusterSet getClusterConfig() {
+  /* package */ ClusterSet getClusterSet() {
     return mClusterSet;
+  }
+
+  /* package */ ClusterConnectionPool getClusterConnectionPool() {
+    return mClusterConnectionPool;
   }
 
   /* package */ NodeState getNodeState() {

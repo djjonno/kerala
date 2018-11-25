@@ -122,10 +122,10 @@ public class RaftTest {
   }
 
   @Test
-  public void should_get_cluster_config() {
+  public void should_get_clusterSet() {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mClusterSet, mUnitUnderTest.getClusterConfig());
+    assertEquals(mClusterSet, mUnitUnderTest.getClusterSet());
   }
 }

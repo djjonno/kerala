@@ -50,9 +50,6 @@ public class Elkd {
   }
 
   public static void main(final String[] args) throws UnknownHostException {
-
-    System.out.println(InetAddress.getLocalHost().getHostName());
-
     /* bootstrap */
 
     final Config config = getConfig(args);
