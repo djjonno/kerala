@@ -1,25 +1,23 @@
 package org.elkd.core.cluster;
 
 import com.google.common.base.Preconditions;
+import org.elkd.shared.schemes.URI;
 
-import java.net.URI;
 import java.util.Objects;
 
 public class Node {
-  private String mHostUri;
   private URI mUri;
 
-  public Node(final String hostUri) {
-    mHostUri = Preconditions.checkNotNull(hostUri, "hostUri");
-    mUri = URI.create(hostUri);
+  public Node(final URI uri) {
+    mUri = Preconditions.checkNotNull(uri, "uri");
   }
 
   public String getId() {
-    return String.valueOf(Objects.hashCode(mHostUri));
+    return String.valueOf(mUri.hashCode());
   }
 
-  public String getHostUri() {
-    return mHostUri;
+  public URI getURI() {
+    return mUri;
   }
 
   public String getHost() {
@@ -39,16 +37,16 @@ public class Node {
       return false;
     }
     final Node node = (Node) o;
-    return Objects.equals(mHostUri, node.mHostUri);
+    return Objects.equals(mUri, node.mUri);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mHostUri);
+    return Objects.hash(mUri);
   }
 
   @Override
   public String toString() {
-    return "Node{" + mHostUri + '}';
+    return mUri.toString();
   }
 }

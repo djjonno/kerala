@@ -1,17 +1,24 @@
 package org.elkd.core.cluster;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import org.apache.log4j.Logger;
 import org.elkd.core.ElkdRuntimeException;
+import org.elkd.shared.schemes.URI;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
 public final class StaticClusterSet implements ClusterSet {
-  private final ImmutableSet<Node> mNodes;
+  private static final Logger LOG = Logger.getLogger(StaticClusterSet.class);
 
-  private StaticClusterSet(final Set<Node> nodes) {
+  private final ImmutableSet<Node> mNodes;
+  private final Node mSelfNode;
+
+  private StaticClusterSet(final Set<Node> nodes, final Node selfNode) {
     mNodes = ImmutableSet.copyOf(nodes);
+    mSelfNode = selfNode;
   }
 
   public void addNode(final Node node) {
@@ -29,6 +36,11 @@ public final class StaticClusterSet implements ClusterSet {
   }
 
   @Override
+  public Node getSelfNode() {
+    return mSelfNode;
+  }
+
+  @Override
   public int clusterSize() {
     return mNodes.size();
   }
@@ -38,24 +50,35 @@ public final class StaticClusterSet implements ClusterSet {
     return mNodes.isEmpty();
   }
 
-  public static Builder builder() {
-    return new Builder();
+  public static Builder builder(final Node selfNode) {
+    return new Builder(selfNode);
   }
 
   public static class Builder {
     private Set<Node> mNodes = new HashSet<>();
+    private Node mSelfNode;
+
+    public Builder(final Node selfNode) {
+      this.mSelfNode = Preconditions.checkNotNull(selfNode, "selfNode");
+    }
 
     public Builder withString(final String clusterSet) {
+      Preconditions.checkNotNull(clusterSet, "clusterSet");
       Stream.of(clusterSet.split(","))
-          .filter(s -> !s.isEmpty())
-          .forEach(s -> {
-            mNodes.add(new Node(s));
+          .filter(uri -> !uri.isEmpty())
+          .map(URI::parseURIString)
+          .forEach(uri -> {
+            withNode(new Node(uri));
           });
 
       return this;
     }
 
     public Builder withNode(final Node node) {
+      Preconditions.checkNotNull(node, "node");
+      if (node.equals(mSelfNode)) {
+        return this;
+      }
       if (mNodes.contains(node)) {
         throw new ElkdRuntimeException(node + " duplicate node.");
       }
@@ -64,12 +87,15 @@ public final class StaticClusterSet implements ClusterSet {
     }
 
     public StaticClusterSet build() {
-      return new StaticClusterSet(mNodes);
+      return new StaticClusterSet(mNodes, mSelfNode);
     }
   }
 
   @Override
   public String toString() {
-    return "StaticClusterSet{" +  mNodes + '}';
+    return "StaticClusterSet{" +
+        "mNodes=" + mNodes +
+        ", mSelfNode=" + mSelfNode +
+        '}';
   }
 }

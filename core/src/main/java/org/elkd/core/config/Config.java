@@ -23,6 +23,11 @@ public class Config {
   @Key(defaultValue = "/usr/local/elkd") public static final String KEY_DATA_DIR = "data.dir";
 
   /**
+   * Server host.
+   */
+  @Key(defaultValue = "localhost") public static final String KEY_HOST = "host";
+
+  /**
    * Server port.
    */
   @Key(defaultValue = "9191") public static final String KEY_PORT = "port";

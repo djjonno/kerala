@@ -50,12 +50,10 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
       final ResponseConverterStreamDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> observer =
           new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
 
-      mThreadPool.submit(() -> {
-        mRaftDelegate.delegateAppendEntries(
-            request,
-            observer
-        );
-      });
+      mRaftDelegate.delegateAppendEntries(
+          request,
+          observer
+      );
     } catch (final ElkdRuntimeException e) {
       LOG.error(e);
       responseObserver.onError(e);
@@ -70,12 +68,10 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
       final ResponseConverterStreamDecorator<RequestVoteResponse, RpcRequestVoteResponse> observer =
           new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
 
-      mThreadPool.submit(() -> {
-        mRaftDelegate.delegateRequestVote(
-            request,
-            observer
-        );
-      });
+      mRaftDelegate.delegateRequestVote(
+          request,
+          observer
+      );
     } catch (final ElkdRuntimeException e) {
       LOG.error(e);
       responseObserver.onError(e);

@@ -11,5 +11,7 @@ public interface ClusterSet {
 
   Set<Node> getNodes();
 
+  Node getSelfNode();
+
   boolean isEmpty();
 }

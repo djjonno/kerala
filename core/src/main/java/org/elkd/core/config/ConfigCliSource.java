@@ -34,6 +34,12 @@ public class ConfigCliSource implements Source {
       .longOpt("help")
       .build();
 
+  private static final Option HOST = Option.builder()
+      .desc("host to bind server")
+      .longOpt("host")
+      .numberOfArgs(1)
+      .build();
+
   private static final Option PORT = Option.builder()
       .desc("port to bind server")
       .longOpt("port")
@@ -48,6 +54,7 @@ public class ConfigCliSource implements Source {
         CLUSTER_SET,
         DATA_DIR,
         HELP,
+        HOST,
         PORT
     });
   }

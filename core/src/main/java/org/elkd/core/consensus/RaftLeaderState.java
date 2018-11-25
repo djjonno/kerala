@@ -26,7 +26,7 @@ class RaftLeaderState implements RaftState {
 
   @Override
   public void on() {
-    LOG.info("online");
+    LOG.info("ready");
     restartMonitor();
   }
 

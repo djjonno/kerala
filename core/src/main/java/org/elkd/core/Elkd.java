@@ -3,6 +3,8 @@ package org.elkd.core;
 import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.elkd.core.cluster.ClusterSet;
+import org.elkd.core.cluster.ClusterUtils;
+import org.elkd.core.cluster.Node;
 import org.elkd.core.cluster.StaticClusterSet;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
@@ -14,6 +16,8 @@ import org.elkd.core.log.LogInvoker;
 import org.elkd.core.server.Server;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Elkd {
   private static final Logger LOG = Logger.getLogger(Elkd.class);
@@ -45,7 +49,9 @@ public class Elkd {
     mServer.awaitTermination();
   }
 
-  public static void main(final String[] args) {
+  public static void main(final String[] args) throws UnknownHostException {
+
+    System.out.println(InetAddress.getLocalHost().getHostName());
 
     /* bootstrap */
 
@@ -55,7 +61,8 @@ public class Elkd {
     }
     LOG.debug("booting with " + config);
 
-    final ClusterSet clusterSet = StaticClusterSet.builder()
+    final Node selfNode = ClusterUtils.buildSelfNode(config);
+    final ClusterSet clusterSet = StaticClusterSet.builder(selfNode)
         .withString(config.get(Config.KEY_CLUSTER_SET))
         .build();
     LOG.info(clusterSet);

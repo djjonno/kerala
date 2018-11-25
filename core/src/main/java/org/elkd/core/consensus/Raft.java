@@ -56,7 +56,7 @@ public class Raft implements RaftDelegate {
   public void initialize() {
     LOG.info("initializing raft");
 
-    new ClusterConnectionPool().initialize(mClusterSet);
+    new ClusterConnectionPool(mClusterSet).initialize();
 
     synchronized (mLock) {
       mRaftState = mStateFactory.getInitialDelegate(this);
