@@ -11,7 +11,7 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.server.converters.ConverterRegistry;
-import org.elkd.core.server.converters.ResponseConverterStreamDecorator;
+import org.elkd.core.server.converters.StreamConverterDecorator;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ExecutorService;
@@ -47,8 +47,8 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
                             final StreamObserver<RpcAppendEntriesResponse> responseObserver) {
     try {
       final AppendEntriesRequest request = mConverterRegistry.convert(appendEntriesRequest);
-      final ResponseConverterStreamDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> observer =
-          new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
+      final StreamConverterDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> observer =
+          new StreamConverterDecorator<>(responseObserver, mConverterRegistry);
 
       mRaftDelegate.delegateAppendEntries(
           request,
@@ -65,8 +65,8 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
                           final StreamObserver<RpcRequestVoteResponse> responseObserver) {
     try {
       final RequestVoteRequest request = mConverterRegistry.convert(requestVotesRequest);
-      final ResponseConverterStreamDecorator<RequestVoteResponse, RpcRequestVoteResponse> observer =
-          new ResponseConverterStreamDecorator<>(responseObserver, mConverterRegistry);
+      final StreamConverterDecorator<RequestVoteResponse, RpcRequestVoteResponse> observer =
+          new StreamConverterDecorator<>(responseObserver, mConverterRegistry);
 
       mRaftDelegate.delegateRequestVote(
           request,

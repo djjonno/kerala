@@ -46,7 +46,9 @@ class RaftCandidateState implements RaftState {
   @Override
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
+    responseObserver.onNext(RequestVoteResponse.builder(0, true).build());
     responseObserver.onCompleted();
+    restartMonitor();
   }
 
   private void restartMonitor() {

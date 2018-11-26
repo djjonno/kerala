@@ -16,7 +16,7 @@ public class ConverterRegistry {
 
   /*
    * Registry maps a Class type to its Converter. The converter will convert it
-   * to its correct couterpart.
+   * to its correct counterpart.
    *
    * For example,
    * RpcAppendEntriesRequest will be converted to AppendEntriesRequest and visa-versa;

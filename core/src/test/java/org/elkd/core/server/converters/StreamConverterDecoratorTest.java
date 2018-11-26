@@ -10,19 +10,19 @@ import org.mockito.MockitoAnnotations;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class ResponseConverterStreamDecoratorTest {
+public class StreamConverterDecoratorTest {
   @Mock Source mSource;
   @Mock Target mTarget;
   @Mock ConverterRegistry mConverterRegistry;
   @Mock StreamObserver<Target> mStreamObserver;
 
-  private ResponseConverterStreamDecorator<Source, Target> mUnitUnderTest;
+  private StreamConverterDecorator<Source, Target> mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    mUnitUnderTest = new ResponseConverterStreamDecorator<>(mStreamObserver, mConverterRegistry);
+    mUnitUnderTest = new StreamConverterDecorator<>(mStreamObserver, mConverterRegistry);
 
     doReturn(mTarget)
         .when(mConverterRegistry)

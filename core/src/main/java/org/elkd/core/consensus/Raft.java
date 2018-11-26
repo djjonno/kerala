@@ -22,9 +22,10 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class Raft implements RaftDelegate {
   private static final Logger LOG = Logger.getLogger(Raft.class);
 
-  private final LogInvoker<Entry> mReplicatedLog;
   private final ClusterSet mClusterSet;
   private final ClusterConnectionPool mClusterConnectionPool;
+
+  private final LogInvoker<Entry> mReplicatedLog;
   private final NodeState mNodeState;
   private final AbstractStateFactory mStateFactory;
   private final BlockingQueue<Class<? extends RaftState>> mTransitions = new LinkedBlockingDeque<>();
@@ -72,7 +73,7 @@ public class Raft implements RaftDelegate {
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
     synchronized (mLock) {
       LOG.info("delegating appendEntries to " + mRaftState);
-      LOG.info("request: " + appendEntriesRequest);
+      LOG.info("request -> " + appendEntriesRequest);
       mRaftState.delegateAppendEntries(appendEntriesRequest, responseObserver);
     }
   }
@@ -80,6 +81,8 @@ public class Raft implements RaftDelegate {
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
     synchronized (mLock) {
+      LOG.info("delegating requestVote to " + mRaftState);
+      LOG.info("request -> " + requestVoteRequest);
       mRaftState.delegateRequestVote(requestVoteRequest, responseObserver);
     }
   }

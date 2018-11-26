@@ -4,13 +4,13 @@ import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.elkd.core.ElkdRuntimeException;
 
-public class ResponseConverterStreamDecorator<Source, Target> implements StreamObserver<Source> {
+public class StreamConverterDecorator<Source, Target> implements StreamObserver<Source> {
 
   private final StreamObserver<Target> mTargetObserver;
   private final ConverterRegistry mConverterRegistry;
 
-  public ResponseConverterStreamDecorator(final StreamObserver<Target> targetObserver,
-                                          final ConverterRegistry converterRegistry) {
+  public StreamConverterDecorator(final StreamObserver<Target> targetObserver,
+                                  final ConverterRegistry converterRegistry) {
     mTargetObserver = Preconditions.checkNotNull(targetObserver, "targetObserver");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
   }

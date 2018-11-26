@@ -1,14 +1,20 @@
 package org.elkd.core.cluster;
 
 import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.ListenableFuture;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.log4j.Logger;
 import org.elkd.core.server.ElkdClusterServiceGrpc;
 import org.elkd.core.server.ElkdClusterServiceGrpc.ElkdClusterServiceFutureStub;
+import org.elkd.core.server.RpcAppendEntriesRequest;
+import org.elkd.core.server.RpcAppendEntriesResponse;
+import org.elkd.core.server.RpcRequestVoteRequest;
+import org.elkd.core.server.RpcRequestVoteResponse;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class ClusterConnectionPool {
@@ -39,6 +45,10 @@ public class ClusterConnectionPool {
     return mChannelMap.get(node);
   }
 
+  public Iterator<Node> iterator() {
+    return mChannelMap.keySet().iterator();
+  }
+
   public static class Channel {
     private ManagedChannel mManagedChannel;
     private ElkdClusterServiceFutureStub mStub;
@@ -52,8 +62,12 @@ public class ClusterConnectionPool {
       return mManagedChannel;
     }
 
-    public ElkdClusterServiceFutureStub getFutureStub() {
-      return mStub;
+    public ListenableFuture<RpcAppendEntriesResponse> appendEntries(final RpcAppendEntriesRequest request) {
+      return mStub.appendEntries(request);
+    }
+
+    public ListenableFuture<RpcRequestVoteResponse> requestVote(final RpcRequestVoteRequest request) {
+      return mStub.requestVote(request);
     }
   }
 }

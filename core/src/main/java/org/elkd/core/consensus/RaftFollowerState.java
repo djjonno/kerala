@@ -14,7 +14,7 @@ import java.util.TimerTask;
 
 class RaftFollowerState implements RaftState {
   private static final Logger LOG = Logger.getLogger(RaftFollowerState.class.getName());
-  private static final int TIMEOUT_MS = 100000;
+  private static final int TIMEOUT_MS = 5000;
   private final Raft mRaft;
 
   private Timer mMonitor;
@@ -46,6 +46,9 @@ class RaftFollowerState implements RaftState {
   @Override
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
+    responseObserver.onNext(RequestVoteResponse.builder(0, true).build());
+    responseObserver.onCompleted();
+    restartMonitor();
   }
 
   private void restartMonitor() {

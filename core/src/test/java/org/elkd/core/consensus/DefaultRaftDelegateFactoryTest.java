@@ -1,16 +1,19 @@
 package org.elkd.core.consensus;
 
+import org.elkd.core.cluster.ClusterConnectionPool;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class DefaultRaftDelegateFactoryTest {
 
-  @Mock
-  Raft mRaft;
+  @Mock Raft mRaft;
 
   private DefaultStateFactory mUnitUnderTest;
 
@@ -19,6 +22,9 @@ public class DefaultRaftDelegateFactoryTest {
     MockitoAnnotations.initMocks(this);
 
     mUnitUnderTest = new DefaultStateFactory();
+    doReturn(mock(ClusterConnectionPool.class))
+        .when(mRaft)
+        .getClusterConnectionPool();
   }
 
   @Test

@@ -7,7 +7,7 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.server.converters.ConverterRegistry;
-import org.elkd.core.server.converters.ResponseConverterStreamDecorator;
+import org.elkd.core.server.converters.StreamConverterDecorator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -64,7 +64,7 @@ public class ClusterServiceTest {
 
     // Then
     verify(mConverterRegistry).convert(request);
-    verify(mRaftDelegate).delegateAppendEntries(eq(mAppendEntriesRequest), any(ResponseConverterStreamDecorator.class));
+    verify(mRaftDelegate).delegateAppendEntries(eq(mAppendEntriesRequest), any(StreamConverterDecorator.class));
   }
 
   @SuppressWarnings("unchecked")
@@ -80,12 +80,12 @@ public class ClusterServiceTest {
     mUnitUnderTest.appendEntries(request, mRpcAppendEntriesStreamObserver);
 
     // Then
-    final ArgumentCaptor<ResponseConverterStreamDecorator<AppendEntriesResponse, RpcAppendEntriesResponse>> captor =
-        ArgumentCaptor.forClass(ResponseConverterStreamDecorator.class);
+    final ArgumentCaptor<StreamConverterDecorator<AppendEntriesResponse, RpcAppendEntriesResponse>> captor =
+        ArgumentCaptor.forClass(StreamConverterDecorator.class);
     verify(mRaftDelegate).delegateAppendEntries(eq(mAppendEntriesRequest), captor.capture());
 
     // Then
-    final ResponseConverterStreamDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> streamObserver = captor.getValue();
+    final StreamConverterDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> streamObserver = captor.getValue();
     streamObserver.onNext(mAppendEntriesResponse);
     verify(mRpcAppendEntriesStreamObserver).onNext(response);
   }
@@ -102,7 +102,7 @@ public class ClusterServiceTest {
 
     // Then
     verify(mConverterRegistry).convert(request);
-    verify(mRaftDelegate).delegateRequestVote(eq(mRequestVoteRequest), any(ResponseConverterStreamDecorator.class));
+    verify(mRaftDelegate).delegateRequestVote(eq(mRequestVoteRequest), any(StreamConverterDecorator.class));
   }
 
   @SuppressWarnings("unchecked")
@@ -118,12 +118,12 @@ public class ClusterServiceTest {
     mUnitUnderTest.requestVote(request, mRpcRequestVoteStreamObserver);
 
     // Then
-    final ArgumentCaptor<ResponseConverterStreamDecorator<RequestVoteResponse, RpcRequestVoteResponse>> captor =
-        ArgumentCaptor.forClass(ResponseConverterStreamDecorator.class);
+    final ArgumentCaptor<StreamConverterDecorator<RequestVoteResponse, RpcRequestVoteResponse>> captor =
+        ArgumentCaptor.forClass(StreamConverterDecorator.class);
     verify(mRaftDelegate).delegateRequestVote(eq(mRequestVoteRequest), captor.capture());
 
     // Then
-    final ResponseConverterStreamDecorator<RequestVoteResponse, RpcRequestVoteResponse> streamObserver = captor.getValue();
+    final StreamConverterDecorator<RequestVoteResponse, RpcRequestVoteResponse> streamObserver = captor.getValue();
     streamObserver.onNext(mRequestVoteResponse);
     verify(mRpcRequestVoteStreamObserver).onNext(response);
   }

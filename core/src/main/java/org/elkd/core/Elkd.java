@@ -16,7 +16,6 @@ import org.elkd.core.log.LogInvoker;
 import org.elkd.core.server.Server;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Elkd {
