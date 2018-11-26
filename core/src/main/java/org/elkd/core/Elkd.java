@@ -2,10 +2,9 @@ package org.elkd.core;
 
 import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
-import org.elkd.core.cluster.ClusterSet;
-import org.elkd.core.cluster.ClusterUtils;
-import org.elkd.core.cluster.Node;
-import org.elkd.core.cluster.StaticClusterSet;
+import org.elkd.core.server.cluster.ClusterSet;
+import org.elkd.core.server.cluster.ClusterUtils;
+import org.elkd.core.server.cluster.StaticClusterSet;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
 import org.elkd.core.consensus.DefaultStateFactory;
@@ -57,8 +56,7 @@ public class Elkd {
     }
     LOG.debug("booting with " + config);
 
-    final Node selfNode = ClusterUtils.buildSelfNode(config);
-    final ClusterSet clusterSet = StaticClusterSet.builder(selfNode)
+    final ClusterSet clusterSet = StaticClusterSet.builder(ClusterUtils.buildSelfNode(config))
         .withString(config.get(Config.KEY_CLUSTER_SET))
         .build();
     LOG.info(clusterSet);

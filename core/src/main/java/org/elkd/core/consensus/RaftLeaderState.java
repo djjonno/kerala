@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
-import org.elkd.core.cluster.ClusterMessenger;
+import org.elkd.core.server.cluster.ClusterMessenger;
 import org.elkd.core.consensus.messages.*;
 import org.elkd.core.statemachine.SetStateMachineCommand;
 
@@ -44,7 +44,7 @@ class RaftLeaderState implements RaftState {
         try {
           LOG.info(future.get());
         } catch (Exception e) {
-          e.printStackTrace();
+//          e.printStackTrace();
         }
       }, EXECUTOR);
 
@@ -54,7 +54,7 @@ class RaftLeaderState implements RaftState {
         try {
           LOG.info(future2.get());
         } catch (Exception e) {
-          e.printStackTrace();
+//          e.printStackTrace();
         }
       }, EXECUTOR);
     });

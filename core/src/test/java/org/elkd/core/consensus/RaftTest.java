@@ -1,7 +1,7 @@
 package org.elkd.core.consensus;
 
 import io.grpc.stub.StreamObserver;
-import org.elkd.core.cluster.ClusterSet;
+import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;

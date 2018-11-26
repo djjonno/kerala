@@ -1,7 +1,7 @@
-package org.elkd.core.cluster;
+package org.elkd.core.server.cluster;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import org.elkd.core.cluster.exceptions.NodeNotFoundException;
+import org.elkd.core.server.cluster.exceptions.NodeNotFoundException;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;

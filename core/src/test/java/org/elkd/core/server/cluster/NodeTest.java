@@ -1,4 +1,4 @@
-package org.elkd.core.cluster;
+package org.elkd.core.server.cluster;
 
 import org.elkd.shared.schemes.URI;
 import org.junit.Before;

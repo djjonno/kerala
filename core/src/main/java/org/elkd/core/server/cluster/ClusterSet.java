@@ -1,4 +1,4 @@
-package org.elkd.core.cluster;
+package org.elkd.core.server.cluster;
 
 import java.util.Set;
 

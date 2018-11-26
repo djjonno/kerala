@@ -1,4 +1,4 @@
-package org.elkd.core.cluster.exceptions;
+package org.elkd.core.server.cluster.exceptions;
 
 public class NodeNotFoundException extends ElkdClusterException {
 }

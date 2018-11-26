@@ -2,7 +2,7 @@ package org.elkd.core.consensus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import org.elkd.core.cluster.ClusterMessenger;
+import org.elkd.core.server.cluster.ClusterMessenger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

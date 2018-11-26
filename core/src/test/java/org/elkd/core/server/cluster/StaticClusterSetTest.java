@@ -1,4 +1,4 @@
-package org.elkd.core.cluster;
+package org.elkd.core.server.cluster;
 
 import com.google.common.collect.ImmutableSet;
 import org.elkd.core.ElkdRuntimeException;

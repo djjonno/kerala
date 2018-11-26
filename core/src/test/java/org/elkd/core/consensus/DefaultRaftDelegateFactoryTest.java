@@ -1,6 +1,6 @@
 package org.elkd.core.consensus;
 
-import org.elkd.core.cluster.ClusterConnectionPool;
+import org.elkd.core.server.cluster.ClusterConnectionPool;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
