@@ -1,7 +1,6 @@
 package org.elkd.core.log;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -19,15 +18,15 @@ public class LogInvoker<T> implements Log<T> {
   @Override
   public long append(final T entry) {
     final long index = mLog.append(entry);
-    onAppend(ImmutableList.of(entry));
+    onAppend(entry);
     return index;
   }
 
   @Override
-  public long append(final List<T> entries) {
-    final long index = mLog.append(entries);
-    onAppend(entries);
-    return index;
+  public long append(final long index, final T entry) {
+    final long append = mLog.append(index, entry);
+    onAppend(entry);
+    return append;
   }
 
   @Override
@@ -69,13 +68,13 @@ public class LogInvoker<T> implements Log<T> {
 
   private void onCommit(final List<T> entries) {
     for (final LogChangeListener<T> listener : mListeners) {
-      listener.onCommit(entries);
+      entries.forEach(listener::onCommit);
     }
   }
 
-  private void onAppend(final List<T> entries) {
+  private void onAppend(final T entry) {
     for (final LogChangeListener<T> listener : mListeners) {
-      listener.onAppend(entries);
+      listener.onAppend(entry);
     }
   }
 }

@@ -29,18 +29,16 @@ public class InMemoryLog implements Log<Entry> {
   }
 
   @Override
-  public long append(final List<Entry> entries) {
-    long index = 0;
-    for (Entry entry : entries) {
-      index = append(entry);
-    }
+  public long append(final long index, final Entry entry) {
+    Preconditions.checkState(0 <= index && index <= mIndex, "index");
+    mLogStore.add((int) index, entry);
     return index;
   }
 
   @Override
   public Entry read(final long index) {
     Preconditions.checkState(START_INDEX <= index && index <= mIndex);
-    Preconditions.checkState(index <= mCommitIndex);
+    Preconditions.checkState(index <= mCommitIndex, "can only read committed entries.");
 
     return mLogStore.get((int) index);
   }

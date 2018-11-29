@@ -3,9 +3,9 @@ package org.elkd.core.log;
 import java.util.List;
 
 public interface Log<T> {
-  long append(T entries);
+  long append(T entry);
 
-  long append(List<T> entries);
+  long append(long index, T entry);
 
   T read(long index);
 

@@ -13,8 +13,9 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 public class InMemoryLogTest {
-  @Mock
-  Entry mEntry1;
+  private static final int FUTURE_INDEX = 100;
+
+  @Mock Entry mEntry1;
   @Mock Entry mEntry2;
   @Mock Entry mEntry3;
 
@@ -61,6 +62,28 @@ public class InMemoryLogTest {
   }
 
   @Test
+  public void should_append_log_at_index() {
+    // Given
+    final long t1 = mUnitUnderTest.append(mEntry1);
+
+    // When
+    final long t2 = mUnitUnderTest.append(t1, mEntry2);
+
+    // Then
+    mUnitUnderTest.commit(t2);
+    assertEquals(t1, t2);
+    assertSame(mEntry2, mUnitUnderTest.read(t2));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void should_throw_exception_when_append_log_at_future_index() {
+    // Given / When
+    mUnitUnderTest.append(FUTURE_INDEX, mEntry1);
+
+    // Then - exception thrown
+  }
+
+  @Test
   public void should_return_corresponding_entry_when_read() {
     // Given
     final long t1 = mUnitUnderTest.append(mEntry1);
@@ -82,7 +105,7 @@ public class InMemoryLogTest {
     mUnitUnderTest.commit(t3);
 
     // When
-    List<Entry> entries = mUnitUnderTest.read(t1, t3);
+    final List<Entry> entries = mUnitUnderTest.read(t1, t3);
 
     // Then
     assertEquals(entries.get((int) t1), mEntry1);
@@ -100,7 +123,7 @@ public class InMemoryLogTest {
     final List<Entry> entries = mUnitUnderTest.read(t1, t1);
 
     // Then
-    assertTrue(entries.size() == 1);
+    assertEquals(1, entries.size());
     assertThat(entries, containsInAnyOrder(mEntry1));
   }
 
@@ -154,13 +177,16 @@ public class InMemoryLogTest {
     );
 
     // When
-    final long t1 = mUnitUnderTest.append(entries);
-    final CommitResult<Entry> result = mUnitUnderTest.commit(t1);
+    mUnitUnderTest.append(mEntry1);
+    mUnitUnderTest.append(mEntry2);
+    final long t = mUnitUnderTest.append(mEntry3);
+
+    final CommitResult<Entry> result = mUnitUnderTest.commit(t);
 
     // Then
     assertFalse(result.getCommitted().isEmpty());
     assertEquals(entries, result.getCommitted());
-    assertEquals(t1, result.getCommitIndex());
+    assertEquals(t, result.getCommitIndex());
   }
 
   @Test
@@ -171,7 +197,11 @@ public class InMemoryLogTest {
     );
 
     // When
-    final CommitResult<Entry> result = mUnitUnderTest.commit(mUnitUnderTest.append(entries));
+    mUnitUnderTest.append(mEntry1);
+    mUnitUnderTest.append(mEntry2);
+    final long t = mUnitUnderTest.append(mEntry3);
+
+    final CommitResult<Entry> result = mUnitUnderTest.commit(t);
 
     // Then
     assertEquals(entries, result.getCommitted());
@@ -184,12 +214,12 @@ public class InMemoryLogTest {
     final CommitResult<Entry> first = mUnitUnderTest.commit(t1);
 
     // When
-    final long t2 = mUnitUnderTest.append(ImmutableList.of(mEntry2, mEntry3));
+    final long t2 = mUnitUnderTest.append(mEntry2);
     final CommitResult<Entry> second = mUnitUnderTest.commit(t2);
 
     // Then
     assertEquals(1, first.getCommitted().size());
-    assertEquals(2, second.getCommitted().size());
+    assertEquals(1, second.getCommitted().size());
     assertFalse(second.getCommitted().contains(first.getCommitted().get(0)));
   }
 }
