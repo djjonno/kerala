@@ -222,4 +222,16 @@ public class InMemoryLogTest {
     assertEquals(1, second.getCommitted().size());
     assertFalse(second.getCommitted().contains(first.getCommitted().get(0)));
   }
+
+  @Test
+  public void should_return_commitIndex() {
+    // Given
+    final long t = mUnitUnderTest.append(mEntry1);
+
+    // When
+    final CommitResult<Entry> commit = mUnitUnderTest.commit(t);
+
+    // Then
+    assertEquals(commit.getCommitIndex(), mUnitUnderTest.getCommitIndex());
+  }
 }

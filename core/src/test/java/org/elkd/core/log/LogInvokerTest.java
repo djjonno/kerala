@@ -201,6 +201,21 @@ public class LogInvokerTest {
     entries.forEach(entry -> verify(mListener2).onCommit(entry));
   }
 
+  @Test
+  public void should_return_getCommitIndex_from_delegate() {
+    // Given
+    final long commit = 10;
+    doReturn(commit)
+        .when(mLog)
+        .getCommitIndex();
+
+    // When
+    final long commitIndex = mUnitUnderTest.getCommitIndex();
+
+    // Then
+    assertEquals(commit, commitIndex);
+  }
+
   private ImmutableList<Entry> getEntries() {
     return ImmutableList.of(mEntry1, mEntry2);
   }
