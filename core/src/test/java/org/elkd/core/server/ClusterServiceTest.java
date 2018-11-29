@@ -14,16 +14,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.concurrent.ExecutorService;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 public class ClusterServiceTest {
   @Mock RaftDelegate mRaftDelegate;
   @Mock ConverterRegistry mConverterRegistry;
-  @Mock ExecutorService mExecutorService;
 
   @Mock AppendEntriesRequest mAppendEntriesRequest;
   @Mock RequestVoteRequest mRequestVoteRequest;
@@ -39,17 +37,7 @@ public class ClusterServiceTest {
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
-    mUnitUnderTest = new ClusterService(mRaftDelegate, mConverterRegistry, mExecutorService);
-
-    setupExecutorService();
-  }
-
-  private void setupExecutorService() {
-    /* make Runnable execute on this thread */
-    doAnswer(invocation -> {
-      ((Runnable) invocation.getArguments()[0]).run();
-      return null;
-    }).when(mExecutorService).submit(any(Runnable.class));
+    mUnitUnderTest = new ClusterService(mRaftDelegate, mConverterRegistry);
   }
 
   @SuppressWarnings("unchecked")
