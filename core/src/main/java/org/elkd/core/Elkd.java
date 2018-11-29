@@ -3,6 +3,7 @@ package org.elkd.core;
 import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.elkd.core.consensus.NodeProperties;
+import org.elkd.core.consensus.RaftFactory;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.server.cluster.ClusterUtils;
@@ -24,6 +25,10 @@ public class Elkd {
   private final Config mConfig;
   private final Raft mRaft;
   private final Server mServer;
+
+  Elkd(final Config config, final Raft raft) {
+    this(config, raft, new Server(raft));
+  }
 
   Elkd(final Config config,
        final Raft raft,
@@ -62,16 +67,10 @@ public class Elkd {
         .build();
     LOG.info(clusterSet);
 
-    final LogInvoker<Entry> log = new LogInvoker<>(new InMemoryLog());
-    final Raft raft = new Raft(
-        clusterSet,
-        new NodeProperties(log),
-        new DefaultStateFactory()
-    );
+    final Raft raft = RaftFactory.create(clusterSet);
     final Elkd elkd = new Elkd(
         config,
-        raft,
-        new Server(raft)
+        raft
     );
 
     try {

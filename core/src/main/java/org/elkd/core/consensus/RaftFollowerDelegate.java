@@ -38,7 +38,6 @@ class RaftFollowerDelegate implements RaftState {
   @Override
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
-    responseObserver.onNext(AppendEntriesResponse.builder(100, true).build());
     responseObserver.onCompleted();
     restartMonitor();
   }
@@ -46,7 +45,6 @@ class RaftFollowerDelegate implements RaftState {
   @Override
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
-    responseObserver.onNext(RequestVoteResponse.builder(0, true).build());
     responseObserver.onCompleted();
     restartMonitor();
   }
