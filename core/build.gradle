@@ -13,9 +13,9 @@ buildscript {
     }
 }
 
-def grpcVersion = "1.15.1"
-def protobufVersion = "3.5.1"
-def protocVersion = "3.5.1-1"
+def grpcVersion = "1.16.1"
+def protobufVersion = "3.6.1"
+def protocVersion = "3.6.1"
 
 dependencies {
     compile project(":shared")
