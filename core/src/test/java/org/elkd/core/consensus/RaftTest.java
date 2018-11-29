@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 public class RaftTest {
   @Mock RaftState mRaft1;
   @Mock RaftState mRaft2;
-  @Mock NodeState mNodeState;
+  @Mock NodeProperties mNodeProperties;
   @Mock ClusterSet mClusterSet;
   @Mock LogInvoker<Entry> mLogInvoker;
   @Mock AbstractStateFactory mStateFactory;
@@ -43,15 +43,14 @@ public class RaftTest {
 
     mExecutorService = Executors.newSingleThreadExecutor();
 
+    setupCommonExpectations();
+
     mUnitUnderTest = new Raft(
-        mLogInvoker,
         mClusterSet,
-        mNodeState,
+        mNodeProperties,
         mStateFactory,
         mExecutorService
     );
-
-    setupCommonExpectations();
   }
 
   private void setupCommonExpectations() {
@@ -61,6 +60,9 @@ public class RaftTest {
     doReturn(mRaft2)
         .when(mStateFactory)
         .getDelegate(any(), any());
+    doReturn(mLogInvoker)
+        .when(mNodeProperties)
+        .getLogInvoker();
   }
 
   @Test
@@ -77,7 +79,7 @@ public class RaftTest {
   public void should_transition_state_for_transition() throws InterruptedException {
     // Given
     mUnitUnderTest.initialize();
-    final Class<? extends RaftState> state = RaftLeaderState.class;
+    final Class<? extends RaftState> state = RaftLeaderDelegate.class;
 
     // When
     mUnitUnderTest.transition(state);
@@ -118,7 +120,7 @@ public class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mNodeState, mUnitUnderTest.getNodeState());
+    assertEquals(mNodeProperties, mUnitUnderTest.getNodeState());
   }
 
   @Test

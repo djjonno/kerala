@@ -26,7 +26,7 @@ public class Raft implements RaftDelegate {
   private final ClusterConnectionPool mClusterConnectionPool;
 
   private final LogInvoker<Entry> mReplicatedLog;
-  private final NodeState mNodeState;
+  private final NodeProperties mNodeProperties;
   private final AbstractStateFactory mStateFactory;
   private final BlockingQueue<Class<? extends RaftState>> mTransitions = new LinkedBlockingDeque<>();
   private final ExecutorService mExecutorService;
@@ -35,24 +35,22 @@ public class Raft implements RaftDelegate {
   /* guarded by mLock */
   private RaftState mRaftState;
 
-  public Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
-              @Nonnull final ClusterSet clusterSet,
-              @Nonnull final NodeState nodeState,
+  public Raft(@Nonnull final ClusterSet clusterSet,
+              @Nonnull final NodeProperties nodeProperties,
               @Nonnull final AbstractStateFactory stateFactory) {
-    this(replicatedLog, clusterSet, nodeState, stateFactory, Executors.newSingleThreadExecutor());
+    this(clusterSet, nodeProperties, stateFactory, Executors.newSingleThreadExecutor());
   }
 
   @VisibleForTesting
-  Raft(@Nonnull final LogInvoker<Entry> replicatedLog,
-       @Nonnull final ClusterSet clusterSet,
-       @Nonnull final NodeState nodeState,
+  Raft(@Nonnull final ClusterSet clusterSet,
+       @Nonnull final NodeProperties nodeProperties,
        @Nonnull final AbstractStateFactory delegateFactory,
        @Nonnull final ExecutorService executorService) {
-    mReplicatedLog = Preconditions.checkNotNull(replicatedLog, "replicatedLog");
     mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
-    mNodeState = Preconditions.checkNotNull(nodeState, "nodeState");
+    mNodeProperties = Preconditions.checkNotNull(nodeProperties, "nodeProperties");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
     mExecutorService = Preconditions.checkNotNull(executorService, "executorService");
+    mReplicatedLog = mNodeProperties.getLogInvoker();
 
     mClusterConnectionPool = new ClusterConnectionPool(mClusterSet);
   }
@@ -103,8 +101,8 @@ public class Raft implements RaftDelegate {
     return mClusterConnectionPool;
   }
 
-  /* package */ NodeState getNodeState() {
-    return mNodeState;
+  /* package */ NodeProperties getNodeState() {
+    return mNodeProperties;
   }
 
   private void performTransition() {

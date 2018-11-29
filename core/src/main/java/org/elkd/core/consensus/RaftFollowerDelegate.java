@@ -12,14 +12,14 @@ import javax.annotation.Nonnull;
 import java.util.Timer;
 import java.util.TimerTask;
 
-class RaftFollowerState implements RaftState {
-  private static final Logger LOG = Logger.getLogger(RaftFollowerState.class.getName());
+class RaftFollowerDelegate implements RaftState {
+  private static final Logger LOG = Logger.getLogger(RaftFollowerDelegate.class.getName());
   private static final int TIMEOUT_MS = 5000;
   private final Raft mRaft;
 
   private Timer mMonitor;
 
-  RaftFollowerState(@Nonnull final Raft raft) {
+  RaftFollowerDelegate(@Nonnull final Raft raft) {
     mRaft = Preconditions.checkNotNull(raft, "raft");
   }
 
@@ -57,7 +57,7 @@ class RaftFollowerState implements RaftState {
     mMonitor.schedule(new TimerTask() {
       @Override
       public void run() {
-        mRaft.transition(RaftCandidateState.class);
+        mRaft.transition(RaftCandidateDelegate.class);
       }
     }, TIMEOUT_MS, TIMEOUT_MS);
   }

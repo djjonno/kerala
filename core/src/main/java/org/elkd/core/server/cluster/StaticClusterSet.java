@@ -2,7 +2,6 @@ package org.elkd.core.server.cluster;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import org.apache.log4j.Logger;
 import org.elkd.core.ElkdRuntimeException;
 import org.elkd.shared.schemes.URI;
 
@@ -11,8 +10,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public final class StaticClusterSet implements ClusterSet {
-  private static final Logger LOG = Logger.getLogger(StaticClusterSet.class);
-
   private final ImmutableSet<Node> mNodes;
   private final Node mSelfNode;
 
@@ -33,6 +30,14 @@ public final class StaticClusterSet implements ClusterSet {
   @Override
   public Set<Node> getNodes() {
     return mNodes;
+  }
+
+  @Override
+  public Set<Node> getAllNodes() {
+    return ImmutableSet.<Node>builder()
+        .addAll(mNodes)
+        .add(mSelfNode)
+        .build();
   }
 
   @Override

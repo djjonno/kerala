@@ -76,6 +76,11 @@ public class InMemoryLog implements Log<Entry> {
   }
 
   @Override
+  public long getCommitIndex() {
+    return mCommitIndex;
+  }
+
+  @Override
   public String toString() {
     final List<Entry> committed = new ArrayList<>();
     for (int i = START_INDEX; i <= mCommitIndex; ++i) {

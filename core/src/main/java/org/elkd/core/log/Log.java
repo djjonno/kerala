@@ -14,4 +14,6 @@ public interface Log<T> {
   CommitResult<T> commit(long index);
 
   void revert(long index);
+
+  long getCommitIndex();
 }

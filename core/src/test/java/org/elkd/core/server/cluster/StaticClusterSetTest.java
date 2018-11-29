@@ -14,7 +14,7 @@ public class StaticClusterSetTest {
   private static final Node SELF_NODE = new Node(URI.parseURIString("127.0.0.1:9191"));
   private static final Node NODE_1 = new Node(URI.parseURIString("127.0.0.1:9192"));
   private static final Node NODE_2 = new Node(URI.parseURIString("127.0.0.1:9193"));
-  private static final Set<Node> MEMBERS = ImmutableSet.of(
+  private static final Set<Node> MEMBERS = ImmutableSet.<Node>of(
       NODE_1, NODE_2
   );
 
@@ -29,6 +29,24 @@ public class StaticClusterSetTest {
     // Then
     assertEquals(MEMBERS.size(), set.clusterSize());
     assertEquals(MEMBERS, set.getNodes());
+  }
+
+  @Test
+  public void should_return_all_nodes() {
+    // Given
+    final ImmutableSet<Node> expected = ImmutableSet.<Node>builder()
+        .addAll(MEMBERS)
+        .add(SELF_NODE)
+        .build();
+
+    // When
+    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+        .withNode(NODE_1)
+        .withNode(NODE_2)
+        .build();
+
+    // Then
+    assertEquals(expected, set.getAllNodes());
   }
 
   @Test

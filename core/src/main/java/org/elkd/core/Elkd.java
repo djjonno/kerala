@@ -2,13 +2,14 @@ package org.elkd.core;
 
 import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
+import org.elkd.core.consensus.NodeProperties;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.server.cluster.ClusterUtils;
 import org.elkd.core.server.cluster.StaticClusterSet;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
 import org.elkd.core.consensus.DefaultStateFactory;
-import org.elkd.core.consensus.NodeState;
 import org.elkd.core.consensus.Raft;
 import org.elkd.core.log.InMemoryLog;
 import org.elkd.core.log.LogInvoker;
@@ -61,10 +62,10 @@ public class Elkd {
         .build();
     LOG.info(clusterSet);
 
+    final LogInvoker<Entry> log = new LogInvoker<>(new InMemoryLog());
     final Raft raft = new Raft(
-        new LogInvoker<>(new InMemoryLog()),
         clusterSet,
-        new NodeState(),
+        new NodeProperties(log),
         new DefaultStateFactory()
     );
     final Elkd elkd = new Elkd(

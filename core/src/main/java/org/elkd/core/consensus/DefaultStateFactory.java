@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 public class DefaultStateFactory implements AbstractStateFactory {
-  static final Class<? extends RaftState> INITIAL_STATE = RaftFollowerState.class;
+  static final Class<? extends RaftState> INITIAL_STATE = RaftFollowerDelegate.class;
 
   private static Map<Class<? extends RaftState>, RaftState> mStateRegistry;
 
@@ -29,9 +29,9 @@ public class DefaultStateFactory implements AbstractStateFactory {
 
     if (mStateRegistry == null) {
       mStateRegistry = ImmutableMap.of(
-          RaftFollowerState.class, createFollowerState(raft),
-          RaftCandidateState.class, createCandidateState(raft),
-          RaftLeaderState.class, createLeaderState(raft)
+          RaftFollowerDelegate.class, createFollowerState(raft),
+          RaftCandidateDelegate.class, createCandidateState(raft),
+          RaftLeaderDelegate.class, createLeaderState(raft)
       );
     }
 
@@ -39,14 +39,14 @@ public class DefaultStateFactory implements AbstractStateFactory {
   }
 
   private RaftState createFollowerState(@Nonnull final Raft raft) {
-    return new RaftFollowerState(raft);
+    return new RaftFollowerDelegate(raft);
   }
 
   private RaftState createCandidateState(@Nonnull final Raft raft) {
-    return new RaftCandidateState(raft);
+    return new RaftCandidateDelegate(raft);
   }
 
   private RaftState createLeaderState(@Nonnull final Raft raft) {
-    return new RaftLeaderState(raft, new ClusterMessenger(raft.getClusterConnectionPool()));
+    return new RaftLeaderDelegate(raft, new ClusterMessenger(raft.getClusterConnectionPool()));
   }
 }

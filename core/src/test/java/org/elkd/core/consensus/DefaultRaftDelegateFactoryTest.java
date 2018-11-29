@@ -30,14 +30,14 @@ public class DefaultRaftDelegateFactoryTest {
   @Test
   public void should_create_singleton_instances() {
     // Given
-    final State follower = mUnitUnderTest.getDelegate(mRaft, RaftFollowerState.class);
-    final State candidate = mUnitUnderTest.getDelegate(mRaft, RaftCandidateState.class);
-    final State leader = mUnitUnderTest.getDelegate(mRaft, RaftLeaderState.class);
+    final State follower = mUnitUnderTest.getDelegate(mRaft, RaftFollowerDelegate.class);
+    final State candidate = mUnitUnderTest.getDelegate(mRaft, RaftCandidateDelegate.class);
+    final State leader = mUnitUnderTest.getDelegate(mRaft, RaftLeaderDelegate.class);
 
     // When
-    final State otherFollower = mUnitUnderTest.getDelegate(mRaft, RaftFollowerState.class);
-    final State otherCandidate = mUnitUnderTest.getDelegate(mRaft, RaftCandidateState.class);
-    final State otherLeader = mUnitUnderTest.getDelegate(mRaft, RaftLeaderState.class);
+    final State otherFollower = mUnitUnderTest.getDelegate(mRaft, RaftFollowerDelegate.class);
+    final State otherCandidate = mUnitUnderTest.getDelegate(mRaft, RaftCandidateDelegate.class);
+    final State otherLeader = mUnitUnderTest.getDelegate(mRaft, RaftLeaderDelegate.class);
 
     // Then
     assertSame(follower, otherFollower);

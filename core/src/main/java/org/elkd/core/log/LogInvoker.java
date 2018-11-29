@@ -52,6 +52,11 @@ public class LogInvoker<T> implements Log<T> {
     mLog.revert(index);
   }
 
+  @Override
+  public long getCommitIndex() {
+    return mLog.getCommitIndex();
+  }
+
   public void registerListener(@Nonnull final LogChangeListener<T> listener) {
     Preconditions.checkNotNull(listener, "listener");
     mListeners.add(listener);
