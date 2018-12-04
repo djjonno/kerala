@@ -1,9 +1,10 @@
 package org.elkd.core.consensus;
 
+import org.elkd.core.config.Config;
 import org.elkd.core.server.cluster.ClusterSet;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 
 public class RaftFactoryTest {
@@ -14,7 +15,7 @@ public class RaftFactoryTest {
     final ClusterSet clusterSet = mock(ClusterSet.class);
 
     // When
-    final Raft raft = RaftFactory.create(clusterSet);
+    final Raft raft = RaftFactory.create(mock(Config.class), clusterSet);
 
     // Then
     assertSame(clusterSet, raft.getClusterSet());

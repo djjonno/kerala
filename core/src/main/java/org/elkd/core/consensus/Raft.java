@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
+import org.elkd.core.config.Config;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
@@ -20,6 +21,7 @@ import java.util.concurrent.Executors;
 public class Raft implements RaftDelegate {
   private static final Logger LOG = Logger.getLogger(Raft.class);
 
+  private final Config mConfig;
   private final ClusterSet mClusterSet;
   private final ClusterConnectionPool mClusterConnectionPool;
   private final LogInvoker<Entry> mLogInvoker;
@@ -29,17 +31,20 @@ public class Raft implements RaftDelegate {
 
   private RaftState mRaftState;
 
-  public Raft(@Nonnull final ClusterSet clusterSet,
+  public Raft(@Nonnull final Config config,
+              @Nonnull final ClusterSet clusterSet,
               @Nonnull final NodeProperties nodeProperties,
               @Nonnull final AbstractStateFactory stateFactory) {
-    this(clusterSet, nodeProperties, stateFactory, Executors.newSingleThreadExecutor());
+    this(config, clusterSet, nodeProperties, stateFactory, Executors.newSingleThreadExecutor());
   }
 
   @VisibleForTesting
-  Raft(@Nonnull final ClusterSet clusterSet,
+  Raft(@Nonnull final Config config,
+       @Nonnull final ClusterSet clusterSet,
        @Nonnull final NodeProperties nodeProperties,
        @Nonnull final AbstractStateFactory delegateFactory,
        @Nonnull final ExecutorService executorService) {
+    mConfig = Preconditions.checkNotNull(config, "config");
     mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
     mNodeProperties = Preconditions.checkNotNull(nodeProperties, "nodeProperties");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
@@ -83,6 +88,10 @@ public class Raft implements RaftDelegate {
       mRaftState = mStateFactory.getDelegate(this, nextState);
       mRaftState.on();
     });
+  }
+
+  /* package */ Config getConfig() {
+    return mConfig;
   }
 
   /* package */ LogInvoker<Entry> getLogInvoker() {

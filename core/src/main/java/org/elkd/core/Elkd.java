@@ -62,7 +62,7 @@ public class Elkd {
         .build();
     LOG.info(clusterSet);
 
-    final Raft raft = RaftFactory.create(clusterSet);
+    final Raft raft = RaftFactory.create(config, clusterSet);
     final Elkd elkd = new Elkd(
         config,
         raft

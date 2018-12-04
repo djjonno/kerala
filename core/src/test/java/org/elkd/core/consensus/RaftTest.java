@@ -1,6 +1,7 @@
 package org.elkd.core.consensus;
 
 import io.grpc.stub.StreamObserver;
+import org.elkd.core.config.Config;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
@@ -16,12 +17,13 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.concurrent.ExecutorService;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 public class RaftTest {
+  @Mock Config mConfig;
   @Mock RaftState mRaft1;
   @Mock RaftState mRaft2;
   @Mock NodeProperties mNodeProperties;
@@ -45,6 +47,7 @@ public class RaftTest {
     setupCommonExpectations();
 
     mUnitUnderTest = new Raft(
+        mConfig,
         mClusterSet,
         mNodeProperties,
         mStateFactory,
@@ -114,11 +117,19 @@ public class RaftTest {
   }
 
   @Test
+  public void should_get_config() {
+    // Given / When - mUnitUnderTest
+
+    // Then
+    assertSame(mConfig, mUnitUnderTest.getConfig());
+  }
+
+  @Test
   public void should_get_context() {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mNodeProperties, mUnitUnderTest.getNodeProperties());
+    assertSame(mNodeProperties, mUnitUnderTest.getNodeProperties());
   }
 
   @Test
@@ -126,6 +137,6 @@ public class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mClusterSet, mUnitUnderTest.getClusterSet());
+    assertSame(mClusterSet, mUnitUnderTest.getClusterSet());
   }
 }

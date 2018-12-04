@@ -13,8 +13,6 @@ public class DefaultStateFactory implements AbstractStateFactory {
 
   private static Map<Class<? extends RaftState>, RaftState> mStateRegistry;
 
-  public DefaultStateFactory() { }
-
   @Override
   public RaftState getInitialDelegate(@Nonnull final Raft raft) {
     Preconditions.checkNotNull(raft, "raft");
