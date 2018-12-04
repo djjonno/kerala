@@ -13,7 +13,6 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
 public class ConverterRegistryTest {
-
   @Mock Converter mConverter;
 
   private ConverterRegistry mUnitUnderTest;

@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class AppendEntriesResponseConverterTest {
-
   private static final int TERM = 1;
   private static final boolean SUCCESS = true;
 

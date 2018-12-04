@@ -16,7 +16,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ListenableFutureConverterDecoratorTest {
-
   private static final boolean CANCELLED = true;
   private static final boolean IS_CANCELLED = true;
   private static final boolean IS_DONE = true;

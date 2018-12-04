@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 public class AppendEntriesRequestConverterTest {
-
   private static final int TERM = 1;
   private static final int PREV_LOG_TERM = 2;
   private static final int PREV_LOG_INDEX = 3;
@@ -28,7 +27,7 @@ public class AppendEntriesRequestConverterTest {
   private static final String EVENT_NAME = "event";
   private static final String KEY = "key";
   private static final String VALUE = "value";
-  private static final Entry ENTRY = Entry.builder(EVENT_NAME)
+  private static final Entry ENTRY = Entry.builder(TERM, EVENT_NAME)
       .withCommand(new SetStateMachineCommand(KEY, VALUE))
       .withCommand(new UnSetStateMachineCommand(KEY))
       .build();

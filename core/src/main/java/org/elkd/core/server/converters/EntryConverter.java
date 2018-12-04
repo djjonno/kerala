@@ -42,12 +42,13 @@ public class EntryConverter implements Converter {
 
     return RpcEntry.newBuilder()
         .addAllCommands(builder.build())
+        .setTerm(source.getTerm())
         .setEvent(source.getEvent())
         .build();
   }
 
   private Entry convertRpcEntry(final RpcEntry source, final ConverterRegistry registry) {
-    final Entry.Builder builder = Entry.builder(source.getEvent());
+    final Entry.Builder builder = Entry.builder(source.getTerm(), source.getEvent());
     for (final RpcStateMachineCommand command : source.getCommandsList()) {
       builder.withCommand(registry.convert(command));
     }

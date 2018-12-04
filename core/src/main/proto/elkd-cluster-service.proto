@@ -34,8 +34,9 @@ message RpcStateMachineCommand {
 }
 
 message RpcEntry {
-    string event = 1;
-    repeated RpcStateMachineCommand commands = 2;
+    uint32 term = 1;
+    string event = 2;
+    repeated RpcStateMachineCommand commands = 3;
 }
 
 message RpcRequestVoteRequest {

@@ -10,24 +10,29 @@ import java.util.List;
 import java.util.Objects;
 
 public class Entry {
+  private final int mTerm;
   private final String mEvent;
   private final List<StateMachineCommand> mCommands;
 
-  private Entry(@Nonnull final String event,
+  private Entry(final int term,
+                @Nonnull final String event,
                 @Nonnull final List<StateMachineCommand> stateMachineCommands) {
+    mTerm = term;
     mEvent = Preconditions.checkNotNull(event, "event");
     mCommands = ImmutableList.copyOf(Preconditions.checkNotNull(stateMachineCommands, "stateMachineCommands"));
   }
 
-  public static Builder builder(final String event) {
-    return new Builder(event);
+  public static Builder builder(final int term, final String event) {
+    return new Builder(term, event);
   }
 
   public static class Builder {
+    private int mTerm;
     private String mEvent;
     private List<StateMachineCommand> mCommands = new ArrayList<>();
 
-    Builder(@Nonnull final String event) {
+    Builder(final int term, @Nonnull final String event) {
+      mTerm = term;
       mEvent = Preconditions.checkNotNull(event, "event");
     }
 
@@ -38,10 +43,15 @@ public class Entry {
 
     public Entry build() {
       return new Entry(
+          mTerm,
           mEvent,
           mCommands
       );
     }
+  }
+
+  public int getTerm() {
+    return mTerm;
   }
 
   public String getEvent() {
@@ -61,19 +71,21 @@ public class Entry {
       return false;
     }
     final Entry entry = (Entry) rhs;
-    return Objects.equals(mEvent, entry.mEvent) &&
+    return mTerm == entry.mTerm &&
+        Objects.equals(mEvent, entry.mEvent) &&
         Objects.equals(mCommands, entry.mCommands);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mEvent, mCommands);
+    return Objects.hash(mTerm, mEvent, mCommands);
   }
 
   @Override
   public String toString() {
     return "Entry{" +
-        "mEvent='" + mEvent + '\'' +
+        "mTerm=" + mTerm +
+        ", mEvent='" + mEvent + '\'' +
         ", mCommands=" + mCommands +
         '}';
   }

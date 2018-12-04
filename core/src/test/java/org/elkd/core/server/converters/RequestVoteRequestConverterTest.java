@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class RequestVoteRequestConverterTest {
-
   private static final int TERM = 1;
   private static final String CANDIDATE_ID = "candidateId";
   private static final int LAST_LOG_INDEX = 2;

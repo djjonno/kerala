@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class EntryConverterTest {
+  private static final int TERM = 1;
   private static final String EVENT = "event";
   private static final String KEY = "key";
   private static final String VALUE = "value";
@@ -26,11 +27,11 @@ public class EntryConverterTest {
   private static final RpcStateMachineCommand RPC_SET_STATE_MACHINE_COMMAND = RpcStateMachineCommand.newBuilder().setKey(KEY).setValue(VALUE).setOperation(SET).build();
   private static final RpcStateMachineCommand RPC_UNSET_STATE_MACHINE_COMMAND = RpcStateMachineCommand.newBuilder().setKey(KEY).setOperation(UNSET).build();
 
-  private static final Entry ENTRY = Entry.builder(EVENT)
+  private static final Entry ENTRY = Entry.builder(TERM, EVENT)
       .withCommand(SET_STATE_MACHINE_COMMAND)
       .withCommand(UNSET_STATE_MACHINE_COMMAND)
       .build();
-  private static final RpcEntry RPC_ENTRY = RpcEntry.newBuilder().setEvent(EVENT).addAllCommands(ImmutableList.of(
+  private static final RpcEntry RPC_ENTRY = RpcEntry.newBuilder().setTerm(TERM).setEvent(EVENT).addAllCommands(ImmutableList.of(
       RPC_SET_STATE_MACHINE_COMMAND,
       RPC_UNSET_STATE_MACHINE_COMMAND
   )).build();
