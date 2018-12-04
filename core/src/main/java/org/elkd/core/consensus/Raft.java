@@ -4,35 +4,29 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
-import org.elkd.core.server.cluster.ClusterConnectionPool;
-import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.log.LogInvoker;
+import org.elkd.core.server.cluster.ClusterConnectionPool;
+import org.elkd.core.server.cluster.ClusterSet;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class Raft implements RaftDelegate {
   private static final Logger LOG = Logger.getLogger(Raft.class);
 
   private final ClusterSet mClusterSet;
   private final ClusterConnectionPool mClusterConnectionPool;
-
-  private final LogInvoker<Entry> mReplicatedLog;
+  private final LogInvoker<Entry> mLogInvoker;
   private final NodeProperties mNodeProperties;
   private final AbstractStateFactory mStateFactory;
-  private final BlockingQueue<Class<? extends RaftState>> mTransitions = new LinkedBlockingDeque<>();
-  private final ExecutorService mExecutorService;
-  private final Object mLock = new Object();
+  private final ExecutorService mSerialExecutor;
 
-  /* guarded by mLock */
   private RaftState mRaftState;
 
   public Raft(@Nonnull final ClusterSet clusterSet,
@@ -49,8 +43,8 @@ public class Raft implements RaftDelegate {
     mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
     mNodeProperties = Preconditions.checkNotNull(nodeProperties, "nodeProperties");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
-    mExecutorService = Preconditions.checkNotNull(executorService, "executorService");
-    mReplicatedLog = mNodeProperties.getLogInvoker();
+    mSerialExecutor = Preconditions.checkNotNull(executorService, "executorService");
+    mLogInvoker = mNodeProperties.getLogInvoker();
 
     mClusterConnectionPool = new ClusterConnectionPool(mClusterSet);
   }
@@ -60,37 +54,39 @@ public class Raft implements RaftDelegate {
 
     mClusterConnectionPool.initialize();
 
-    synchronized (mLock) {
+    mSerialExecutor.execute(() -> {
       mRaftState = mStateFactory.getInitialDelegate(this);
       mRaftState.on();
-      mExecutorService.submit(this::performTransition);
-    }
+    });
   }
 
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
-    synchronized (mLock) {
-      LOG.info("delegating appendEntries to " + mRaftState);
-      LOG.info("request -> " + appendEntriesRequest);
+    mSerialExecutor.execute(() -> {
+      LOG.info("delegating appendEntries to " + mRaftState + " w/ " + appendEntriesRequest);
       mRaftState.delegateAppendEntries(appendEntriesRequest, responseObserver);
-    }
+    });
   }
 
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
-    synchronized (mLock) {
-      LOG.info("delegating requestVote to " + mRaftState);
-      LOG.info("request -> " + requestVoteRequest);
+    mSerialExecutor.execute(() -> {
+      LOG.info("delegating appendEntries to " + mRaftState + " w/ " + requestVoteRequest);
       mRaftState.delegateRequestVote(requestVoteRequest, responseObserver);
-    }
+    });
   }
 
-  void transition(@Nonnull final Class<? extends RaftState> newDelegate) {
-    mTransitions.add(newDelegate);
+  /* package */ void transitionToState(@Nonnull final Class<? extends RaftState> nextState) {
+    LOG.info("transitioning to -> " + nextState);
+    mSerialExecutor.execute(() -> {
+      mRaftState.off();
+      mRaftState = mStateFactory.getDelegate(this, nextState);
+      mRaftState.on();
+    });
   }
 
-  /* package */ LogInvoker<Entry> getReplicatedLog() {
-    return mReplicatedLog;
+  /* package */ LogInvoker<Entry> getLogInvoker() {
+    return mLogInvoker;
   }
 
   /* package */ ClusterSet getClusterSet() {
@@ -101,24 +97,7 @@ public class Raft implements RaftDelegate {
     return mClusterConnectionPool;
   }
 
-  /* package */ NodeProperties getNodeState() {
+  /* package */ NodeProperties getNodeProperties() {
     return mNodeProperties;
-  }
-
-  private void performTransition() {
-    for (;;) {
-      try {
-        LOG.info("awaiting next transition");
-        final Class<? extends RaftState> next = mTransitions.take();
-        LOG.info("transitioning to -> " + next);
-        synchronized (mLock) {
-          mRaftState.off();
-          mRaftState = mStateFactory.getDelegate(this, next);
-          mRaftState.on();
-        }
-      } catch (final InterruptedException e) {
-        LOG.error("failed to retrieve next transition", e);
-      }
-    }
   }
 }

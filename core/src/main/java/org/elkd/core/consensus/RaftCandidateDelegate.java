@@ -15,10 +15,9 @@ import java.util.TimerTask;
 class RaftCandidateDelegate implements RaftState {
   private static final Logger LOG = Logger.getLogger(RaftCandidateDelegate.class.getName());
   private static final int TIMEOUT_MS = 1000;
+  private final Raft mRaft;
 
   private Timer mMonitor;
-
-  private final Raft mRaft;
 
   RaftCandidateDelegate(@Nonnull final Raft raft) {
     mRaft = Preconditions.checkNotNull(raft, "raft");
@@ -55,7 +54,7 @@ class RaftCandidateDelegate implements RaftState {
     mMonitor.schedule(new TimerTask() {
       @Override
       public void run() {
-        mRaft.transition(RaftLeaderDelegate.class);
+        mRaft.transitionToState(RaftLeaderDelegate.class);
       }
     }, TIMEOUT_MS, TIMEOUT_MS);
   }

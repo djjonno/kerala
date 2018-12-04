@@ -1,20 +1,20 @@
 package org.elkd.core.consensus;
 
 import io.grpc.stub.StreamObserver;
-import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.log.LogInvoker;
+import org.elkd.core.server.cluster.ClusterSet;
+import org.elkd.core.testutil.Executors;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
@@ -41,7 +41,7 @@ public class RaftTest {
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    mExecutorService = Executors.newSingleThreadExecutor();
+    mExecutorService = Executors.getMockedSerialExecutor();
 
     setupCommonExpectations();
 
@@ -66,7 +66,7 @@ public class RaftTest {
   }
 
   @Test
-  public void should_get_initial_state_and_activate_on_initialize() {
+  public void should_get_initial_state_and_activate_on_initialize() throws InterruptedException {
     // Given / When
     mUnitUnderTest.initialize();
 
@@ -82,17 +82,16 @@ public class RaftTest {
     final Class<? extends RaftState> state = RaftLeaderDelegate.class;
 
     // When
-    mUnitUnderTest.transition(state);
+    mUnitUnderTest.transitionToState(state);
 
     // Then
-    mExecutorService.awaitTermination(1, TimeUnit.SECONDS); // TODO: find a better way
     verify(mRaft1).off();
     verify(mStateFactory).getDelegate(mUnitUnderTest, state);
     verify(mRaft2).on();
   }
 
   @Test
-  public void should_route_appendEntries_to_active_state() {
+  public void should_route_appendEntries_to_active_state() throws InterruptedException {
     // Given
     mUnitUnderTest.initialize();
 
@@ -104,7 +103,7 @@ public class RaftTest {
   }
 
   @Test
-  public void should_route_requestVotes_to_active_state() {
+  public void should_route_requestVotes_to_active_state() throws InterruptedException {
     // Given
     mUnitUnderTest.initialize();
 
@@ -120,7 +119,7 @@ public class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertEquals(mNodeProperties, mUnitUnderTest.getNodeState());
+    assertEquals(mNodeProperties, mUnitUnderTest.getNodeProperties());
   }
 
   @Test

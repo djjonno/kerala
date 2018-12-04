@@ -17,10 +17,10 @@ class RaftLeaderDelegate implements RaftState {
   private static final Logger LOG = Logger.getLogger(RaftLeaderDelegate.class.getName());
   private static final int TIMEOUT_MS = 1000;
 
-  private Timer mMonitor;
-
   private final Raft mRaft;
   private final ClusterMessenger mClusterMessenger;
+
+  private Timer mMonitor;
 
   /* package */ RaftLeaderDelegate(@Nonnull final Raft raft,
                                    @Nonnull final ClusterMessenger clusterMessenger) {
@@ -60,7 +60,7 @@ class RaftLeaderDelegate implements RaftState {
     mMonitor.schedule(new TimerTask() {
       @Override
       public void run() {
-        mRaft.transition(RaftFollowerDelegate.class);
+        mRaft.transitionToState(RaftFollowerDelegate.class);
       }
     }, TIMEOUT_MS, TIMEOUT_MS);
   }

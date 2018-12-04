@@ -55,7 +55,7 @@ class RaftFollowerDelegate implements RaftState {
     mMonitor.schedule(new TimerTask() {
       @Override
       public void run() {
-        mRaft.transition(RaftCandidateDelegate.class);
+        mRaft.transitionToState(RaftCandidateDelegate.class);
       }
     }, TIMEOUT_MS, TIMEOUT_MS);
   }
