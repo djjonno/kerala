@@ -14,7 +14,7 @@ public class RaftFactory {
     return new Raft(
         config,
         clusterSet,
-        new NodeProperties(log),
+        new RaftContext(log),
         new DefaultStateFactory()
     );
   }

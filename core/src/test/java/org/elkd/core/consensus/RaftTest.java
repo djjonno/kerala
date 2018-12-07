@@ -26,7 +26,7 @@ public class RaftTest {
   @Mock Config mConfig;
   @Mock RaftState mRaft1;
   @Mock RaftState mRaft2;
-  @Mock NodeProperties mNodeProperties;
+  @Mock RaftContext mRaftContext;
   @Mock ClusterSet mClusterSet;
   @Mock LogInvoker<Entry> mLogInvoker;
   @Mock AbstractStateFactory mStateFactory;
@@ -49,7 +49,7 @@ public class RaftTest {
     mUnitUnderTest = new Raft(
         mConfig,
         mClusterSet,
-        mNodeProperties,
+        mRaftContext,
         mStateFactory,
         mExecutorService
     );
@@ -63,7 +63,7 @@ public class RaftTest {
         .when(mStateFactory)
         .getDelegate(any(), any());
     doReturn(mLogInvoker)
-        .when(mNodeProperties)
+        .when(mRaftContext)
         .getLogInvoker();
   }
 
@@ -129,7 +129,7 @@ public class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertSame(mNodeProperties, mUnitUnderTest.getNodeProperties());
+    assertSame(mRaftContext, mUnitUnderTest.getNodeProperties());
   }
 
   @Test

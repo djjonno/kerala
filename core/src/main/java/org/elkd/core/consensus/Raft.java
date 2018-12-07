@@ -25,7 +25,7 @@ public class Raft implements RaftDelegate {
   private final ClusterSet mClusterSet;
   private final ClusterConnectionPool mClusterConnectionPool;
   private final LogInvoker<Entry> mLogInvoker;
-  private final NodeProperties mNodeProperties;
+  private final RaftContext mRaftContext;
   private final AbstractStateFactory mStateFactory;
   private final ExecutorService mSerialExecutor;
 
@@ -33,23 +33,23 @@ public class Raft implements RaftDelegate {
 
   public Raft(@Nonnull final Config config,
               @Nonnull final ClusterSet clusterSet,
-              @Nonnull final NodeProperties nodeProperties,
+              @Nonnull final RaftContext raftContext,
               @Nonnull final AbstractStateFactory stateFactory) {
-    this(config, clusterSet, nodeProperties, stateFactory, Executors.newSingleThreadExecutor());
+    this(config, clusterSet, raftContext, stateFactory, Executors.newSingleThreadExecutor());
   }
 
   @VisibleForTesting
   Raft(@Nonnull final Config config,
        @Nonnull final ClusterSet clusterSet,
-       @Nonnull final NodeProperties nodeProperties,
+       @Nonnull final RaftContext raftContext,
        @Nonnull final AbstractStateFactory delegateFactory,
        @Nonnull final ExecutorService executorService) {
     mConfig = Preconditions.checkNotNull(config, "config");
     mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
-    mNodeProperties = Preconditions.checkNotNull(nodeProperties, "nodeProperties");
+    mRaftContext = Preconditions.checkNotNull(raftContext, "raftContext");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
     mSerialExecutor = Preconditions.checkNotNull(executorService, "executorService");
-    mLogInvoker = mNodeProperties.getLogInvoker();
+    mLogInvoker = mRaftContext.getLogInvoker();
 
     mClusterConnectionPool = new ClusterConnectionPool(mClusterSet);
   }
@@ -106,7 +106,7 @@ public class Raft implements RaftDelegate {
     return mClusterConnectionPool;
   }
 
-  /* package */ NodeProperties getNodeProperties() {
-    return mNodeProperties;
+  /* package */ RaftContext getNodeProperties() {
+    return mRaftContext;
   }
 }

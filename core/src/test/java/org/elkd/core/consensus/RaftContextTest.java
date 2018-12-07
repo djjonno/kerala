@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
 
-public class NodePropertiesTest {
+public class RaftContextTest {
   private static final int DEFAULT_CURRENT_TERM = 0;
   private static final String DEFAULT_VOTED_FOR = null;
 
@@ -23,36 +23,36 @@ public class NodePropertiesTest {
   @Test
   public void should_have_default_values() {
     // Given / When
-    final NodeProperties nodeProperties = new NodeProperties(mLogInvoker);
+    final RaftContext raftContext = new RaftContext(mLogInvoker);
 
     // Then
-    assertEquals(DEFAULT_CURRENT_TERM, nodeProperties.getCurrentTerm());
-    assertEquals(DEFAULT_VOTED_FOR, nodeProperties.getVotedFor());
+    assertEquals(DEFAULT_CURRENT_TERM, raftContext.getCurrentTerm());
+    assertEquals(DEFAULT_VOTED_FOR, raftContext.getVotedFor());
   }
 
   @Test
   public void should_set_votedFor() {
     // Given
-    final NodeProperties nodeProperties = new NodeProperties(mLogInvoker);
+    final RaftContext raftContext = new RaftContext(mLogInvoker);
     final String votedFor = "node-id";
 
     // When
-    nodeProperties.setVotedFor(votedFor);
+    raftContext.setVotedFor(votedFor);
 
     // Then
-    assertEquals(votedFor, nodeProperties.getVotedFor());
+    assertEquals(votedFor, raftContext.getVotedFor());
   }
 
   @Test
   public void should_set_currentTerm() {
     // Given
-    final NodeProperties nodeProperties = new NodeProperties(mLogInvoker);
+    final RaftContext raftContext = new RaftContext(mLogInvoker);
     final int currentTerm = 10;
 
     // When
-    nodeProperties.setCurrentTerm(currentTerm);
+    raftContext.setCurrentTerm(currentTerm);
 
     // Then
-    assertEquals(currentTerm, nodeProperties.getCurrentTerm());
+    assertEquals(currentTerm, raftContext.getCurrentTerm());
   }
 }

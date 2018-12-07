@@ -6,14 +6,14 @@ import org.elkd.core.log.LogInvoker;
 
 import javax.annotation.Nullable;
 
-public class NodeProperties {
+public class RaftContext {
 
   /* persistent state */
   private int mCurrentTerm;
   private String mVotedFor;
   private LogInvoker<Entry> mLogInvoker;
 
-  public NodeProperties(final LogInvoker<Entry> logInvoker) {
+  public RaftContext(final LogInvoker<Entry> logInvoker) {
     mCurrentTerm = 0;
     mVotedFor = null;
     mLogInvoker = Preconditions.checkNotNull(logInvoker, "logInvoker");
