@@ -55,6 +55,12 @@ public class Config {
     return Integer.parseInt(mConfig.get(key));
   }
 
+  public Integer getAsInteger(final String key, final Integer defaultValue) {
+    return mConfig.get(key) == null
+        ? defaultValue
+        : getAsInteger(key);
+  }
+
   public Double getAsDouble(final String key) {
     return Double.parseDouble(mConfig.get(key));
   }

@@ -1,5 +1,6 @@
 package org.elkd.core.consensus;
 
+import org.elkd.core.config.ConfigProvider;
 import org.elkd.core.server.cluster.ClusterConnectionPool;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,10 @@ public class DefaultRaftDelegateFactoryTest {
     doReturn(mock(ClusterConnectionPool.class))
         .when(mRaft)
         .getClusterConnectionPool();
+
+    doReturn(ConfigProvider.compileConfig(new String[] { }))
+        .when(mRaft)
+        .getConfig();
   }
 
   @Test

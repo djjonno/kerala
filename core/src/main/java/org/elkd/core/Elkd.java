@@ -63,10 +63,7 @@ public class Elkd {
     LOG.info(clusterSet);
 
     final Raft raft = RaftFactory.create(config, clusterSet);
-    final Elkd elkd = new Elkd(
-        config,
-        raft
-    );
+    final Elkd elkd = new Elkd(config, raft);
 
     try {
       Runtime.getRuntime().addShutdownHook(new Thread(elkd::shutdown));
