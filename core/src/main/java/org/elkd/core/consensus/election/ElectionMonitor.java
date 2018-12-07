@@ -25,7 +25,7 @@ public class ElectionMonitor {
     mTimerFactory = Preconditions.checkNotNull(timerFactory, "timerFactory");
   }
 
-  public void monitor() {
+  public void reset() {
     stop();
     mTimer = mTimerFactory.createDaemonTimer();
     mTimer.schedule(new TimerTask() {

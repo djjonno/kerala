@@ -69,7 +69,7 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseStreamObserver);
 
     // Then
-    verify(mElectionMonitor, times(2)).monitor();
+    verify(mElectionMonitor, times(2)).reset();
     verify(mRaft, never()).transitionToState(any());
   }
 
@@ -82,6 +82,6 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVoteResponseStreamObserver);
 
     // Then
-    verify(mElectionMonitor, times(2)).monitor();
+    verify(mElectionMonitor, times(2)).reset();
   }
 }

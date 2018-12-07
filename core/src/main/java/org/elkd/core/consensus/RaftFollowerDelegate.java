@@ -12,14 +12,12 @@ import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
 
 import javax.annotation.Nonnull;
-import java.util.Timer;
 
 class RaftFollowerDelegate implements RaftState {
   private static final Logger LOG = Logger.getLogger(RaftFollowerDelegate.class.getName());
 
   private final Raft mRaft;
 
-  private Timer mMonitor;
   private ElectionMonitor mElectionMonitor;
 
   RaftFollowerDelegate(@Nonnull final Raft raft) {
@@ -41,7 +39,7 @@ class RaftFollowerDelegate implements RaftState {
   @Override
   public void on() {
     LOG.info("ready");
-    mElectionMonitor.monitor();
+    mElectionMonitor.reset();
   }
 
   @Override
@@ -54,13 +52,13 @@ class RaftFollowerDelegate implements RaftState {
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
     responseObserver.onCompleted();
-    mElectionMonitor.monitor();
+    mElectionMonitor.reset();
   }
 
   @Override
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
     responseObserver.onCompleted();
-    mElectionMonitor.monitor();
+    mElectionMonitor.reset();
   }
 }

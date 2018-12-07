@@ -43,7 +43,7 @@ public class ElectionMonitorTest {
   @Test
   public void should_use_timerFactory() {
     // Given / When
-    mUnitUnderTest.monitor();
+    mUnitUnderTest.reset();
 
     // Then
     verify(mTimerFactory).createDaemonTimer();
@@ -52,7 +52,7 @@ public class ElectionMonitorTest {
   @Test
   public void should_schedule_timeoutTask_with_timeout() {
     // Given / When
-    mUnitUnderTest.monitor();
+    mUnitUnderTest.reset();
 
     // Then
     verify(mTimer).schedule(any(TimerTask.class), eq(TIMEOUT));
@@ -61,7 +61,7 @@ public class ElectionMonitorTest {
   @Test
   public void should_execute_timeoutTask_after_timeout_elapsed() throws InterruptedException {
     // Given / When
-    mUnitUnderTest.monitor();
+    mUnitUnderTest.reset();
 
     // Then
     verify(mTimeoutTask).run();
@@ -70,7 +70,7 @@ public class ElectionMonitorTest {
   @Test
   public void should_cancel_timer_on_stop() {
     // Given
-    mUnitUnderTest.monitor();
+    mUnitUnderTest.reset();
 
     // When
     mUnitUnderTest.stop();
@@ -89,23 +89,23 @@ public class ElectionMonitorTest {
   }
 
   @Test
-  public void should_stop_previous_timer_on_monitor() {
+  public void should_stop_previous_timer_on_reset() {
     // Given
     final Timer first = mock(Timer.class);
     final Timer second = mock(Timer.class);
     doReturn(first, second)
         .when(mTimerFactory)
         .createDaemonTimer();
-    mUnitUnderTest.monitor();
+    mUnitUnderTest.reset();
 
     // When
-    mUnitUnderTest.monitor();
+    mUnitUnderTest.reset();
 
     // Then
     verify(first).cancel();
 
     // When
-    mUnitUnderTest.monitor();
+    mUnitUnderTest.reset();
 
     // Then
     verify(second).cancel();
