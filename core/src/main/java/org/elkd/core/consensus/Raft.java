@@ -106,7 +106,7 @@ public class Raft implements RaftDelegate {
     return mClusterConnectionPool;
   }
 
-  /* package */ RaftContext getNodeProperties() {
+  /* package */ RaftContext getRaftContext() {
     return mRaftContext;
   }
 }

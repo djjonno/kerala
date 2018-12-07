@@ -20,6 +20,7 @@ class RaftLeaderDelegate implements RaftState {
   private final Raft mRaft;
   private final ClusterMessenger mClusterMessenger;
 
+  private LeaderContext mLeaderContext;
   private Timer mMonitor;
 
   /* package */ RaftLeaderDelegate(@Nonnull final Raft raft,
@@ -30,6 +31,7 @@ class RaftLeaderDelegate implements RaftState {
 
   @Override
   public void on() {
+    mLeaderContext = new LeaderContext(mRaft.getClusterSet().getNodes(), mRaft.getRaftContext());
     LOG.info("ready");
     restartMonitor();
   }

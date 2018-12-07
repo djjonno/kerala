@@ -38,11 +38,11 @@ public class RaftContext {
     commit();
   }
 
-  public LogInvoker<Entry> getLogInvoker() {
+  LogInvoker<Entry> getLogInvoker() {
     return mLogInvoker;
   }
 
-  public long getCommitIndex() {
+  long getCommitIndex() {
     return mLogInvoker.getCommitIndex();
   }
 

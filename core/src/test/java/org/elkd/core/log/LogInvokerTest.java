@@ -202,7 +202,7 @@ public class LogInvokerTest {
   }
 
   @Test
-  public void should_return_getCommitIndex_from_delegate() {
+  public void should_return_commitIndex_from_delegate() {
     // Given
     final long commit = 10;
     doReturn(commit)
@@ -214,6 +214,21 @@ public class LogInvokerTest {
 
     // Then
     assertEquals(commit, commitIndex);
+  }
+
+  @Test
+  public void should_return_lastIndex_from_delegate() {
+    // Given
+    final long expectedIndex = 10;
+    doReturn(expectedIndex)
+        .when(mLog)
+        .getLastIndex();
+
+    // When
+    final long lastIndex = mUnitUnderTest.getLastIndex();
+
+    // Then
+    assertEquals(expectedIndex, lastIndex);
   }
 
   private ImmutableList<Entry> getEntries() {

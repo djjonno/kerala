@@ -129,7 +129,7 @@ public class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertSame(mRaftContext, mUnitUnderTest.getNodeProperties());
+    assertSame(mRaftContext, mUnitUnderTest.getRaftContext());
   }
 
   @Test

@@ -11,8 +11,8 @@ public class InMemoryLog implements Log<Entry> {
   private static final int START_INDEX = 0;
   private static final int ROLLBACK = 1;
   private List<Entry> mLogStore;
-  private long mIndex = -1;
-  private long mCommitIndex = -1;
+  private long mIndex = Log.INDEX_FROM;
+  private long mCommitIndex = Log.INDEX_FROM;
 
   public InMemoryLog() {
     mLogStore = new ArrayList<>();
@@ -76,6 +76,11 @@ public class InMemoryLog implements Log<Entry> {
   @Override
   public long getCommitIndex() {
     return mCommitIndex;
+  }
+
+  @Override
+  public long getLastIndex() {
+    return mIndex;
   }
 
   @Override
