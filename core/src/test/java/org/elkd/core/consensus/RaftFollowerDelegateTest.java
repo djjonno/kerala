@@ -2,7 +2,6 @@ package org.elkd.core.consensus;
 
 import io.grpc.stub.StreamObserver;
 import org.elkd.core.config.Config;
-import org.elkd.core.consensus.election.ElectionMonitor;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
@@ -24,7 +23,7 @@ public class RaftFollowerDelegateTest {
   @Mock StreamObserver<AppendEntriesResponse> mAppendEntriesResponseStreamObserver;
   @Mock RequestVoteRequest mRequestVoteRequest;
   @Mock StreamObserver<RequestVoteResponse> mRequestVoteResponseStreamObserver;
-  @Mock ElectionMonitor mElectionMonitor;
+  @Mock TimeoutMonitor mTimeoutMonitor;
 
   private RaftFollowerDelegate mUnitUnderTest;
 
@@ -34,7 +33,7 @@ public class RaftFollowerDelegateTest {
 
     setupCommonExpectations();
 
-    mUnitUnderTest = new RaftFollowerDelegate(mRaft, mElectionMonitor);
+    mUnitUnderTest = new RaftFollowerDelegate(mRaft, mTimeoutMonitor);
   }
 
   private void setupCommonExpectations() {
@@ -69,7 +68,7 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseStreamObserver);
 
     // Then
-    verify(mElectionMonitor, times(2)).reset();
+    verify(mTimeoutMonitor, times(2)).reset();
     verify(mRaft, never()).transitionToState(any());
   }
 
@@ -82,6 +81,6 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVoteResponseStreamObserver);
 
     // Then
-    verify(mElectionMonitor, times(2)).reset();
+    verify(mTimeoutMonitor, times(2)).reset();
   }
 }

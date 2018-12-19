@@ -1,4 +1,4 @@
-package org.elkd.core.consensus.election;
+package org.elkd.core.consensus;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,14 +12,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class ElectionMonitorTest {
+public class TimeoutMonitorTest {
   private static final long TIMEOUT = 500;
 
-  @Mock ElectionMonitor.TimerFactory mTimerFactory;
+  @Mock TimeoutMonitor.TimerFactory mTimerFactory;
   @Mock Runnable mTimeoutTask;
   @Mock Timer mTimer;
 
-  private ElectionMonitor mUnitUnderTest;
+  private TimeoutMonitor mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
@@ -37,7 +37,7 @@ public class ElectionMonitorTest {
         .when(mTimer)
         .schedule(any(TimerTask.class), eq(TIMEOUT));
 
-    mUnitUnderTest = new ElectionMonitor(TIMEOUT, mTimeoutTask, mTimerFactory);
+    mUnitUnderTest = new TimeoutMonitor(TIMEOUT, mTimeoutTask, mTimerFactory);
   }
 
   @Test

@@ -13,7 +13,8 @@ import static org.mockito.Mockito.doReturn;
 
 public class LeaderContextTest {
 
-  private static long LAST_LOG_INDEX = 1;
+  private static final long LAST_LOG_INDEX = 1;
+  private static final long FOREIGN_INDEX = 10;
 
   @Mock Node mNode1;
   @Mock Node mNode2;
@@ -73,7 +74,7 @@ public class LeaderContextTest {
   @Test(expected = IllegalStateException.class)
   public void should_throw_exception_when_updating_nextIndex_with_foreign_node() {
     // Given / When
-    mUnitUnderTest.updateNextIndex(mForeignNode, 10);
+    mUnitUnderTest.updateNextIndex(mForeignNode, FOREIGN_INDEX);
 
     // Then - exception thrown
   }
@@ -111,7 +112,7 @@ public class LeaderContextTest {
   @Test(expected = IllegalStateException.class)
   public void should_throw_exception_when_updating_matchIndex_with_foreign_node() {
     // Given / When
-    mUnitUnderTest.updateMatchIndex(mForeignNode, 10);
+    mUnitUnderTest.updateMatchIndex(mForeignNode, FOREIGN_INDEX);
 
     // Then - exception thrown
   }

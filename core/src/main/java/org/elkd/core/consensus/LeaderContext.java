@@ -51,4 +51,12 @@ public class LeaderContext {
 
     mMatchIndex.put(node, index);
   }
+
+  @Override
+  public String toString() {
+    return "LeaderContext{" +
+        "mNextIndex=" + mNextIndex +
+        ", mMatchIndex=" + mMatchIndex +
+        '}';
+  }
 }

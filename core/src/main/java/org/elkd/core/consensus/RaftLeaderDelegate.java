@@ -29,6 +29,7 @@ class RaftLeaderDelegate implements RaftState {
   public void on() {
     mLeaderContext = new LeaderContext(mRaft.getClusterSet().getNodes(), mRaft.getRaftContext());
     LOG.info("ready");
+    LOG.info(mLeaderContext.toString());
   }
 
   @Override
