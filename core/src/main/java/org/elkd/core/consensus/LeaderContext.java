@@ -20,7 +20,7 @@ public class LeaderContext {
 
     for (final Node node : nodes) {
       mNextIndex.put(node, context.getLogInvoker().getLastIndex() + 1);
-      mMatchIndex.put(node, Log.INDEX_FROM);
+      mMatchIndex.put(node, DEFAULT_MATCH_INDEX);
     }
   }
 

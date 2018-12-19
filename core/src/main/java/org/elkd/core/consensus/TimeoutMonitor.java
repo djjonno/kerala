@@ -1,4 +1,4 @@
-package org.elkd.core.consensus.election;
+package org.elkd.core.consensus;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -7,19 +7,19 @@ import javax.annotation.Nonnull;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ElectionMonitor {
+public class TimeoutMonitor {
   private final long mTimeout;
   private final Runnable mTimeoutTask;
   private final TimerFactory mTimerFactory;
 
   private Timer mTimer;
 
-  public ElectionMonitor(final int timeout, @Nonnull final Runnable timeoutTask) {
+  public TimeoutMonitor(final int timeout, @Nonnull final Runnable timeoutTask) {
     this(timeout, timeoutTask, new TimerFactory());
   }
 
   @VisibleForTesting
-  ElectionMonitor(final long timeout, final Runnable timeoutTask, final TimerFactory timerFactory) {
+  TimeoutMonitor(final long timeout, final Runnable timeoutTask, final TimerFactory timerFactory) {
     mTimeout = timeout;
     mTimeoutTask = Preconditions.checkNotNull(timeoutTask, "timeoutTask");
     mTimerFactory = Preconditions.checkNotNull(timerFactory, "timerFactory");

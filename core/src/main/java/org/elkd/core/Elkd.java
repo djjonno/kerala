@@ -50,6 +50,9 @@ public class Elkd {
 
   public static void main(final String[] args) throws UnknownHostException {
     /* bootstrap */
+    LOG.info("");
+    LOG.info("\telkd (alpha)");
+    LOG.info("");
 
     final Config config = getConfig(args);
     if (config == null) {

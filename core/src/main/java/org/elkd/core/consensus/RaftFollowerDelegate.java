@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
 import org.elkd.core.config.Config;
-import org.elkd.core.consensus.election.ElectionMonitor;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
@@ -18,10 +17,10 @@ class RaftFollowerDelegate implements RaftState {
 
   private final Raft mRaft;
 
-  private ElectionMonitor mElectionMonitor;
+  private TimeoutMonitor mTimeoutMonitor;
 
   RaftFollowerDelegate(@Nonnull final Raft raft) {
-    this(raft, new ElectionMonitor(
+    this(raft, new TimeoutMonitor(
         raft.getConfig().getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS),
         () -> {
           raft.transitionToState(RaftCandidateDelegate.class);
@@ -31,34 +30,34 @@ class RaftFollowerDelegate implements RaftState {
 
   @VisibleForTesting
   RaftFollowerDelegate(@Nonnull final Raft raft,
-                       @Nonnull final ElectionMonitor electionMonitor) {
+                       @Nonnull final TimeoutMonitor timeoutMonitor) {
     mRaft = Preconditions.checkNotNull(raft, "raft");
-    mElectionMonitor = Preconditions.checkNotNull(electionMonitor, "electionMonitor");
+    mTimeoutMonitor = Preconditions.checkNotNull(timeoutMonitor, "timeoutMonitor");
   }
 
   @Override
   public void on() {
     LOG.info("ready");
-    mElectionMonitor.reset();
+    mTimeoutMonitor.reset();
   }
 
   @Override
   public void off() {
     LOG.info("offline");
-    mElectionMonitor.stop();
+    mTimeoutMonitor.stop();
   }
 
   @Override
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
     responseObserver.onCompleted();
-    mElectionMonitor.reset();
+    mTimeoutMonitor.reset();
   }
 
   @Override
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
     responseObserver.onCompleted();
-    mElectionMonitor.reset();
+    mTimeoutMonitor.reset();
   }
 }
