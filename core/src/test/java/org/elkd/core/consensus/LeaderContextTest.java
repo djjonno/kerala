@@ -1,7 +1,7 @@
 package org.elkd.core.consensus;
 
 import com.google.common.collect.ImmutableSet;
-import org.elkd.core.log.LogInvoker;
+import org.elkd.core.log.Log;
 import org.elkd.core.server.cluster.Node;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class LeaderContextTest {
   @Mock Node mNode2;
   @Mock Node mForeignNode;
   @Mock RaftContext mRaftContext;
-  @Mock LogInvoker mLogInvoker;
+  @Mock Log mLog;
 
   private LeaderContext mUnitUnderTest;
 
@@ -28,17 +28,7 @@ public class LeaderContextTest {
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    doReturn(mLogInvoker)
-        .when(mRaftContext)
-        .getLogInvoker();
-    doReturn(LAST_LOG_INDEX)
-        .when(mLogInvoker)
-        .getLastIndex();
-
-    mUnitUnderTest = new LeaderContext(
-        ImmutableSet.of(mNode1, mNode2),
-        mRaftContext
-    );
+    mUnitUnderTest = new LeaderContext(ImmutableSet.of(mNode1, mNode2), LAST_LOG_INDEX);
   }
 
   @Test

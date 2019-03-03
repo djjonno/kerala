@@ -7,41 +7,41 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class LogInvoker<T> implements Log<T> {
-  private final Set<LogChangeListener<T>> mListeners = new HashSet<>();
-  private final Log<T> mLog;
+public class LogInvoker<E> implements Log<E> {
+  private final Set<LogChangeListener<E>> mListeners = new HashSet<>();
+  private final Log<E> mLog;
 
-  public LogInvoker(@Nonnull final Log<T> log) {
+  public LogInvoker(@Nonnull final Log<E> log) {
     mLog = Preconditions.checkNotNull(log, "log");
   }
 
   @Override
-  public long append(final T entry) {
+  public long append(final E entry) {
     final long index = mLog.append(entry);
     onAppend(entry);
     return index;
   }
 
   @Override
-  public long append(final long index, final T entry) {
+  public long append(final long index, final E entry) {
     final long append = mLog.append(index, entry);
     onAppend(entry);
     return append;
   }
 
   @Override
-  public T read(final long index) {
+  public E read(final long index) {
     return mLog.read(index);
   }
 
   @Override
-  public List<T> read(final long from, final long to) {
+  public List<E> read(final long from, final long to) {
     return mLog.read(from, to);
   }
 
   @Override
-  public CommitResult<T> commit(final long index) {
-    final CommitResult<T> result = mLog.commit(index);
+  public CommitResult<E> commit(final long index) {
+    final CommitResult<E> result = mLog.commit(index);
     onCommit(result.getCommitted());
     return result;
   }
@@ -61,24 +61,24 @@ public class LogInvoker<T> implements Log<T> {
     return mLog.getLastIndex();
   }
 
-  public void registerListener(@Nonnull final LogChangeListener<T> listener) {
+  public void registerListener(@Nonnull final LogChangeListener<E> listener) {
     Preconditions.checkNotNull(listener, "listener");
     mListeners.add(listener);
   }
 
-  public void deregisterListener(@Nonnull final LogChangeListener<T> listener) {
+  public void deregisterListener(@Nonnull final LogChangeListener<E> listener) {
     Preconditions.checkNotNull(listener, "listener");
     mListeners.remove(listener);
   }
 
-  private void onCommit(final List<T> entries) {
-    for (final LogChangeListener<T> listener : mListeners) {
+  private void onCommit(final List<E> entries) {
+    for (final LogChangeListener<E> listener : mListeners) {
       entries.forEach(listener::onCommit);
     }
   }
 
-  private void onAppend(final T entry) {
-    for (final LogChangeListener<T> listener : mListeners) {
+  private void onAppend(final E entry) {
+    for (final LogChangeListener<E> listener : mListeners) {
       listener.onAppend(entry);
     }
   }

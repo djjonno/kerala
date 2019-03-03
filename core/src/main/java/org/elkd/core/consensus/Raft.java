@@ -10,7 +10,9 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
-import org.elkd.core.log.LogInvoker;
+import org.elkd.core.log.Log;
+import org.elkd.core.log.LogCommandExecutor;
+import org.elkd.core.log.LogProvider;
 import org.elkd.core.server.cluster.ClusterConnectionPool;
 import org.elkd.core.server.cluster.ClusterSet;
 
@@ -24,7 +26,7 @@ public class Raft implements RaftDelegate {
   private final Config mConfig;
   private final ClusterSet mClusterSet;
   private final ClusterConnectionPool mClusterConnectionPool;
-  private final LogInvoker<Entry> mLogInvoker;
+  private final LogProvider<Entry> mLogProvider;
   private final RaftContext mRaftContext;
   private final AbstractStateFactory mStateFactory;
   private final ExecutorService mSerialExecutor;
@@ -34,8 +36,9 @@ public class Raft implements RaftDelegate {
   public Raft(@Nonnull final Config config,
               @Nonnull final ClusterSet clusterSet,
               @Nonnull final RaftContext raftContext,
-              @Nonnull final AbstractStateFactory stateFactory) {
-    this(config, clusterSet, raftContext, stateFactory, Executors.newSingleThreadExecutor());
+              @Nonnull final AbstractStateFactory stateFactory,
+              @Nonnull final LogProvider<Entry> log) {
+    this(config, clusterSet, raftContext, stateFactory, log, Executors.newSingleThreadExecutor());
   }
 
   @VisibleForTesting
@@ -43,13 +46,14 @@ public class Raft implements RaftDelegate {
        @Nonnull final ClusterSet clusterSet,
        @Nonnull final RaftContext raftContext,
        @Nonnull final AbstractStateFactory delegateFactory,
+       @Nonnull final LogProvider<Entry> log,
        @Nonnull final ExecutorService executorService) {
     mConfig = Preconditions.checkNotNull(config, "config");
     mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
     mRaftContext = Preconditions.checkNotNull(raftContext, "raftContext");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
     mSerialExecutor = Preconditions.checkNotNull(executorService, "executorService");
-    mLogInvoker = mRaftContext.getLogInvoker();
+    mLogProvider = Preconditions.checkNotNull(log, "log");
 
     mClusterConnectionPool = new ClusterConnectionPool(mClusterSet);
   }
@@ -94,8 +98,12 @@ public class Raft implements RaftDelegate {
     return mConfig;
   }
 
-  /* package */ LogInvoker<Entry> getLogInvoker() {
-    return mLogInvoker;
+  /* package */ Log<Entry> getLog() {
+    return mLogProvider.getLog();
+  }
+
+  /* package */ LogCommandExecutor<Entry> getLogCommandExecutor() {
+    return mLogProvider.logCommandExecutor();
   }
 
   /* package */ ClusterSet getClusterSet() {

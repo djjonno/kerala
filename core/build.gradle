@@ -7,13 +7,12 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies { // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier
-        // gradle versions
+    dependencies {
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"
     }
 }
 
-def grpcVersion = "1.16.1"
+def grpcVersion = "1.18.0"
 def protobufVersion = "3.6.1"
 def protocVersion = "3.6.1"
 

@@ -7,7 +7,8 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
-import org.elkd.core.log.LogInvoker;
+import org.elkd.core.log.Log;
+import org.elkd.core.log.LogProvider;
 import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.testutil.Executors;
 import org.junit.Before;
@@ -28,7 +29,8 @@ public class RaftTest {
   @Mock RaftState mRaft2;
   @Mock RaftContext mRaftContext;
   @Mock ClusterSet mClusterSet;
-  @Mock LogInvoker<Entry> mLogInvoker;
+  @Mock LogProvider<Entry> mLogProvider;
+  @Mock Log<Entry> mLog;
   @Mock AbstractStateFactory mStateFactory;
   @Mock RequestVoteRequest mRequestVoteRequest;
   @Mock AppendEntriesRequest mAppendEntriesRequest;
@@ -51,6 +53,7 @@ public class RaftTest {
         mClusterSet,
         mRaftContext,
         mStateFactory,
+        mLogProvider,
         mExecutorService
     );
   }
@@ -62,9 +65,9 @@ public class RaftTest {
     doReturn(mRaft2)
         .when(mStateFactory)
         .getDelegate(any(), any());
-    doReturn(mLogInvoker)
-        .when(mRaftContext)
-        .getLogInvoker();
+    doReturn(mLog)
+        .when(mLogProvider)
+        .getLog();
   }
 
   @Test

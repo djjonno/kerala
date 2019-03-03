@@ -1,8 +1,7 @@
 package org.elkd.core.consensus;
 
-import com.google.common.base.Preconditions;
 import org.elkd.core.consensus.messages.Entry;
-import org.elkd.core.log.LogInvoker;
+import org.elkd.core.log.Log;
 
 import javax.annotation.Nullable;
 
@@ -11,12 +10,10 @@ public class RaftContext {
   /* persistent state */
   private int mCurrentTerm;
   private String mVotedFor;
-  private LogInvoker<Entry> mLogInvoker;
 
-  public RaftContext(final LogInvoker<Entry> logInvoker) {
+  public RaftContext() {
     mCurrentTerm = 0;
     mVotedFor = null;
-    mLogInvoker = Preconditions.checkNotNull(logInvoker, "logInvoker");
   }
 
   int getCurrentTerm() {
@@ -36,14 +33,6 @@ public class RaftContext {
   void setVotedFor(final String votedFor) {
     mVotedFor = votedFor;
     commit();
-  }
-
-  LogInvoker<Entry> getLogInvoker() {
-    return mLogInvoker;
-  }
-
-  long getCommitIndex() {
-    return mLogInvoker.getCommitIndex();
   }
 
   private void commit() {

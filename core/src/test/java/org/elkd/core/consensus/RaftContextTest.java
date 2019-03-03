@@ -13,8 +13,6 @@ public class RaftContextTest {
   private static final int DEFAULT_CURRENT_TERM = 0;
   private static final String DEFAULT_VOTED_FOR = null;
 
-  @Mock LogInvoker<Entry> mLogInvoker;
-
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
@@ -23,7 +21,7 @@ public class RaftContextTest {
   @Test
   public void should_have_default_values() {
     // Given / When
-    final RaftContext raftContext = new RaftContext(mLogInvoker);
+    final RaftContext raftContext = new RaftContext();
 
     // Then
     assertEquals(DEFAULT_CURRENT_TERM, raftContext.getCurrentTerm());
@@ -33,7 +31,7 @@ public class RaftContextTest {
   @Test
   public void should_set_votedFor() {
     // Given
-    final RaftContext raftContext = new RaftContext(mLogInvoker);
+    final RaftContext raftContext = new RaftContext();
     final String votedFor = "node-id";
 
     // When
@@ -46,7 +44,7 @@ public class RaftContextTest {
   @Test
   public void should_set_currentTerm() {
     // Given
-    final RaftContext raftContext = new RaftContext(mLogInvoker);
+    final RaftContext raftContext = new RaftContext();
     final int currentTerm = 10;
 
     // When
