@@ -1,33 +1,38 @@
 # elkd
-
+---
 [![Build Status](https://travis-ci.com/elkd/elkd.svg?branch=master)](https://travis-ci.com/elkd/elkd)
 [![codecov](https://codecov.io/gh/elkd/elkd/branch/master/graph/badge.svg)](https://codecov.io/gh/elkd/elkd)
 [![Maintainability](https://api.codeclimate.com/v1/badges/584249e219d2df7bb0ae/maintainability)](https://codeclimate.com/github/elkd/elkd/maintainability)
+[![Releases](https://img.shields.io/github/release/elkd/elkd/all.svg?style=flat-square)](https://github.com/elkd/elkd/releases)
 
-## The elkd platform 🦌
+## 🦌
 
-Elkd is a distributed, time series database designed for analysing billions of events.  It is eventually consistent and is backed by the Raft protocol. 
+elkd is a distributed and reliable store for time-series data and machine-learning analysis.  We emphasise on being:
+- *Simple*: powerful, minimalistic, extensive query language
+- *Secure*: TLS + Certificates
+- *Fast*: 10,000 writes/sec
+- *Robust*: raft distribution consensus protocol 
 
-Elkd has a powerful functional query language built in that is optimised for aggregating streams consisting of billions of events.  It is fault tolerant and highly available. We have a comprehensive real-world simulation testing suite that we continuously update to battle test the core runtime.  This ensures we maintain and improve reliability between releases. 
+---
 
-#### Get Started [WIP]
+### Features
 
-- Download
-- Install
-- Configure
-- Start as Single Node
-- Start as Cluster
-- ElkdCli
-- ElkdClients
+- Store time-series data in streams.
+- Expressive but minimal query language:
+    - Analogous to traditional programming languages - opting for familiarity
+    - Programmatic access in Kotlin/Java (no SQL statements)
+    - Extensible with elkd plugins
+- Static cluster configuration
+    - Will be dynamic in future release
 
-#### Supports / Bugs
-[WIP]
+*elkd is under active development and features are in flux.*
 
-#### File a bug
-[WIP]
-
-#### Contributing
-[WIP] 
-
-### Local Development
-[WIP]
+### Schedule for 0.1 (first release)
+- Fully distributed and reliable key/value store
+    - elkd-core consensus & replicated log stabilized
+    - eventually consistent
+- Simple query language exposed 
+	- `set [key] [value]`
+	- `get [key]`
+	- `rm [key]`
+- Java/Kotlin client
