@@ -10,14 +10,14 @@ class AppendFromCommand<E> constructor(
     override val reason: LogChangeReason) : LogCommand<E> {
 
   override fun execute(log: Log<E>) {
-    if (log.lastIndex < from) {
+    if (log.lastIndex + 1 < from) {
       throw NonSequentialAppendException()
     }
-    if (log.lastIndex > from){
+    if (log.lastIndex >= from) {
       log.revert(from)
     }
 
-    AppendCommand.build<E>(entries, reason).execute(log)
+    AppendCommand.build(entries, reason).execute(log)
   }
 
   companion object {

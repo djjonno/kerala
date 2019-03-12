@@ -58,7 +58,7 @@
             <property name="max" value="50"/>
         </module>
         <module name="ParameterNumber">
-            <property name="max" value="5"/>
+            <property name="max" value="6"/>
         </module>
 
         <module name="EmptyForInitializerPad"/>

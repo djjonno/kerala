@@ -1,8 +1,5 @@
 package org.elkd.core.consensus;
 
-import org.elkd.core.consensus.messages.Entry;
-import org.elkd.core.log.Log;
-
 import javax.annotation.Nullable;
 
 public class RaftContext {

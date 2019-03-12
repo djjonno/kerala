@@ -37,10 +37,13 @@ public class InMemoryLog implements Log<Entry> {
 
   @Override
   public Entry read(final long index) {
-    Preconditions.checkState(START_INDEX <= index && index <= mIndex);
-    Preconditions.checkState(index <= mCommitIndex, "can only read committed entries.");
-
-    return mLogStore.get((int) index);
+    try {
+      Preconditions.checkState(START_INDEX <= index && index <= mIndex);
+      Preconditions.checkState(index <= mCommitIndex, "can only read committed entries.");
+      return mLogStore.get((int) index);
+    } catch (final Exception e) {
+      return null;
+    }
   }
 
   @Override
@@ -49,7 +52,10 @@ public class InMemoryLog implements Log<Entry> {
 
     final List<Entry> subList = new ArrayList<>();
     for (int i = (int) from; i <= to; ++i) {
-      subList.add(mLogStore.get(i));
+      final Entry entry = read(i);
+      if (entry != null) {
+        subList.add(entry);
+      }
     }
 
     return ImmutableList.copyOf(subList);

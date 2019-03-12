@@ -50,15 +50,16 @@ public class InMemoryLogTest {
     assertEquals(secondTransaction, t2);
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void should_throw_exception_when_accessing_uncommitted_entry() {
+  @Test
+  public void should_return_null_when_accessing_uncommitted_entry() {
     // Given
     final long t1 = mUnitUnderTest.append(mEntry1);
 
     // When
-    mUnitUnderTest.read(t1);
+    final Entry entry = mUnitUnderTest.read(t1);
 
-    // Then - exception thrown
+    // Then
+    assertNull(entry);
   }
 
   @Test
@@ -94,6 +95,15 @@ public class InMemoryLogTest {
 
     // Then
     assertEquals(mEntry1, entry);
+  }
+
+  @Test
+  public void should_return_null_when_entry_does_not_exist_at_index() {
+    // Given / When
+    final Entry entry = mUnitUnderTest.read(FUTURE_INDEX);
+
+    // Then
+    assertNull(entry);
   }
 
   @Test

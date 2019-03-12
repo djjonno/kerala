@@ -28,9 +28,7 @@ class RaftFollowerDelegate implements RaftState {
         raft,
         new TimeoutMonitor(
             raft.getConfig().getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS),
-            () -> {
-              raft.transitionToState(RaftCandidateDelegate.class);
-            }
+            () -> raft.transitionToState(RaftCandidateDelegate.class)
         )
     );
   }
@@ -64,7 +62,8 @@ class RaftFollowerDelegate implements RaftState {
       mRaft.getLogCommandExecutor().execute(appendFromCommand);
 
       if (appendEntriesRequest.getLeaderCommit() > mRaft.getLog().getCommitIndex()) {
-        mRaft.getLogCommandExecutor().execute(CommitCommand.Companion.build(mRaft.getLog().getLastIndex(), LogChangeReason.REPLICATION));
+        final long commitIndex = Math.min(appendEntriesRequest.getLeaderCommit(), mRaft.getLog().getLastIndex());
+        mRaft.getLogCommandExecutor().execute(CommitCommand.Companion.build(commitIndex, LogChangeReason.REPLICATION));
       }
       replySuccess(responseObserver);
     } catch (final Exception e) {
@@ -81,18 +80,23 @@ class RaftFollowerDelegate implements RaftState {
     responseObserver.onCompleted();
   }
 
-  private void replySuccess(StreamObserver<AppendEntriesResponse> responseObserver) {
+  private void replySuccess(final StreamObserver<AppendEntriesResponse> responseObserver) {
     responseObserver.onNext(AppendEntriesResponse.builder(mRaft.getRaftContext().getCurrentTerm(), true).build());
     responseObserver.onCompleted();
   }
 
   private void validateAppendEntriesRequest(final AppendEntriesRequest appendEntriesRequest) throws Exception {
-    final Entry prevEntry = mRaft.getLog().read(appendEntriesRequest.getPrevLogIndex());
-    final boolean termsMismatch = appendEntriesRequest.getTerm() < mRaft.getRaftContext().getCurrentTerm();
-    final boolean prevEntryTermInequality = prevEntry.getTerm() == appendEntriesRequest.getPrevLogTerm();
-
-    if (termsMismatch || prevEntryTermInequality) {
-      throw new Exception("AppendEntriesRequest failed validations.");
+    if (appendEntriesRequest.getTerm() < mRaft.getRaftContext().getCurrentTerm()) {
+      throw new Exception("Term mismatch. Validation Failed.");
+    }
+    /* This check is only relevant when there are entries in the log.
+       `prevLogIndex == -1` occurs for the first ever log entry.
+     */
+    if (appendEntriesRequest.getPrevLogIndex() > -1) {
+      final Entry prevEntry = mRaft.getLog().read(appendEntriesRequest.getPrevLogIndex());
+      if (prevEntry == null || (prevEntry.getTerm() != appendEntriesRequest.getPrevLogTerm())) {
+        throw new Exception("Entry.term mismatch. Validation Failed.");
+      }
     }
   }
 
