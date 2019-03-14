@@ -16,18 +16,19 @@ import org.elkd.core.log.commands.CommitCommand;
 
 import javax.annotation.Nonnull;
 
+import static org.elkd.shared.math.random.randomizeNumberPoint;
+
 class RaftFollowerDelegate implements RaftState {
   private static final Logger LOG = Logger.getLogger(RaftFollowerDelegate.class.getName());
 
   private final Raft mRaft;
-
+  private final int mTimeout;
   private TimeoutMonitor mTimeoutMonitor;
 
   RaftFollowerDelegate(@Nonnull final Raft raft) {
     this(
         raft,
         new TimeoutMonitor(
-            raft.getConfig().getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS),
             () -> raft.transitionToState(RaftCandidateDelegate.class)
         )
     );
@@ -38,12 +39,13 @@ class RaftFollowerDelegate implements RaftState {
                        @Nonnull final TimeoutMonitor timeoutMonitor) {
     mRaft = Preconditions.checkNotNull(raft, "raft");
     mTimeoutMonitor = Preconditions.checkNotNull(timeoutMonitor, "timeoutMonitor");
+    mTimeout = Preconditions.checkNotNull(mRaft.getConfig().getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS));
   }
 
   @Override
   public void on() {
     LOG.info("ready");
-    mTimeoutMonitor.reset();
+    resetTimeout();
   }
 
   @Override
@@ -69,14 +71,14 @@ class RaftFollowerDelegate implements RaftState {
     } catch (final Exception e) {
       replyFalse(responseObserver);
     } finally {
-      mTimeoutMonitor.reset();
+      resetTimeout();
     }
   }
 
   @Override
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
-    mTimeoutMonitor.reset();
+    resetTimeout();
     responseObserver.onCompleted();
   }
 
@@ -106,5 +108,11 @@ class RaftFollowerDelegate implements RaftState {
   private void replyFalse(final StreamObserver<AppendEntriesResponse> responseObserver) {
     responseObserver.onNext(AppendEntriesResponse.builder(mRaft.getRaftContext().getCurrentTerm(), false).build());
     responseObserver.onCompleted();
+  }
+
+  private void resetTimeout() {
+    final int newTimeout = randomizeNumberPoint(mTimeout, 0.2);
+    LOG.info("Timeout in " + newTimeout + "ms");
+    mTimeoutMonitor.reset(newTimeout);
   }
 }

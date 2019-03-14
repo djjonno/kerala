@@ -1,24 +1,24 @@
 package org.elkd.core.consensus;
 
-    import com.google.common.collect.ImmutableList;
-    import io.grpc.stub.StreamObserver;
-    import org.elkd.core.config.Config;
-    import org.elkd.core.consensus.messages.AppendEntriesRequest;
-    import org.elkd.core.consensus.messages.AppendEntriesResponse;
-    import org.elkd.core.consensus.messages.Entry;
-    import org.elkd.core.consensus.messages.RequestVoteRequest;
-    import org.elkd.core.consensus.messages.RequestVoteResponse;
-    import org.elkd.core.log.Log;
-    import org.elkd.core.log.LogCommandExecutor;
-    import org.elkd.core.log.commands.AppendFromCommand;
-    import org.junit.Before;
-    import org.junit.Test;
-    import org.mockito.ArgumentCaptor;
-    import org.mockito.Mock;
-    import org.mockito.MockitoAnnotations;
+import com.google.common.collect.ImmutableList;
+import io.grpc.stub.StreamObserver;
+import org.elkd.core.config.Config;
+import org.elkd.core.consensus.messages.AppendEntriesRequest;
+import org.elkd.core.consensus.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.Entry;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
+import org.elkd.core.log.Log;
+import org.elkd.core.log.LogCommandExecutor;
+import org.elkd.core.log.commands.AppendFromCommand;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-    import static org.junit.Assert.*;
-    import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class RaftFollowerDelegateTest {
   private static final int ELECTION_TIMEOUT = 50;
@@ -109,7 +109,7 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseStreamObserver);
 
     // Then
-    verify(mTimeoutMonitor, times(2)).reset();
+    verify(mTimeoutMonitor, times(2)).reset(anyLong());
     verify(mRaft, never()).transitionToState(any());
   }
 
@@ -122,7 +122,7 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVoteResponseStreamObserver);
 
     // Then
-    verify(mTimeoutMonitor, times(2)).reset();
+    verify(mTimeoutMonitor, times(2)).reset(anyLong());
   }
 
   @Test

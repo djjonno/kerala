@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class TimeoutMonitorTest {
-  private static final long TIMEOUT = 500;
+  private static final long TIMEOUT = 50;
 
   @Mock TimeoutMonitor.TimerFactory mTimerFactory;
   @Mock Runnable mTimeoutTask;
@@ -37,13 +37,13 @@ public class TimeoutMonitorTest {
         .when(mTimer)
         .schedule(any(TimerTask.class), eq(TIMEOUT));
 
-    mUnitUnderTest = new TimeoutMonitor(TIMEOUT, mTimeoutTask, mTimerFactory);
+    mUnitUnderTest = new TimeoutMonitor(mTimeoutTask, mTimerFactory);
   }
 
   @Test
   public void should_use_timerFactory() {
     // Given / When
-    mUnitUnderTest.reset();
+    mUnitUnderTest.reset(TIMEOUT);
 
     // Then
     verify(mTimerFactory).createDaemonTimer();
@@ -52,7 +52,7 @@ public class TimeoutMonitorTest {
   @Test
   public void should_schedule_timeoutTask_with_timeout() {
     // Given / When
-    mUnitUnderTest.reset();
+    mUnitUnderTest.reset(TIMEOUT);
 
     // Then
     verify(mTimer).schedule(any(TimerTask.class), eq(TIMEOUT));
@@ -61,16 +61,26 @@ public class TimeoutMonitorTest {
   @Test
   public void should_execute_timeoutTask_after_timeout_elapsed() throws InterruptedException {
     // Given / When
-    mUnitUnderTest.reset();
+    mUnitUnderTest.reset(TIMEOUT);
 
     // Then
     verify(mTimeoutTask).run();
   }
 
   @Test
+  public void should_use_new_timeout_when_reset() {
+    // Given / When
+    final long newTimeout = TIMEOUT * 2;
+    mUnitUnderTest.reset(newTimeout);
+
+    // Then
+    verify(mTimer).schedule(any(TimerTask.class), eq(newTimeout));
+  }
+
+  @Test
   public void should_cancel_timer_on_stop() {
     // Given
-    mUnitUnderTest.reset();
+    mUnitUnderTest.reset(TIMEOUT);
 
     // When
     mUnitUnderTest.stop();
@@ -96,16 +106,16 @@ public class TimeoutMonitorTest {
     doReturn(first, second)
         .when(mTimerFactory)
         .createDaemonTimer();
-    mUnitUnderTest.reset();
+    mUnitUnderTest.reset(TIMEOUT);
 
     // When
-    mUnitUnderTest.reset();
+    mUnitUnderTest.reset(TIMEOUT);
 
     // Then
     verify(first).cancel();
 
     // When
-    mUnitUnderTest.reset();
+    mUnitUnderTest.reset(TIMEOUT);
 
     // Then
     verify(second).cancel();

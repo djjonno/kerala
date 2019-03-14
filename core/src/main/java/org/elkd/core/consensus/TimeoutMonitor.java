@@ -8,25 +8,26 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class TimeoutMonitor {
-  private final long mTimeout;
   private final Runnable mTimeoutTask;
   private final TimerFactory mTimerFactory;
 
+  private long mTimeout;
   private Timer mTimer;
 
-  public TimeoutMonitor(final int timeout, @Nonnull final Runnable timeoutTask) {
-    this(timeout, timeoutTask, new TimerFactory());
+  public TimeoutMonitor(@Nonnull final Runnable timeoutTask) {
+    this(timeoutTask, new TimerFactory());
   }
 
   @VisibleForTesting
-  TimeoutMonitor(final long timeout, final Runnable timeoutTask, final TimerFactory timerFactory) {
-    mTimeout = timeout;
+  TimeoutMonitor(final Runnable timeoutTask, final TimerFactory timerFactory) {
     mTimeoutTask = Preconditions.checkNotNull(timeoutTask, "timeoutTask");
     mTimerFactory = Preconditions.checkNotNull(timerFactory, "timerFactory");
   }
 
-  public void reset() {
+  public void reset(final long timeout) {
+    Preconditions.checkState(timeout > 0);
     stop();
+    mTimeout = timeout;
     mTimer = mTimerFactory.createDaemonTimer();
     mTimer.schedule(new TimerTask() {
       @Override
