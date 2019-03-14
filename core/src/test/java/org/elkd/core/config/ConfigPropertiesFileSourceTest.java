@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import static org.elkd.core.config.ConfigPropertiesFileSource.ELKD_CONFIG_NAME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -148,7 +147,7 @@ public class ConfigPropertiesFileSourceTest {
     // Then
     verify(mProperties).getProperty(KEY_1);
     verify(mProperties).getProperty(KEY_2);
-    assertTrue(mConfig.size() == 1);
+    assertEquals(mConfig.size(), 1);
     assertEquals(mConfig.get(KEY_1), VALUE_1);
   }
 

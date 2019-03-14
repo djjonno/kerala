@@ -23,9 +23,9 @@ public class AppendEntriesResponseConverter implements Converter {
   public <T> T convert(final Object source, final ConverterRegistry registry) throws ConverterException {
     Preconditions.checkNotNull(source, "source");
 
-    if (RpcAppendEntriesResponse.class.isInstance(source)) {
+    if (source instanceof RpcAppendEntriesResponse) {
       return (T) convertRpcAppendEntriesResponse(source);
-    } else if (AppendEntriesResponse.class.isInstance(source)) {
+    } else if (source instanceof AppendEntriesResponse) {
       return (T) convertAppendEntriesResponse(source);
     }
 

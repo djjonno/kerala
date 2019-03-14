@@ -12,7 +12,7 @@ class AppendCommand<E> constructor(
   }
 
   companion object {
-    fun <E> build(entry: E, reason: LogChangeReason): AppendCommand<E> = build(listOf(entry), reason)
-    fun <E> build(entries: List<E>, reason: LogChangeReason): AppendCommand<E> = AppendCommand(entries, reason)
+    @JvmStatic fun <E> build(entry: E, reason: LogChangeReason): AppendCommand<E> = build(listOf(entry), reason)
+    @JvmStatic fun <E> build(entries: List<E>, reason: LogChangeReason): AppendCommand<E> = AppendCommand(entries, reason)
   }
 }

@@ -35,6 +35,7 @@ public class AppendCommandTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void should_append_single_entry() {
     // Given
     final AppendCommand command = AppendCommand.Companion.build(ImmutableList.of(mEntry1, mEntry2), COMMAND_REASON);
@@ -47,6 +48,7 @@ public class AppendCommandTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void should_append_all_entries_to_receiver() {
     // Given / When
     mUnitUnderTest.execute(mReceiver);

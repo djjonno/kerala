@@ -13,6 +13,6 @@ class CommitCommand<E> constructor(
   }
 
   companion object {
-    fun <E> build(index: Long, reason: LogChangeReason): CommitCommand<E> = CommitCommand(index, reason)
+    @JvmStatic fun <E> build(index: Long, reason: LogChangeReason): CommitCommand<E> = CommitCommand(index, reason)
   }
 }

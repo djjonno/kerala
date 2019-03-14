@@ -30,7 +30,8 @@ dependencies {
     compileOnly "javax.annotation:javax.annotation-api:1.2"
 
     testCompile "io.grpc:grpc-testing:${grpcVersion}"
-    testCompile "org.hamcrest:hamcrest-junit:2.0.0.0"
+    testCompile "org.hamcrest:hamcrest-junit:2.+"
+    testCompile group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: '2.0.0-alpha01'
 }
 
 protobuf {

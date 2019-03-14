@@ -9,7 +9,7 @@ class LogCommandExecutor<E> constructor(private val log: Log<E>) {
   private val LOG = Logger.getLogger(LogCommandExecutor::class.java)
 
   fun execute(command: LogCommand<E>) {
-    LOG.info("executing $command")
+    LOG.info("executing ${command.javaClass.name} for ${command.reason}")
     command.execute(log)
   }
 }

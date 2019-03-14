@@ -21,7 +21,7 @@ class AppendFromCommand<E> constructor(
   }
 
   companion object {
-    fun <E> build(from: Long, entries: List<E>, reason: LogChangeReason): AppendFromCommand<E>
+    @JvmStatic fun <E> build(from: Long, entries: List<E>, reason: LogChangeReason): AppendFromCommand<E>
         = AppendFromCommand(from, entries, reason)
   }
 }

@@ -63,7 +63,7 @@ class RaftFollowerDelegate implements RaftState {
 
       if (appendEntriesRequest.getLeaderCommit() > mRaft.getLog().getCommitIndex()) {
         final long commitIndex = Math.min(appendEntriesRequest.getLeaderCommit(), mRaft.getLog().getLastIndex());
-        mRaft.getLogCommandExecutor().execute(CommitCommand.Companion.build(commitIndex, LogChangeReason.REPLICATION));
+        mRaft.getLogCommandExecutor().execute(CommitCommand.build(commitIndex, LogChangeReason.REPLICATION));
       }
       replySuccess(responseObserver);
     } catch (final Exception e) {

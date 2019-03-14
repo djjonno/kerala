@@ -37,7 +37,7 @@ public class Config {
    */
   @Key(defaultValue = "500") public static final String KEY_RAFT_ELECTION_TIMEOUT_MS = "raft.election.timeout";
 
-  /* -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+  /*  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  */
 
   private static final Logger LOG = Logger.getLogger(Config.class);
 

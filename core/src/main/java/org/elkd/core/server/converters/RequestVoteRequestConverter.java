@@ -23,9 +23,9 @@ public class RequestVoteRequestConverter implements Converter {
   public <T> T convert(final Object source, final ConverterRegistry registry) throws ConverterException {
     Preconditions.checkNotNull(source, "source");
 
-    if (RequestVoteRequest.class.isInstance(source)) {
+    if (source instanceof RequestVoteRequest) {
       return (T) convertRequestVoteRequest(source);
-    } else if (RpcRequestVoteRequest.class.isInstance(source)) {
+    } else if (source instanceof RpcRequestVoteRequest) {
       return (T) convertRpcRequestVoteRequest(source);
     }
 
