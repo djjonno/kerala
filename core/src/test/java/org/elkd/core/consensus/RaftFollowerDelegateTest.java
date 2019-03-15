@@ -114,18 +114,6 @@ public class RaftFollowerDelegateTest {
   }
 
   @Test
-  public void should_cancel_timeout_when_requestVote_received() throws InterruptedException {
-    // Given
-    mUnitUnderTest.on();
-
-    // When
-    mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVoteResponseStreamObserver);
-
-    // Then
-    verify(mTimeoutMonitor, times(2)).reset(anyLong());
-  }
-
-  @Test
   public void raft_spec__should_reply_false_if_term_lt_currentTerm() {
     // Given
     final AppendEntriesRequest request = AppendEntriesRequest.builder(CURRENT_TERM - 1, 1, 0, LEADER_ID, LEADER_COMMIT).build();

@@ -71,6 +71,9 @@ public class Raft implements RaftDelegate {
 
   public void delegateAppendEntries(final AppendEntriesRequest appendEntriesRequest,
                                     final StreamObserver<AppendEntriesResponse> responseObserver) {
+    /* perform state-agnostic logic */
+    termCheck(appendEntriesRequest.getTerm());
+
     mSerialExecutor.execute(() -> {
       LOG.info("delegating appendEntries to " + mRaftState + " w/ " + appendEntriesRequest);
       mRaftState.delegateAppendEntries(appendEntriesRequest, responseObserver);
@@ -79,6 +82,9 @@ public class Raft implements RaftDelegate {
 
   public void delegateRequestVote(final RequestVoteRequest requestVoteRequest,
                                   final StreamObserver<RequestVoteResponse> responseObserver) {
+    /* perform state-agnostic logic */
+    termCheck(requestVoteRequest.getTerm());
+
     mSerialExecutor.execute(() -> {
       LOG.info("delegating appendEntries to " + mRaftState + " w/ " + requestVoteRequest);
       mRaftState.delegateRequestVote(requestVoteRequest, responseObserver);
@@ -116,5 +122,14 @@ public class Raft implements RaftDelegate {
 
   /* package */ RaftContext getRaftContext() {
     return mRaftContext;
+  }
+
+  private void termCheck(final int requestTerm) {
+    final RaftContext raftContext = getRaftContext();
+    if (requestTerm > raftContext.getCurrentTerm()) {
+      raftContext.setCurrentTerm(requestTerm);
+      raftContext.setVotedFor(null);
+      transitionToState(RaftFollowerDelegate.class);
+    }
   }
 }
