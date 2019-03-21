@@ -33,9 +33,14 @@ public class Config {
   @Key(defaultValue = "9191") public static final String KEY_PORT = "port";
 
   /**
-   * Time for a candidate to wait before transitioning to follower state.
+   * Time for a follower to wait before transitioning to candidate state.
    */
   @Key(defaultValue = "500") public static final String KEY_RAFT_FOLLOWER_TIMEOUT_MS = "raft.follower.timeout";
+
+  /**
+   * Time for a candidate to wait before transitioning to follower state.
+   */
+  @Key(defaultValue = "500") public static final String KEY_RAFT_CANDIDATE_TIMEOUT_MS = "raft.follower.timeout";
 
   /*  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  */
 
@@ -59,6 +64,10 @@ public class Config {
     return mConfig.get(key) == null
         ? defaultValue
         : getAsInteger(key);
+  }
+
+  public Long getAsLong(final String key) {
+    return Long.parseLong(mConfig.get(key));
   }
 
   public Double getAsDouble(final String key) {

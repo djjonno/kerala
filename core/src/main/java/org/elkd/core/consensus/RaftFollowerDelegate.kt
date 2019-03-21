@@ -21,8 +21,8 @@ internal class RaftFollowerDelegate @VisibleForTesting
 constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
 
   private val raft: Raft
-  private val mTimeout: Int
-  private val mTimeoutMonitor: TimeoutMonitor
+  private val timeout: Int
+  private val timeoutMonitor: TimeoutMonitor
 
   constructor(raft: Raft) : this(
       raft,
@@ -31,8 +31,8 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
 
   init {
     this.raft = Preconditions.checkNotNull(raft, "raft")
-    mTimeoutMonitor = Preconditions.checkNotNull(timeoutMonitor, "timeoutMonitor")
-    mTimeout = Preconditions.checkNotNull(this.raft.config.getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS))
+    this.timeoutMonitor = Preconditions.checkNotNull(timeoutMonitor, "timeoutMonitor")
+    timeout = Preconditions.checkNotNull(this.raft.config.getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS))
   }
 
   override fun on() {
@@ -42,7 +42,7 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
 
   override fun off() {
     LOG.info("follower offline")
-    mTimeoutMonitor.stop()
+    timeoutMonitor.stop()
   }
 
   override fun delegateAppendEntries(appendEntriesRequest: AppendEntriesRequest,
@@ -77,7 +77,7 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
 
     if (raftContext.votedFor in listOf(null, requestVoteRequest.candidateId)
         && raft.log.lastIndex <= requestVoteRequest.lastLogIndex
-        && raft.log.read(raft.log.lastIndex).term <= requestVoteRequest.lastLogTerm) {
+        && (raft.log.lastIndex == -1L || raft.log.read(raft.log.lastIndex).term <= requestVoteRequest.lastLogTerm)) {
       raftContext.votedFor = requestVoteRequest.candidateId
       raftContext.currentTerm = requestVoteRequest.term
       replyRequestVote(true, responseObserver)
@@ -115,9 +115,9 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
   }
 
   private fun resetTimeout() {
-    val newTimeout = randomizeNumberPoint(mTimeout, 0.2)
+    val newTimeout = randomizeNumberPoint(timeout, 0.2)
     LOG.info("timeout in " + newTimeout + "ms")
-    mTimeoutMonitor.reset(newTimeout.toLong())
+    timeoutMonitor.reset(newTimeout.toLong())
   }
 
   companion object {

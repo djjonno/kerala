@@ -15,7 +15,7 @@ public class Node {
   }
 
   public String getId() {
-    return DigestUtils.shaHex(mUri.toString()).substring(0, ID_LEN + 1);
+    return "elkd-node@" + DigestUtils.shaHex(mUri.toString()).substring(0, ID_LEN + 1);
   }
 
   public URI getURI() {
@@ -49,6 +49,6 @@ public class Node {
 
   @Override
   public String toString() {
-    return "elkd-node@" + getId() + "(" + mUri.toString() + ")";
+    return getId() + "(" + mUri.toString() + ")";
   }
 }

@@ -86,7 +86,7 @@ public class Raft implements RaftDelegate {
     termCheck(requestVoteRequest.getTerm());
 
     mSerialExecutor.execute(() -> {
-      LOG.info("delegating appendEntries to " + mRaftState + " w/ " + requestVoteRequest);
+      LOG.info("delegating requestVote to " + mRaftState + " w/ " + requestVoteRequest);
       mRaftState.delegateRequestVote(requestVoteRequest, responseObserver);
     });
   }
