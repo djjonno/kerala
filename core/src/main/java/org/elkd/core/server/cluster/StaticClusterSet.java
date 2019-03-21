@@ -98,9 +98,9 @@ public final class StaticClusterSet implements ClusterSet {
 
   @Override
   public String toString() {
-    return "StaticClusterSet{" +
-        "mNodes=" + mNodes +
-        ", mSelfNode=" + mSelfNode +
-        '}';
+    return "StaticClusterSet[" +
+        "self=" + mSelfNode +
+        ", nodes=" + mNodes +
+        ']';
   }
 }

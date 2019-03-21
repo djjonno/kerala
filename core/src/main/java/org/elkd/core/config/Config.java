@@ -35,7 +35,7 @@ public class Config {
   /**
    * Time for a candidate to wait before transitioning to follower state.
    */
-  @Key(defaultValue = "500") public static final String KEY_RAFT_ELECTION_TIMEOUT_MS = "raft.election.timeout";
+  @Key(defaultValue = "500") public static final String KEY_RAFT_FOLLOWER_TIMEOUT_MS = "raft.follower.timeout";
 
   /*  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  */
 

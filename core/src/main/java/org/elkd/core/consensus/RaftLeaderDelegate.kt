@@ -7,21 +7,27 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
-import java.util.*
+import org.elkd.core.server.cluster.ClusterMessenger
 
-internal class RaftCandidateDelegate(raft: Raft) : RaftState {
+internal class RaftLeaderDelegate/* package */(raft: Raft,
+                                               private val mClusterMessenger: ClusterMessenger) : RaftState {
+
   private val raft: Raft
+
+  private var mLeaderContext: LeaderContext? = null
 
   init {
     this.raft = Preconditions.checkNotNull(raft, "raft")
   }
 
   override fun on() {
-    LOG.info("candidate ready")
+    mLeaderContext = LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex)
+    LOG.info("leader ready")
+    LOG.info(mLeaderContext?.toString())
   }
 
   override fun off() {
-    LOG.info("candidate offline")
+    LOG.info("leader offline")
   }
 
   override fun delegateAppendEntries(appendEntriesRequest: AppendEntriesRequest,
@@ -39,6 +45,6 @@ internal class RaftCandidateDelegate(raft: Raft) : RaftState {
   }
 
   companion object {
-    private val LOG = Logger.getLogger(RaftCandidateDelegate::class.java.name)
+    private val LOG = Logger.getLogger(RaftLeaderDelegate::class.java.name)
   }
 }

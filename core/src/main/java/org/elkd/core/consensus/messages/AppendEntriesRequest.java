@@ -10,7 +10,7 @@ import java.util.List;
 public class AppendEntriesRequest {
   private final int mTerm;
   private final int mPrevLogTerm;
-  private final int mPrevLogIndex;
+  private final long mPrevLogIndex;
   private final String mLeaderId;
   private final int mLeaderCommit;
   private final List<Entry> mEntries;
@@ -27,7 +27,7 @@ public class AppendEntriesRequest {
 
   public static Builder builder(final int term,
                                 final int prevLogTerm,
-                                final int prevLogIndex,
+                                final long prevLogIndex,
                                 final String leaderId,
                                 final int leaderCommit) {
     return new Builder(term, prevLogTerm, prevLogIndex, leaderId, leaderCommit);
@@ -36,14 +36,14 @@ public class AppendEntriesRequest {
   public static class Builder {
     private final int mTerm;
     private final int mPrevLogTerm;
-    private final int mPrevLogIndex;
+    private final long mPrevLogIndex;
     private final String mLeaderId;
     private final int mLeaderCommit;
     private final List<Entry> mEntries = new ArrayList<>();
 
     private Builder(final int term,
                     final int prevLogTerm,
-                    final int prevLogIndex,
+                    final long prevLogIndex,
                     final String leaderId,
                     final int leaderCommit) {
       mTerm = term;
@@ -76,7 +76,7 @@ public class AppendEntriesRequest {
     return mPrevLogTerm;
   }
 
-  public int getPrevLogIndex() {
+  public long getPrevLogIndex() {
     return mPrevLogIndex;
   }
 

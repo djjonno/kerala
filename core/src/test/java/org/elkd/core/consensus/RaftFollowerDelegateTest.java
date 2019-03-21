@@ -84,11 +84,11 @@ public class RaftFollowerDelegateTest {
 
     doReturn(ELECTION_TIMEOUT)
         .when(mConfig)
-        .getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS);
+        .getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS);
   }
 
   @Test
-  public void should_transition_to_candidateState_if_timeout() throws InterruptedException {
+  public void should_transition_to_candidateState_when_timeout() throws InterruptedException {
     // Given - builtin electionMonitor
     mUnitUnderTest = new RaftFollowerDelegate(mRaft);
 
@@ -114,7 +114,7 @@ public class RaftFollowerDelegateTest {
   }
 
   @Test
-  public void raft_spec__should_reply_false_if_term_lt_currentTerm() {
+  public void raft_spec__appendEntries__appendEntries__should_reply_false_when_term_lt_currentTerm() {
     // Given
     final AppendEntriesRequest request = AppendEntriesRequest.builder(CURRENT_TERM - 1, 1, 0, LEADER_ID, LEADER_COMMIT).build();
 
@@ -122,11 +122,11 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(request, mAppendEntriesResponseStreamObserver);
 
     // Then
-    assertFalse(getReply(mAppendEntriesResponseStreamObserver).isSuccessful());
+    assertFalse(getReplyAppendEntries(mAppendEntriesResponseStreamObserver).isSuccessful());
   }
 
   @Test
-  public void raft_spec__should_reply_false_if_no_entry_at_prevLogIndex() {
+  public void raft_spec__appendEntries__should_reply_false_when_no_entry_at_prevLogIndex() {
     // Given
     final int futurePrevLogIndex = 10;
     final AppendEntriesRequest request = AppendEntriesRequest.builder(0, 0, futurePrevLogIndex, LEADER_ID, LEADER_COMMIT).build();
@@ -135,11 +135,11 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(request, mAppendEntriesResponseStreamObserver);
 
     // Then
-    assertFalse(getReply(mAppendEntriesResponseStreamObserver).isSuccessful());
+    assertFalse(getReplyAppendEntries(mAppendEntriesResponseStreamObserver).isSuccessful());
   }
 
   @Test
-  public void raft_spec__should_reply_false_if_entry_term_at_prevLogIndex_does_not_match_prevLogTerm() {
+  public void raft_spec__appendEntries__should_reply_false_when_entry_term_at_prevLogIndex_does_not_match_prevLogTerm() {
     // Given
     final AppendEntriesRequest request = AppendEntriesRequest.builder(0, 2, 1, LEADER_ID, LEADER_COMMIT).build();
 
@@ -147,12 +147,12 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(request, mAppendEntriesResponseStreamObserver);
 
     // Then
-    assertFalse(getReply(mAppendEntriesResponseStreamObserver).isSuccessful());
+    assertFalse(getReplyAppendEntries(mAppendEntriesResponseStreamObserver).isSuccessful());
   }
 
   @Test
   @SuppressWarnings("unchecked")
-  public void raft_spec__should_append_new_entries() {
+  public void raft_spec__appendEntries__should_append_new_entries() {
     // Given
     final ImmutableList<Entry> entries = ImmutableList.of(
         Entry.builder(0, "first").build(),
@@ -166,7 +166,7 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(request, mAppendEntriesResponseStreamObserver);
 
     // Then
-    assertTrue(getReply(mAppendEntriesResponseStreamObserver).isSuccessful());
+    assertTrue(getReplyAppendEntries(mAppendEntriesResponseStreamObserver).isSuccessful());
     verify(mLogCommandExecutor).execute(any(AppendFromCommand.class));
     final ArgumentCaptor<Entry> captor = ArgumentCaptor.forClass(Entry.class);
     verify(mLog, times(entries.size())).append(captor.capture());
@@ -176,7 +176,7 @@ public class RaftFollowerDelegateTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void raft_spec__should_revert_and_overwrite_conflicted_entries() {
+  public void raft_spec__appendEntries__should_revert_and_overwrite_conflicted_entries() {
     // Given
     final int prevLogIndex = 0;
     final ImmutableList<Entry> entries = ImmutableList.of(
@@ -191,7 +191,7 @@ public class RaftFollowerDelegateTest {
     mUnitUnderTest.delegateAppendEntries(request, mAppendEntriesResponseStreamObserver);
 
     // Then
-    assertTrue(getReply(mAppendEntriesResponseStreamObserver).isSuccessful());
+    assertTrue(getReplyAppendEntries(mAppendEntriesResponseStreamObserver).isSuccessful());
     verify(mLogCommandExecutor).execute(any(AppendFromCommand.class));
     final ArgumentCaptor<Entry> captor = ArgumentCaptor.forClass(Entry.class);
     verify(mLog, times(2)).append(captor.capture());
@@ -200,7 +200,7 @@ public class RaftFollowerDelegateTest {
   }
 
   @Test
-  public void raft_spec__should_commit_to_leaderCommit() {
+  public void raft_spec__appendEntries__should_commit_to_leaderCommit() {
     // Given
     final int leaderCommit = 0;
     final AppendEntriesRequest request = AppendEntriesRequest.builder(0, 0, 1, LEADER_ID, leaderCommit).build();
@@ -216,8 +216,136 @@ public class RaftFollowerDelegateTest {
     verify(mLog).commit(leaderCommit);
   }
 
-  private AppendEntriesResponse getReply(final StreamObserver<AppendEntriesResponse> streamObserver) {
+  @Test
+  public void raft_spec__requestVote__should_reply_false_when_term_lt_currentTerm() {
+    // Given
+    doReturn(0)
+        .when(mRequestVoteRequest)
+        .getTerm();
+    doReturn(1)
+        .when(mRaftContext)
+        .getCurrentTerm();
+
+    // When
+    mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVoteResponseStreamObserver);
+
+    // Then
+    assertFalse(getReplyRequestVote(mRequestVoteResponseStreamObserver).isVoteGranted());
+    verify(mRaftContext, never()).setVotedFor(any());
+    verify(mRaftContext, never()).setCurrentTerm(anyInt());
+  }
+
+  @Test
+  public void raft_spec__requestVote__should_reply_true_when_log_up_to_date_votedForNull() {
+    // Given
+    final String candidateId = "candidateId";
+    final int term = 1;
+    final Entry entry = mock(Entry.class);
+    final long lastLogIndex = 1;
+    final int lastLogTerm = 1;
+    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.builder(term, candidateId, lastLogIndex + 1, lastLogTerm).build();
+    doReturn(term - 1)
+        .when(mRaftContext)
+        .getCurrentTerm();
+    doReturn(null)
+        .when(mRaftContext)
+        .getVotedFor();
+    doReturn(lastLogIndex)
+        .when(mLog)
+        .getLastIndex();
+    doReturn(entry)
+        .when(mLog)
+        .read(lastLogIndex);
+    doReturn(lastLogTerm - 1)
+        .when(entry)
+        .getTerm();
+
+    // When
+    mUnitUnderTest.delegateRequestVote(requestVoteRequest, mRequestVoteResponseStreamObserver);
+
+    // Then
+    assertTrue(getReplyRequestVote(mRequestVoteResponseStreamObserver).isVoteGranted());
+    verify(mRaftContext).setVotedFor(candidateId);
+    verify(mRaftContext).setCurrentTerm(term);
+  }
+
+  @Test
+  public void raft_spec__requestVote__should_reply_true_when_log_up_to_date_votedFor_eq_candidateId() {
+    // Given
+    final String candidateId = "candidateId";
+    final int term = 1;
+    final Entry entry = mock(Entry.class);
+    final long lastLogIndex = 1;
+    final int lastLogTerm = 1;
+    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.builder(term, candidateId, lastLogIndex + 1, lastLogTerm).build();
+    doReturn(term - 1)
+        .when(mRaftContext)
+        .getCurrentTerm();
+    doReturn(candidateId)
+        .when(mRaftContext)
+        .getVotedFor();
+    doReturn(lastLogIndex)
+        .when(mLog)
+        .getLastIndex();
+    doReturn(entry)
+        .when(mLog)
+        .read(lastLogIndex);
+    doReturn(lastLogTerm - 1)
+        .when(entry)
+        .getTerm();
+
+    // When
+    mUnitUnderTest.delegateRequestVote(requestVoteRequest, mRequestVoteResponseStreamObserver);
+
+    // Then
+    assertTrue(getReplyRequestVote(mRequestVoteResponseStreamObserver).isVoteGranted());
+    verify(mRaftContext).setVotedFor(candidateId);
+    verify(mRaftContext).setCurrentTerm(term);
+  }
+
+  @Test
+  public void raft_spec__requestVote__should_reply_false_when_log_up_to_date_votedFor_neq_candidateId() {
+    // Given
+    final String candidateId = "candidateId";
+    final String otherCandidateId = "otherCandidateId";
+    final int term = 1;
+    final Entry entry = mock(Entry.class);
+    final long lastLogIndex = 1;
+    final int lastLogTerm = 1;
+    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.builder(term, otherCandidateId, lastLogIndex + 1, lastLogTerm).build();
+    doReturn(term - 1)
+        .when(mRaftContext)
+        .getCurrentTerm();
+    doReturn(candidateId)
+        .when(mRaftContext)
+        .getVotedFor();
+    doReturn(lastLogIndex)
+        .when(mLog)
+        .getLastIndex();
+    doReturn(entry)
+        .when(mLog)
+        .read(lastLogIndex);
+    doReturn(lastLogTerm - 1)
+        .when(entry)
+        .getTerm();
+
+    // When
+    mUnitUnderTest.delegateRequestVote(requestVoteRequest, mRequestVoteResponseStreamObserver);
+
+    // Then
+    assertFalse(getReplyRequestVote(mRequestVoteResponseStreamObserver).isVoteGranted());
+    verify(mRaftContext, never()).setVotedFor(any());
+    verify(mRaftContext, never()).setCurrentTerm(anyInt());
+  }
+
+  private AppendEntriesResponse getReplyAppendEntries(final StreamObserver<AppendEntriesResponse> streamObserver) {
     final ArgumentCaptor<AppendEntriesResponse> captor = ArgumentCaptor.forClass(AppendEntriesResponse.class);
+    verify(streamObserver).onNext(captor.capture());
+    return captor.getValue();
+  }
+
+  private RequestVoteResponse getReplyRequestVote(final StreamObserver<RequestVoteResponse> streamObserver) {
+    final ArgumentCaptor<RequestVoteResponse> captor = ArgumentCaptor.forClass(RequestVoteResponse.class);
     verify(streamObserver).onNext(captor.capture());
     return captor.getValue();
   }

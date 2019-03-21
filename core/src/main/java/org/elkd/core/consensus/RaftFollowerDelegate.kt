@@ -32,16 +32,16 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
   init {
     this.raft = Preconditions.checkNotNull(raft, "raft")
     mTimeoutMonitor = Preconditions.checkNotNull(timeoutMonitor, "timeoutMonitor")
-    mTimeout = Preconditions.checkNotNull(this.raft.config.getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS))
+    mTimeout = Preconditions.checkNotNull(this.raft.config.getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS))
   }
 
   override fun on() {
-    LOG.info("ready")
+    LOG.info("follower ready")
     resetTimeout()
   }
 
   override fun off() {
-    LOG.info("offline")
+    LOG.info("follower offline")
     mTimeoutMonitor.stop()
   }
 
@@ -79,6 +79,7 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
         && raft.log.lastIndex <= requestVoteRequest.lastLogIndex
         && raft.log.read(raft.log.lastIndex).term <= requestVoteRequest.lastLogTerm) {
       raftContext.votedFor = requestVoteRequest.candidateId
+      raftContext.currentTerm = requestVoteRequest.term
       replyRequestVote(true, responseObserver)
       return
     }

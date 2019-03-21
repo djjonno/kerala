@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 public class RequestVoteRequest {
   private final int mTerm;
   private final String mCandidateId;
-  private final int mLastLogIndex;
+  private final long mLastLogIndex;
   private final int mLastLogTerm;
 
   private RequestVoteRequest(final Builder builder) {
@@ -18,7 +18,7 @@ public class RequestVoteRequest {
 
   public static Builder builder(final int term,
                                 final String candidateId,
-                                final int lastLogIndex,
+                                final long lastLogIndex,
                                 final int lastLogTerm) {
     return new Builder(term, candidateId, lastLogIndex, lastLogTerm);
   }
@@ -26,12 +26,12 @@ public class RequestVoteRequest {
   public static class Builder {
     private final int mTerm;
     private final String mCandidateId;
-    private final int mLastLogIndex;
+    private final long mLastLogIndex;
     private final int mLastLogTerm;
 
     private Builder(final int term,
                     final String candidateId,
-                    final int lastLogIndex,
+                    final long lastLogIndex,
                     final int lastLogTerm) {
       mTerm = term;
       mCandidateId = candidateId;
@@ -52,7 +52,7 @@ public class RequestVoteRequest {
     return mCandidateId;
   }
 
-  public int getLastLogIndex() {
+  public long getLastLogIndex() {
     return mLastLogIndex;
   }
 
