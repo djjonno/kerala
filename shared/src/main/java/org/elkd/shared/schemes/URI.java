@@ -48,7 +48,7 @@ public class URI {
 
   @Override
   public String toString() {
-    return mHost + ":" + mPort;
+    return SCHEME + mHost + ":" + mPort;
   }
 
   @Override

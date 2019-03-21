@@ -32,7 +32,7 @@ public class ClusterConnectionPool {
 
     for (final Node node : mClusterSet.getNodes()) {
       final ManagedChannel channel = ManagedChannelBuilder
-          .forTarget(node.getURI().toString())
+          .forTarget(node.getHost() + ":" + node.getPort())
           .usePlaintext() /* TODO: add cert auth */
           .build();
       mChannelMap.put(node, new Channel(channel));

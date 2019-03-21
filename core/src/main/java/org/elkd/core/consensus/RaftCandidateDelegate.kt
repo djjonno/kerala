@@ -18,6 +18,7 @@ internal class RaftCandidateDelegate(raft: Raft) : RaftState {
 
   override fun on() {
     LOG.info("candidate ready")
+    startElection()
   }
 
   override fun off() {
@@ -36,6 +37,10 @@ internal class RaftCandidateDelegate(raft: Raft) : RaftState {
      */
     responseObserver.onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())
     responseObserver.onCompleted()
+  }
+
+  private fun startElection() {
+
   }
 
   companion object {

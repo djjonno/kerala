@@ -77,6 +77,7 @@ public class Config {
   public String toString() {
     return "Config{" + mConfig + '}';
   }
+
   /* Helpers */
 
   static List<String> getSupportedKeys() {

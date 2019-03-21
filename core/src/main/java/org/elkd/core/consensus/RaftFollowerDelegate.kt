@@ -116,7 +116,7 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
 
   private fun resetTimeout() {
     val newTimeout = randomizeNumberPoint(mTimeout, 0.2)
-    LOG.info("Timeout in " + newTimeout + "ms")
+    LOG.info("timeout in " + newTimeout + "ms")
     mTimeoutMonitor.reset(newTimeout.toLong())
   }
 

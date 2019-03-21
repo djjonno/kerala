@@ -45,8 +45,10 @@ public class ClusterConnectionPoolTest {
     // Then
     assertNotNull(clusterConnectionPool.getChannel(NODE_1));
     assertNotNull(clusterConnectionPool.getChannel(NODE_2));
-    verify(NODE_1).getURI();
-    verify(NODE_2).getURI();
+    verify(NODE_1).getHost();
+    verify(NODE_1).getPort();
+    verify(NODE_2).getHost();
+    verify(NODE_2).getPort();
     assertNull(clusterConnectionPool.getChannel(SELF_NODE));
     verifyZeroInteractions(SELF_NODE);
   }
