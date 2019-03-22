@@ -1,7 +1,7 @@
 package org.elkd.core.consensus
 
+import org.apache.log4j.Logger
 import org.elkd.shared.annotations.Mockable
-import java.util.logging.Logger
 
 @Mockable
 class RaftContext {

@@ -3,8 +3,6 @@ package org.elkd.core.server.cluster;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.elkd.core.server.cluster.ClusterConnectionPool.Channel;
-import org.elkd.core.server.cluster.exceptions.NodeNotFoundException;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
@@ -13,6 +11,8 @@ import org.elkd.core.server.RpcAppendEntriesRequest;
 import org.elkd.core.server.RpcAppendEntriesResponse;
 import org.elkd.core.server.RpcRequestVoteRequest;
 import org.elkd.core.server.RpcRequestVoteResponse;
+import org.elkd.core.server.cluster.ClusterConnectionPool.Channel;
+import org.elkd.core.server.cluster.exceptions.NodeNotFoundException;
 import org.elkd.core.server.converters.ConverterRegistry;
 import org.elkd.core.server.converters.ListenableFutureConverterDecorator;
 
@@ -34,6 +34,10 @@ public class ClusterMessenger {
                    final ConverterRegistry converterRegistry) {
     mClusterConnectionPool = Preconditions.checkNotNull(clusterConnectionPool, "clusterConnectionPool");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
+  }
+
+  public ClusterSet getClusterSet() {
+    return mClusterConnectionPool.getClusterSet();
   }
 
   public ListenableFuture<AppendEntriesResponse> appendEntries(final Node node, final AppendEntriesRequest request) {

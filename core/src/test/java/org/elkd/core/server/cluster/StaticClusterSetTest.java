@@ -27,7 +27,7 @@ public class StaticClusterSetTest {
         .build();
 
     // Then
-    assertEquals(MEMBERS.size(), set.clusterSize());
+    assertEquals(MEMBERS.size(), set.size());
     assertEquals(MEMBERS, set.getNodes());
   }
 
@@ -118,7 +118,7 @@ public class StaticClusterSetTest {
         .build();
 
     // Then
-    assertEquals(set.clusterSize(), MEMBERS.size());
+    assertEquals(set.size(), MEMBERS.size());
   }
 
   @Test(expected = ElkdRuntimeException.class)

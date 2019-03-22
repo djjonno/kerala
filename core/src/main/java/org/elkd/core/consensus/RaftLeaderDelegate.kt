@@ -1,6 +1,5 @@
 package org.elkd.core.consensus
 
-import com.google.common.base.Preconditions
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -9,16 +8,9 @@ import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.server.cluster.ClusterMessenger
 
-internal class RaftLeaderDelegate/* package */(raft: Raft,
-                                               private val mClusterMessenger: ClusterMessenger) : RaftState {
-
-  private val raft: Raft
+class RaftLeaderDelegate(private val raft: Raft) : RaftState {
 
   private var mLeaderContext: LeaderContext? = null
-
-  init {
-    this.raft = Preconditions.checkNotNull(raft, "raft")
-  }
 
   override fun on() {
     mLeaderContext = LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex)

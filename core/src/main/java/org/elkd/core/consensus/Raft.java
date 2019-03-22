@@ -14,6 +14,7 @@ import org.elkd.core.log.Log;
 import org.elkd.core.log.LogCommandExecutor;
 import org.elkd.core.log.LogProvider;
 import org.elkd.core.server.cluster.ClusterConnectionPool;
+import org.elkd.core.server.cluster.ClusterMessenger;
 import org.elkd.core.server.cluster.ClusterSet;
 
 import javax.annotation.Nonnull;
@@ -24,7 +25,7 @@ public class Raft implements RaftDelegate {
   private static final Logger LOG = Logger.getLogger(Raft.class);
 
   private final Config mConfig;
-  private final ClusterSet mClusterSet;
+  private final ClusterMessenger mClusterMessenger;
   private final ClusterConnectionPool mClusterConnectionPool;
   private final LogProvider<Entry> mLogProvider;
   private final RaftContext mRaftContext;
@@ -49,13 +50,14 @@ public class Raft implements RaftDelegate {
        @Nonnull final LogProvider<Entry> log,
        @Nonnull final ExecutorService executorService) {
     mConfig = Preconditions.checkNotNull(config, "config");
-    mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
     mRaftContext = Preconditions.checkNotNull(raftContext, "raftContext");
     mStateFactory = Preconditions.checkNotNull(delegateFactory, "delegateFactory");
     mSerialExecutor = Preconditions.checkNotNull(executorService, "executorService");
     mLogProvider = Preconditions.checkNotNull(log, "log");
 
-    mClusterConnectionPool = new ClusterConnectionPool(mClusterSet);
+    Preconditions.checkNotNull(clusterSet, "clusterSet");
+    mClusterConnectionPool = new ClusterConnectionPool(clusterSet);
+    mClusterMessenger = new ClusterMessenger(mClusterConnectionPool);
   }
 
   public void initialize() {
@@ -92,8 +94,8 @@ public class Raft implements RaftDelegate {
   }
 
   /* package */ void transitionToState(@Nonnull final Class<? extends RaftState> nextState) {
-    LOG.info("transitioning to -> " + nextState);
     mSerialExecutor.execute(() -> {
+      LOG.info("transitioning to -> " + nextState);
       mRaftState.off();
       mRaftState = mStateFactory.getDelegate(this, nextState);
       mRaftState.on();
@@ -113,11 +115,11 @@ public class Raft implements RaftDelegate {
   }
 
   /* package */ ClusterSet getClusterSet() {
-    return mClusterSet;
+    return mClusterMessenger.getClusterSet();
   }
 
-  /* package */ ClusterConnectionPool getClusterConnectionPool() {
-    return mClusterConnectionPool;
+  /* package */ ClusterMessenger getClusterMessenger() {
+    return mClusterMessenger;
   }
 
   /* package */ RaftContext getRaftContext() {

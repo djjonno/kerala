@@ -2,7 +2,6 @@ package org.elkd.core.consensus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import org.elkd.core.server.cluster.ClusterMessenger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,6 +44,6 @@ public class DefaultStateFactory implements AbstractStateFactory {
   }
 
   private RaftState createLeaderState(@Nonnull final Raft raft) {
-    return new RaftLeaderDelegate(raft, new ClusterMessenger(raft.getClusterConnectionPool()));
+    return new RaftLeaderDelegate(raft);
   }
 }

@@ -3,7 +3,7 @@ package org.elkd.core.server.cluster;
 import java.util.Set;
 
 public interface ClusterSet {
-  int clusterSize();
+  int size();
 
   void addNode(Node uri);
 

@@ -1,7 +1,6 @@
 package org.elkd.core.consensus;
 
 import org.elkd.core.config.ConfigProvider;
-import org.elkd.core.server.cluster.ClusterConnectionPool;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -10,7 +9,6 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 public class DefaultRaftDelegateFactoryTest {
 
@@ -23,9 +21,6 @@ public class DefaultRaftDelegateFactoryTest {
     MockitoAnnotations.initMocks(this);
 
     mUnitUnderTest = new DefaultStateFactory();
-    doReturn(mock(ClusterConnectionPool.class))
-        .when(mRaft)
-        .getClusterConnectionPool();
 
     doReturn(ConfigProvider.compileConfig(new String[] { }))
         .when(mRaft)

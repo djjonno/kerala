@@ -17,12 +17,11 @@ import org.elkd.shared.annotations.Mockable
 import org.elkd.shared.math.randomizeNumberPoint
 
 @Mockable
-internal class RaftFollowerDelegate @VisibleForTesting
-constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
+class RaftFollowerDelegate @VisibleForTesting
+constructor(private val raft: Raft,
+            private val timeoutMonitor: TimeoutMonitor) : RaftState {
 
-  private val raft: Raft
   private val timeout: Int
-  private val timeoutMonitor: TimeoutMonitor
 
   constructor(raft: Raft) : this(
       raft,
@@ -30,8 +29,6 @@ constructor(raft: Raft, timeoutMonitor: TimeoutMonitor) : RaftState {
   )
 
   init {
-    this.raft = Preconditions.checkNotNull(raft, "raft")
-    this.timeoutMonitor = Preconditions.checkNotNull(timeoutMonitor, "timeoutMonitor")
     timeout = Preconditions.checkNotNull(this.raft.config.getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS))
   }
 

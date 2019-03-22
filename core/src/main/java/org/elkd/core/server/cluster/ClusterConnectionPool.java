@@ -27,8 +27,12 @@ public class ClusterConnectionPool {
     mClusterSet = Preconditions.checkNotNull(clusterSet, "clusterSet");
   }
 
+  public ClusterSet getClusterSet() {
+    return mClusterSet;
+  }
+
   public void initialize() {
-    LOG.info("initializing cluster connections with " + mClusterSet.clusterSize() + " nodes");
+    LOG.info("initializing cluster connections with " + mClusterSet.size() + " nodes");
 
     for (final Node node : mClusterSet.getNodes()) {
       final ManagedChannel channel = ManagedChannelBuilder

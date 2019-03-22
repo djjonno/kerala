@@ -46,7 +46,7 @@ public final class StaticClusterSet implements ClusterSet {
   }
 
   @Override
-  public int clusterSize() {
+  public int size() {
     return mNodes.size();
   }
 

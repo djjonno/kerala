@@ -24,33 +24,21 @@ import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.*
 
 class RaftTest {
-  @Mock
-  internal var mConfig: Config? = null
-  @Mock
-  internal var mRaft1: RaftState? = null
-  @Mock
-  internal var mRaft2: RaftState? = null
-  @Mock
-  internal var mRaftContext: RaftContext? = null
-  @Mock
-  internal var mClusterSet: ClusterSet? = null
-  @Mock
-  internal var mLogProvider: LogProvider<Entry>? = null
-  @Mock
-  internal var mLog: Log<Entry>? = null
-  @Mock
-  internal var mStateFactory: AbstractStateFactory? = null
-  @Mock
-  internal var mRequestVoteRequest: RequestVoteRequest? = null
-  @Mock
-  internal var mAppendEntriesRequest: AppendEntriesRequest? = null
-  @Mock
-  internal var mRequestVotesResponseObserver: StreamObserver<RequestVoteResponse>? = null
-  @Mock
-  internal var mAppendEntriesResponseObserver: StreamObserver<AppendEntriesResponse>? = null
+  @Mock internal lateinit var mConfig: Config
+  @Mock internal lateinit var mRaft1: RaftState
+  @Mock internal lateinit var mRaft2: RaftState
+  @Mock internal lateinit var mRaftContext: RaftContext
+  @Mock internal lateinit var mClusterSet: ClusterSet
+  @Mock internal lateinit var mLogProvider: LogProvider<Entry>
+  @Mock internal lateinit var mLog: Log<Entry>
+  @Mock internal lateinit var mStateFactory: AbstractStateFactory
+  @Mock internal lateinit var mRequestVoteRequest: RequestVoteRequest
+  @Mock internal lateinit var mAppendEntriesRequest: AppendEntriesRequest
+  @Mock internal lateinit var mRequestVotesResponseObserver: StreamObserver<RequestVoteResponse>
+  @Mock internal lateinit var mAppendEntriesResponseObserver: StreamObserver<AppendEntriesResponse>
 
-  private var mUnitUnderTest: Raft? = null
-  private var mExecutorService: ExecutorService? = null
+  private lateinit var mUnitUnderTest: Raft
+  private lateinit var mExecutorService: ExecutorService
 
   @Before
   @Throws(Exception::class)
@@ -62,12 +50,12 @@ class RaftTest {
     setupCommonExpectations()
 
     mUnitUnderTest = Raft(
-        mConfig!!,
-        mClusterSet!!,
-        mRaftContext!!,
-        mStateFactory!!,
-        mLogProvider!!,
-        mExecutorService!!
+        mConfig,
+        mClusterSet,
+        mRaftContext,
+        mStateFactory,
+        mLogProvider,
+        mExecutorService
     )
   }
 
@@ -87,7 +75,7 @@ class RaftTest {
   @Throws(InterruptedException::class)
   fun should_get_initial_state_and_activate_on_initialize() {
     // Given / When
-    mUnitUnderTest!!.initialize()
+    mUnitUnderTest.initialize()
 
     // Then
     verify<AbstractStateFactory>(mStateFactory).getInitialDelegate(mUnitUnderTest)
@@ -98,11 +86,11 @@ class RaftTest {
   @Throws(InterruptedException::class)
   fun should_transition_state_for_transition() {
     // Given
-    mUnitUnderTest!!.initialize()
+    mUnitUnderTest.initialize()
     val state = RaftLeaderDelegate::class.java
 
     // When
-    mUnitUnderTest!!.transitionToState(state)
+    mUnitUnderTest.transitionToState(state)
 
     // Then
     verify<RaftState>(mRaft1).off()
@@ -114,10 +102,10 @@ class RaftTest {
   @Throws(InterruptedException::class)
   fun should_route_appendEntries_to_active_state() {
     // Given
-    mUnitUnderTest!!.initialize()
+    mUnitUnderTest.initialize()
 
     // When
-    mUnitUnderTest!!.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver)
+    mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver)
 
     // Then
     verify<RaftState>(mRaft1).delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver)
@@ -127,10 +115,10 @@ class RaftTest {
   @Throws(InterruptedException::class)
   fun should_route_requestVotes_to_active_state() {
     // Given
-    mUnitUnderTest!!.initialize()
+    mUnitUnderTest.initialize()
 
     // When
-    mUnitUnderTest!!.delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver)
+    mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver)
 
     // Then
     verify<RaftState>(mRaft1).delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver)
@@ -141,7 +129,7 @@ class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertSame(mConfig, mUnitUnderTest!!.config)
+    assertSame(mConfig, mUnitUnderTest.config)
   }
 
   @Test
@@ -149,7 +137,7 @@ class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertSame(mRaftContext, mUnitUnderTest!!.raftContext)
+    assertSame(mRaftContext, mUnitUnderTest.raftContext)
   }
 
   @Test
@@ -157,13 +145,13 @@ class RaftTest {
     // Given / When - mUnitUnderTest
 
     // Then
-    assertSame(mClusterSet, mUnitUnderTest!!.clusterSet)
+    assertSame(mClusterSet, mUnitUnderTest.clusterSet)
   }
 
   @Test
   fun should_transition_to_follower_if_term_gt_currentTerm_when_appendEntries() {
     // Given
-    mUnitUnderTest!!.initialize()
+    mUnitUnderTest.initialize()
     val currentTerm = 0
     doReturn(currentTerm)
         .`when`<RaftContext>(mRaftContext)
@@ -178,20 +166,20 @@ class RaftTest {
         .getDelegate(any(), eq(RaftFollowerDelegate::class.java))
 
     // When
-    mUnitUnderTest!!.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver)
+    mUnitUnderTest.delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver)
 
     // Then
     verify<AbstractStateFactory>(mStateFactory).getDelegate(eq<Raft>(mUnitUnderTest), eq(RaftFollowerDelegate::class.java))
     verify<RaftContext>(mRaftContext).currentTerm = newTerm
     verify<RaftContext>(mRaftContext).votedFor = null
     verify(followerDelegate).on()
-    verify(followerDelegate).delegateAppendEntries(mAppendEntriesRequest!!, mAppendEntriesResponseObserver!!)
+    verify(followerDelegate).delegateAppendEntries(mAppendEntriesRequest, mAppendEntriesResponseObserver)
   }
 
   @Test
   fun should_transition_to_follower_if_term_gt_currentTerm_when_requestVotes() {
     // Given
-    mUnitUnderTest!!.initialize()
+    mUnitUnderTest.initialize()
     val currentTerm = 0
     doReturn(currentTerm)
         .`when`<RaftContext>(mRaftContext)
@@ -206,13 +194,13 @@ class RaftTest {
         .getDelegate(any(), eq(RaftFollowerDelegate::class.java))
 
     // When
-    mUnitUnderTest!!.delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver)
+    mUnitUnderTest.delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver)
 
     // Then
     verify<AbstractStateFactory>(mStateFactory).getDelegate(eq<Raft>(mUnitUnderTest), eq(RaftFollowerDelegate::class.java))
     verify<RaftContext>(mRaftContext).currentTerm = newTerm
     verify<RaftContext>(mRaftContext).votedFor = null
     verify(followerDelegate).on()
-    verify(followerDelegate).delegateRequestVote(mRequestVoteRequest!!, mRequestVotesResponseObserver!!)
+    verify(followerDelegate).delegateRequestVote(mRequestVoteRequest, mRequestVotesResponseObserver)
   }
 }
