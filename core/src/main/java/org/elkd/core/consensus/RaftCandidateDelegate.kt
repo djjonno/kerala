@@ -68,7 +68,7 @@ class RaftCandidateDelegate(private val raft: Raft,
   }
 
   private fun stopElection() {
-    electionScheduler?.cancel()
+    electionScheduler?.finish()
   }
 
   private fun createVoteRequest(): RequestVoteRequest {

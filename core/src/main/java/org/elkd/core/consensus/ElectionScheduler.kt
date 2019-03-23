@@ -25,8 +25,8 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
       voteRequest,
       clusterMessenger.clusterSet.allNodes.size,
       ElectionMode.MAJORITY,
-      onSuccessDecorator(onSuccess),
-      onFailureDecorator(onFailure))
+      onSuccessDelegate(),
+      onFailureDelegate())
 
   fun schedule() {
     if (scheduled) return
@@ -40,6 +40,11 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     dispatchVoteRequest()
   }
 
+  fun finish() {
+    onSuccess = null
+    onFailure = null
+  }
+
   private fun dispatchVoteRequest() {
     clusterMessenger.clusterSet.nodes.forEach {
       val future = clusterMessenger.requestVote(it, voteRequest)
@@ -49,29 +54,25 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     }
   }
 
-  fun cancel() {
-    onSuccess = null
-    onFailure = null
-  }
-
-  fun onSuccessDecorator(runnable: Runnable?): Runnable? {
+  private fun onSuccessDelegate(): Runnable? {
     return Runnable {
       LOG.info("election was successful $electionTally")
-      runnable?.run()
+      onSuccess?.run()
+      finish()
     }
   }
 
-  fun onFailureDecorator(runnable: Runnable?): Runnable? {
+  private fun onFailureDelegate(): Runnable? {
     return Runnable {
       LOG.info("election was not successful $electionTally")
-      runnable?.run()
+      onFailure?.run()
+      finish()
     }
   }
 
   private fun handleVoteResponse(node: Node, future: ListenableFuture<RequestVoteResponse>) {
     try {
       val voteResponse = future.get()
-      LOG.info(voteResponse)
       when (voteResponse.isVoteGranted) {
         true -> electionTally.recordVote(node)
         false -> electionTally.recordNoVote(node)
