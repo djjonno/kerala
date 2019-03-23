@@ -1,15 +1,20 @@
 package org.elkd.core.consensus
 
+import com.google.common.util.concurrent.ListenableFuture
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.RequestVoteRequest
+import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.server.cluster.ClusterMessenger
+import org.elkd.core.server.cluster.Node
+import java.lang.Exception
+import java.util.concurrent.Executors
 
 /**
  * Performs an election across the cluster, requesting votes and tallying responses.
  *
  * @param onSuccess If election was successful, this Runnable will be executed
  * @param onFailure Opposite to onSuccess, this Runnable is called when election failed.
- * @param clusterMessenger - Messenger mechanism, contains logical cluster to perform election across.
+ * @param clusterMessenger Messenger mechanism, contains logical cluster to perform election across.
  */
 class ElectionScheduler private constructor(private val voteRequest: RequestVoteRequest,
                                             private var onSuccess: Runnable?,
@@ -18,8 +23,8 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
   private var scheduled = false
   private var electionTally: ElectionTally = ElectionTally(
       voteRequest,
-      clusterMessenger.clusterSet.size(),
-      ElectionType.MAJORITY,
+      clusterMessenger.clusterSet.allNodes.size,
+      ElectionMode.MAJORITY,
       onSuccessDecorator(onSuccess),
       onFailureDecorator(onFailure))
 
@@ -30,6 +35,18 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
 
     /* Vote for self */
     electionTally.recordVote(clusterMessenger.clusterSet.selfNode)
+
+    /* dispatch votes across cluster */
+    dispatchVoteRequest()
+  }
+
+  private fun dispatchVoteRequest() {
+    clusterMessenger.clusterSet.nodes.forEach {
+      val future = clusterMessenger.requestVote(it, voteRequest)
+      future.addListener(Runnable {
+        handleVoteResponse(it, future)
+      }, Executors.newSingleThreadExecutor())
+    }
   }
 
   fun cancel() {
@@ -49,6 +66,17 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
       LOG.info("election was not successful $electionTally")
       runnable?.run()
     }
+  }
+
+  private fun handleVoteResponse(node: Node, future: ListenableFuture<RequestVoteResponse>) {
+    try {
+      val voteResponse = future.get()
+      LOG.info(voteResponse)
+      when (voteResponse.isVoteGranted) {
+        true -> electionTally.recordVote(node)
+        false -> electionTally.recordNoVote(node)
+      }
+    } catch (e: Exception) { }
   }
 
   companion object {

@@ -1,4 +1,4 @@
-package org.elkd.core.server;
+package org.elkd.core.server.cluster;
 
 import io.grpc.stub.StreamObserver;
 import org.elkd.core.consensus.RaftDelegate;
@@ -6,6 +6,10 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
+import org.elkd.core.server.RpcAppendEntriesRequest;
+import org.elkd.core.server.RpcAppendEntriesResponse;
+import org.elkd.core.server.RpcRequestVoteRequest;
+import org.elkd.core.server.RpcRequestVoteResponse;
 import org.elkd.core.server.converters.ConverterRegistry;
 import org.elkd.core.server.converters.StreamConverterDecorator;
 import org.junit.Before;
@@ -16,8 +20,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class ClusterServiceTest {
   @Mock RaftDelegate mRaftDelegate;
@@ -114,6 +117,40 @@ public class ClusterServiceTest {
     final StreamConverterDecorator<RequestVoteResponse, RpcRequestVoteResponse> streamObserver = captor.getValue();
     streamObserver.onNext(mRequestVoteResponse);
     verify(mRpcRequestVoteStreamObserver).onNext(response);
+  }
+
+  @Test
+  public void should_call_onError_given_appendEntries_delegation_throws_exception() {
+    // Given
+    final RpcAppendEntriesRequest request = RpcAppendEntriesRequest.newBuilder().build();
+    final RuntimeException exception = new RuntimeException();
+    doThrow(exception)
+        .when(mRaftDelegate)
+        .delegateAppendEntries(any(), any());
+
+    // When
+    mUnitUnderTest.appendEntries(request, mRpcAppendEntriesStreamObserver);
+
+    // Then
+    verify(mRpcAppendEntriesStreamObserver).onError(exception);
+    verify(mRpcAppendEntriesStreamObserver).onCompleted();
+  }
+
+  @Test
+  public void should_call_onError_given_requestVote_delegation_throws_exception() {
+    // Given
+    final RpcRequestVoteRequest request = RpcRequestVoteRequest.newBuilder().build();
+    final RuntimeException exception = new RuntimeException();
+    doThrow(exception)
+        .when(mRaftDelegate)
+        .delegateRequestVote(any(), any());
+
+    // When
+    mUnitUnderTest.requestVote(request, mRpcRequestVoteStreamObserver);
+
+    // Then
+    verify(mRpcRequestVoteStreamObserver).onError(exception);
+    verify(mRpcRequestVoteStreamObserver).onCompleted();
   }
 
   private void setupConverterRegistry(final Object from, final Object to) {

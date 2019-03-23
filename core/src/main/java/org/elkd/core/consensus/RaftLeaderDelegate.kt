@@ -6,7 +6,6 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
-import org.elkd.core.server.cluster.ClusterMessenger
 
 class RaftLeaderDelegate(private val raft: Raft) : RaftState {
 
@@ -16,6 +15,17 @@ class RaftLeaderDelegate(private val raft: Raft) : RaftState {
     mLeaderContext = LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex)
     LOG.info("leader ready")
     LOG.info(mLeaderContext?.toString())
+
+    var c = 0
+    while (c < 10) {
+      val request = AppendEntriesRequest.builder(raft.raftContext.currentTerm, -1, raft.log.lastIndex, raft.clusterSet.selfNode.id, raft.log.commitIndex).build()
+      raft.clusterMessenger.clusterSet.nodes.forEach {
+        raft.clusterMessenger.appendEntries(it, request)
+      }
+      Thread.sleep(500)
+      c++
+      LOG.info("sending")
+    }
   }
 
   override fun off() {

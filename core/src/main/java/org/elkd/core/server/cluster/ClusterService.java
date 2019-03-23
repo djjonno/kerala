@@ -1,14 +1,18 @@
-package org.elkd.core.server;
+package org.elkd.core.server.cluster;
 
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
-import org.elkd.core.ElkdRuntimeException;
 import org.elkd.core.consensus.RaftDelegate;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
+import org.elkd.core.server.ElkdClusterServiceGrpc;
+import org.elkd.core.server.RpcAppendEntriesRequest;
+import org.elkd.core.server.RpcAppendEntriesResponse;
+import org.elkd.core.server.RpcRequestVoteRequest;
+import org.elkd.core.server.RpcRequestVoteResponse;
 import org.elkd.core.server.converters.ConverterRegistry;
 import org.elkd.core.server.converters.StreamConverterDecorator;
 
@@ -20,7 +24,7 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
   private final RaftDelegate mRaftDelegate;
   private final ConverterRegistry mConverterRegistry;
 
-  /* package */ ClusterService(@Nonnull final RaftDelegate raftDelegate,
+  public ClusterService(@Nonnull final RaftDelegate raftDelegate,
                                @Nonnull final ConverterRegistry converterRegistry) {
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
@@ -42,9 +46,10 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
           request,
           observer
       );
-    } catch (final ElkdRuntimeException e) {
+    } catch (final Exception e) {
       LOG.error(e);
       responseObserver.onError(e);
+      responseObserver.onCompleted();
     }
   }
 
@@ -60,9 +65,10 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
           request,
           observer
       );
-    } catch (final ElkdRuntimeException e) {
+    } catch (final Exception e) {
       LOG.error(e);
       responseObserver.onError(e);
+      responseObserver.onCompleted();
     }
   }
 }

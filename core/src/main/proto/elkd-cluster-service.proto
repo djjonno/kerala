@@ -14,7 +14,7 @@ message RpcAppendEntriesRequest {
     uint64 prevLogIndex = 3;
     uint32 prevLogTerm = 4;
     repeated RpcEntry entries = 5;
-    uint32 leaderCommit = 6;
+    uint64 leaderCommit = 6;
 }
 
 message RpcAppendEntriesResponse {

@@ -12,7 +12,7 @@ public class AppendEntriesRequest {
   private final int mPrevLogTerm;
   private final long mPrevLogIndex;
   private final String mLeaderId;
-  private final int mLeaderCommit;
+  private final long mLeaderCommit;
   private final List<Entry> mEntries;
 
   private AppendEntriesRequest(final Builder builder) {
@@ -29,7 +29,7 @@ public class AppendEntriesRequest {
                                 final int prevLogTerm,
                                 final long prevLogIndex,
                                 final String leaderId,
-                                final int leaderCommit) {
+                                final long leaderCommit) {
     return new Builder(term, prevLogTerm, prevLogIndex, leaderId, leaderCommit);
   }
 
@@ -38,14 +38,14 @@ public class AppendEntriesRequest {
     private final int mPrevLogTerm;
     private final long mPrevLogIndex;
     private final String mLeaderId;
-    private final int mLeaderCommit;
+    private final long mLeaderCommit;
     private final List<Entry> mEntries = new ArrayList<>();
 
     private Builder(final int term,
                     final int prevLogTerm,
                     final long prevLogIndex,
                     final String leaderId,
-                    final int leaderCommit) {
+                    final long leaderCommit) {
       mTerm = term;
       mLeaderId = leaderId;
       mPrevLogTerm = prevLogTerm;
@@ -84,7 +84,7 @@ public class AppendEntriesRequest {
     return mLeaderId;
   }
 
-  public int getLeaderCommit() {
+  public long getLeaderCommit() {
     return mLeaderCommit;
   }
 
