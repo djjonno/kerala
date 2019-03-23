@@ -51,18 +51,6 @@ public class InMemoryLogTest {
   }
 
   @Test
-  public void should_return_null_when_accessing_uncommitted_entry() {
-    // Given
-    final long t1 = mUnitUnderTest.append(mEntry1);
-
-    // When
-    final Entry entry = mUnitUnderTest.read(t1);
-
-    // Then
-    assertNull(entry);
-  }
-
-  @Test
   public void should_append_log_at_index() {
     // Given
     final long t1 = mUnitUnderTest.append(mEntry1);

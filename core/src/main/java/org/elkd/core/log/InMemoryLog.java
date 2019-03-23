@@ -39,7 +39,6 @@ public class InMemoryLog implements Log<Entry> {
   public Entry read(final long index) {
     try {
       Preconditions.checkState(START_INDEX <= index && index <= mIndex);
-      Preconditions.checkState(index <= mCommitIndex, "can only read committed entries.");
       return mLogStore.get((int) index);
     } catch (final Exception e) {
       return null;
@@ -97,7 +96,7 @@ public class InMemoryLog implements Log<Entry> {
     }
 
     return "InMemoryLog{" +
-        "mLogStore=" + committed +
+        "mLogStore=" + mLogStore +
         ", mIndex=" + mIndex +
         ", mCommitIndex=" + mCommitIndex +
         '}';

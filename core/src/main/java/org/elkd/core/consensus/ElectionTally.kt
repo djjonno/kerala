@@ -76,7 +76,6 @@ class ElectionTally(private val voteRequest: RequestVoteRequest,
   }
 
   private fun isMajorityElectionOver(): Boolean {
-    LOG.info("voted.size: ${voted.size}, voteTotal / 2: ${voteTotal / 2}")
     return voted.size > (voteTotal / 2);
   }
 
