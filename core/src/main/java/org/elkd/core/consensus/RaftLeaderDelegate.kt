@@ -17,14 +17,14 @@ class RaftLeaderDelegate(private val raft: Raft) : RaftState {
     LOG.info(mLeaderContext?.toString())
 
     var c = 0
-    while (c < 10) {
+    while (c < 20) {
       val request = AppendEntriesRequest.builder(raft.raftContext.currentTerm, -1, raft.log.lastIndex, raft.clusterSet.selfNode.id, raft.log.commitIndex).build()
       raft.clusterMessenger.clusterSet.nodes.forEach {
         raft.clusterMessenger.appendEntries(it, request)
       }
       Thread.sleep(500)
       c++
-      LOG.info("sending")
+      LOG.info("replicating appendEntries...")
     }
   }
 

@@ -3,6 +3,7 @@ package org.elkd.core.consensus
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
+import org.elkd.core.consensus.election.ElectionScheduler
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
