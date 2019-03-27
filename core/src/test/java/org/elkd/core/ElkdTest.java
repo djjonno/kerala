@@ -1,7 +1,7 @@
 package org.elkd.core;
 
 import org.elkd.core.config.Config;
-import org.elkd.core.raft.Raft;
+import org.elkd.core.consensus.Raft;
 import org.elkd.core.server.Server;
 import org.junit.Before;
 import org.junit.Test;

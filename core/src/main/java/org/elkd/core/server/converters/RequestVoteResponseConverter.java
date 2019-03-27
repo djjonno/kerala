@@ -2,7 +2,7 @@ package org.elkd.core.server.converters;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import org.elkd.core.raft.messages.RequestVoteResponse;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.server.RpcRequestVoteResponse;
 import org.elkd.core.server.converters.exceptions.ConverterException;
 import org.elkd.core.server.converters.exceptions.ConverterNotFoundException;

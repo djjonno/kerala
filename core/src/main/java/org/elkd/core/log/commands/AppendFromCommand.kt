@@ -4,6 +4,15 @@ import org.elkd.core.log.Log
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.exceptions.NonSequentialAppendException
 
+/**
+ * Append from the given index.
+ *
+ * @param from append at this log index and onwards. Will revert current index if not yet committed.
+ * @param entries List<E> to append
+ * @param reason instigator of log change
+ *
+ * @see LogChangeReason
+ */
 class AppendFromCommand<E> constructor(
     private val from: Long,
     private val entries: List<E>,
@@ -11,9 +20,9 @@ class AppendFromCommand<E> constructor(
 
   override fun execute(log: Log<E>) {
     if (log.lastIndex + 1 < from) {
-      throw NonSequentialAppendException()
+      throw NonSequentialAppendException(log.lastIndex, from)
     }
-    if (log.lastIndex >= from) {
+    if (from <= log.lastIndex) {
       log.revert(from)
     }
 

@@ -1,7 +1,7 @@
 package org.elkd.core.log;
 
 import com.google.common.collect.ImmutableList;
-import org.elkd.core.raft.messages.Entry;
+import org.elkd.core.consensus.messages.Entry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -31,7 +31,7 @@ public class InMemoryLogTest {
   public void should_start_indexing_from_zero() {
     // Given / When
     final long firstIndex = 0;
-    final long index = mUnitUnderTest.append(mEntry1);
+    final long index = mUnitUnderTest.getLastIndex();
 
     // Then
     assertEquals(firstIndex, index);
@@ -41,10 +41,9 @@ public class InMemoryLogTest {
   public void should_increment_index_when_appended() {
     // Given
     final long secondTransaction = 1;
-    mUnitUnderTest.append(mEntry1);
 
     // When
-    final long t2 = mUnitUnderTest.append(mEntry2);
+    final long t2 = mUnitUnderTest.append(mEntry1);
 
     // Then
     assertEquals(secondTransaction, t2);
@@ -98,7 +97,7 @@ public class InMemoryLogTest {
   public void should_return_entry_series_in_order() {
     // Given
     final long t1 = mUnitUnderTest.append(mEntry1);
-    final long t2 = mUnitUnderTest.append(mEntry2);
+    mUnitUnderTest.append(mEntry2);
     final long t3 = mUnitUnderTest.append(mEntry3);
     mUnitUnderTest.commit(t3);
 
@@ -106,9 +105,7 @@ public class InMemoryLogTest {
     final List<Entry> entries = mUnitUnderTest.read(t1, t3);
 
     // Then
-    assertEquals(entries.get((int) t1), mEntry1);
-    assertEquals(entries.get((int) t2), mEntry2);
-    assertEquals(entries.get((int) t3), mEntry3);
+    assertEquals(ImmutableList.of(mEntry1, mEntry2, mEntry3), entries);
   }
 
   @Test
@@ -128,7 +125,7 @@ public class InMemoryLogTest {
   @Test(expected = IllegalStateException.class)
   public void should_throw_exception_committing_out_of_range_index() {
     // Given
-    final long outOfRange = 1;
+    final long outOfRange = 2;
     mUnitUnderTest.append(mEntry1);
 
     // When
@@ -198,7 +195,6 @@ public class InMemoryLogTest {
     mUnitUnderTest.append(mEntry1);
     mUnitUnderTest.append(mEntry2);
     final long t = mUnitUnderTest.append(mEntry3);
-
     final CommitResult<Entry> result = mUnitUnderTest.commit(t);
 
     // Then

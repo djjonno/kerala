@@ -11,14 +11,14 @@ public interface ClusterSet {
   /**
    * Reserved for dynamic cluster configuration.
    *
-   * @param node add the given node to the cluster.
+   * @param node add the given target to the cluster.
    */
   void addNode(Node node);
 
   /**
    * Reserved for dynamic cluster configuration.
    *
-   * @param node removed the given node from the cluster.
+   * @param node removed the given target from the cluster.
    */
   void removeNode(Node node);
 
@@ -26,7 +26,7 @@ public interface ClusterSet {
 
   Set<Node> getAllNodes();
 
-  Node getSelfNode();
+  Node localNode();
 
   boolean isEmpty();
 }

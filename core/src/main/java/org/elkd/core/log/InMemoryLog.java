@@ -2,20 +2,23 @@ package org.elkd.core.log;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import org.elkd.core.raft.messages.Entry;
+import org.elkd.core.consensus.messages.Entry;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryLog implements Log<Entry> {
   private static final int START_INDEX = 0;
-  private static final int ROLLBACK = 1;
   private List<Entry> mLogStore;
   private long mIndex = -1;
-  private long mCommitIndex = -1;
+  private long mCommitIndex = 0;
 
   public InMemoryLog() {
     mLogStore = new ArrayList<>();
+
+    /* Default Log Record - prevents having to provide a log index that
+       technically does not exist e.g index = -1 */
+    append(Entry.NULL_ENTRY);
   }
 
   @Override
@@ -23,7 +26,7 @@ public class InMemoryLog implements Log<Entry> {
     Preconditions.checkNotNull(entry, "entry");
 
     mIndex++;
-    mLogStore.add((int) mIndex, entry);
+    insertOrReplace((int) mIndex, entry);
 
     return mIndex;
   }
@@ -31,7 +34,8 @@ public class InMemoryLog implements Log<Entry> {
   @Override
   public long append(final long index, final Entry entry) {
     Preconditions.checkState(0 <= index && index <= mIndex, "index");
-    mLogStore.add((int) index, entry);
+
+    insertOrReplace((int) index, entry);
     return index;
   }
 
@@ -47,7 +51,7 @@ public class InMemoryLog implements Log<Entry> {
 
   @Override
   public List<Entry> read(final long from, final long to) {
-    Preconditions.checkState(START_INDEX <= from && from <= to && to <= mCommitIndex);
+    Preconditions.checkState(START_INDEX <= from && from <= to);
 
     final List<Entry> subList = new ArrayList<>();
     for (int i = (int) from; i <= to; ++i) {
@@ -74,8 +78,12 @@ public class InMemoryLog implements Log<Entry> {
   @Override
   public void revert(final long index) {
     Preconditions.checkState(mCommitIndex < index);
-
-    mIndex = index - ROLLBACK;
+    /* delete up to index */
+    if (index <= mIndex) {
+      while (index <= mIndex) {
+        mLogStore.remove((int) mIndex--);
+      }
+    }
   }
 
   @Override
@@ -100,5 +108,19 @@ public class InMemoryLog implements Log<Entry> {
         ", mIndex=" + mIndex +
         ", mCommitIndex=" + mCommitIndex +
         '}';
+  }
+
+  @Override
+  public Entry getLastEntry() {
+    return read(getLastIndex());
+  }
+
+  private void insertOrReplace(final int index, final Entry entry) {
+    try {
+      if (mLogStore.get(index) != null) {
+        mLogStore.remove(index);
+      }
+    } catch (final IndexOutOfBoundsException e) { }
+    mLogStore.add(index, entry);
   }
 }

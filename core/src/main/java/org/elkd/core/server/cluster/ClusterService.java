@@ -3,11 +3,11 @@ package org.elkd.core.server.cluster;
 import com.google.common.base.Preconditions;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
-import org.elkd.core.raft.RaftDelegate;
-import org.elkd.core.raft.messages.AppendEntriesRequest;
-import org.elkd.core.raft.messages.AppendEntriesResponse;
-import org.elkd.core.raft.messages.RequestVoteRequest;
-import org.elkd.core.raft.messages.RequestVoteResponse;
+import org.elkd.core.consensus.RaftDelegate;
+import org.elkd.core.consensus.messages.AppendEntriesRequest;
+import org.elkd.core.consensus.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.server.ElkdClusterServiceGrpc;
 import org.elkd.core.server.RpcAppendEntriesRequest;
 import org.elkd.core.server.RpcAppendEntriesResponse;
@@ -29,7 +29,7 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
 
-    LOG.info("service ready to accept node connections");
+    LOG.info("service ready to accept target connections");
   }
 
   /* Cluster I/O */

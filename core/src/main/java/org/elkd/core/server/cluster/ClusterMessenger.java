@@ -3,10 +3,10 @@ package org.elkd.core.server.cluster;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.elkd.core.raft.messages.AppendEntriesRequest;
-import org.elkd.core.raft.messages.AppendEntriesResponse;
-import org.elkd.core.raft.messages.RequestVoteRequest;
-import org.elkd.core.raft.messages.RequestVoteResponse;
+import org.elkd.core.consensus.messages.AppendEntriesRequest;
+import org.elkd.core.consensus.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.RequestVoteRequest;
+import org.elkd.core.consensus.messages.RequestVoteResponse;
 import org.elkd.core.server.RpcAppendEntriesRequest;
 import org.elkd.core.server.RpcAppendEntriesResponse;
 import org.elkd.core.server.RpcRequestVoteRequest;
@@ -17,9 +17,9 @@ import org.elkd.core.server.converters.ConverterRegistry;
 import org.elkd.core.server.converters.ListenableFutureConverterDecorator;
 
 /**
- * Send a message to a node in the provided ClusterConnectionPool.
+ * Send a message to a target in the provided ClusterConnectionPool.
  *
- * Handles message conversion between server & raft types.
+ * Handles message conversion between server & consensus types.
  */
 public class ClusterMessenger {
   private final ClusterConnectionPool mClusterConnectionPool;

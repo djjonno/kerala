@@ -34,3 +34,10 @@ elkd is a distributed and reliable store for time-series data and machine-learni
 	- `get [key]`
 	- `rm [key]`
 - Java/Kotlin client
+
+### Project Names
+- beacon
+- strobe
+- pulse
+- lighthouse
+- pilot

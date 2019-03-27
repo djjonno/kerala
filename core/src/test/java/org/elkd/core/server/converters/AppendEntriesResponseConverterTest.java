@@ -1,6 +1,6 @@
 package org.elkd.core.server.converters;
 
-import org.elkd.core.raft.messages.AppendEntriesResponse;
+import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.server.RpcAppendEntriesResponse;
 import org.junit.Before;
 import org.junit.Test;

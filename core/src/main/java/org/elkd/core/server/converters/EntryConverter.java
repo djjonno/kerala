@@ -2,7 +2,7 @@ package org.elkd.core.server.converters;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.elkd.core.raft.messages.Entry;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.server.RpcEntry;
 import org.elkd.core.server.RpcStateMachineCommand;
 import org.elkd.core.server.converters.exceptions.ConverterException;

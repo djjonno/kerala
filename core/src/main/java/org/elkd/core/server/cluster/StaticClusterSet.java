@@ -41,7 +41,7 @@ public final class StaticClusterSet implements ClusterSet {
   }
 
   @Override
-  public Node getSelfNode() {
+  public Node localNode() {
     return mSelfNode;
   }
 
@@ -80,12 +80,12 @@ public final class StaticClusterSet implements ClusterSet {
     }
 
     public Builder withNode(final Node node) {
-      Preconditions.checkNotNull(node, "node");
+      Preconditions.checkNotNull(node, "target");
       if (node.equals(mSelfNode)) {
         return this;
       }
       if (mNodes.contains(node)) {
-        throw new ElkdRuntimeException(node + " duplicate node.");
+        throw new ElkdRuntimeException(node + " duplicate target.");
       }
       mNodes.add(node);
       return this;

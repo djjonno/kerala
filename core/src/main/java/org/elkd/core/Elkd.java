@@ -4,9 +4,9 @@ import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
-import org.elkd.core.raft.Raft;
-import org.elkd.core.raft.RaftFactory;
-import org.elkd.core.raft.messages.Entry;
+import org.elkd.core.consensus.Raft;
+import org.elkd.core.consensus.RaftFactory;
+import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.InMemoryLog;
 import org.elkd.core.log.LogProvider;
 import org.elkd.core.server.Server;
@@ -34,7 +34,7 @@ public class Elkd {
        final Raft raft,
        final Server server) {
     mConfig = Preconditions.checkNotNull(config, "config");
-    mRaft = Preconditions.checkNotNull(raft, "raft");
+    mRaft = Preconditions.checkNotNull(raft, "consensus");
     mServer = Preconditions.checkNotNull(server, "server");
   }
 

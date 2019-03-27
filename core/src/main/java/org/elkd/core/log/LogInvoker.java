@@ -61,6 +61,11 @@ public class LogInvoker<E> implements Log<E> {
     return mLog.getLastIndex();
   }
 
+  @Override
+  public E getLastEntry() {
+    return mLog.getLastEntry();
+  }
+
   public void registerListener(@Nonnull final LogChangeListener<E> listener) {
     Preconditions.checkNotNull(listener, "listener");
     mListeners.add(listener);
