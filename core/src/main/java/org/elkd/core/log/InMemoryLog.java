@@ -2,7 +2,7 @@ package org.elkd.core.log;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import org.elkd.core.consensus.messages.Entry;
+import org.elkd.core.raft.messages.Entry;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,0 +1,61 @@
+package org.elkd.core.raft.payload;
+
+import com.google.common.collect.ImmutableList;
+import org.elkd.core.raft.messages.AppendEntriesRequest;
+import org.elkd.core.raft.messages.Entry;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
+public class AppendEntriesRequestTest {
+  private static final int TERM = 1;
+  private static final int PREV_LOG_TERM = 1;
+  private static final int PREV_LOG_INDEX = 2;
+  private static final String LEADER_ID = "leaderId";
+  private static final int LEADER_COMMIT = 3;
+  private static final List<Entry> ENTRIES = ImmutableList.of(Entry.builder(TERM, "event").build());
+
+  @Test
+  public void should_build_with_properties() {
+    // Given / When
+    final AppendEntriesRequest request = AppendEntriesRequest.builder(
+        TERM,
+        PREV_LOG_TERM,
+        PREV_LOG_INDEX,
+        LEADER_ID,
+        LEADER_COMMIT
+    )
+        .withEntries(ENTRIES)
+        .build();
+
+    // Then
+    assertEquals(TERM, request.getTerm());
+    assertEquals(PREV_LOG_TERM, request.getPrevLogTerm());
+    assertEquals(LEADER_ID, request.getLeaderId());
+    assertEquals(LEADER_COMMIT, request.getLeaderCommit());
+    assertEquals(ENTRIES, request.getEntries());
+  }
+
+  @Test
+  public void should_build_with_single_event() {
+    // Given / When
+    final AppendEntriesRequest request = AppendEntriesRequest.builder(
+        TERM,
+        PREV_LOG_TERM,
+        PREV_LOG_INDEX,
+        LEADER_ID,
+        LEADER_COMMIT
+    )
+        .withEntry(ENTRIES.get(0))
+        .build();
+
+    // Then
+    assertEquals(TERM, request.getTerm());
+    assertEquals(PREV_LOG_TERM, request.getPrevLogTerm());
+    assertEquals(LEADER_ID, request.getLeaderId());
+    assertEquals(LEADER_COMMIT, request.getLeaderCommit());
+    assertEquals(ENTRIES, request.getEntries());
+  }
+}

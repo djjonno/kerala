@@ -2,12 +2,25 @@ package org.elkd.core.server.cluster;
 
 import java.util.Set;
 
+/**
+ * Cluster membership container.
+ */
 public interface ClusterSet {
   int size();
 
-  void addNode(Node uri);
+  /**
+   * Reserved for dynamic cluster configuration.
+   *
+   * @param node add the given node to the cluster.
+   */
+  void addNode(Node node);
 
-  void removeNode(Node uri);
+  /**
+   * Reserved for dynamic cluster configuration.
+   *
+   * @param node removed the given node from the cluster.
+   */
+  void removeNode(Node node);
 
   Set<Node> getNodes();
 

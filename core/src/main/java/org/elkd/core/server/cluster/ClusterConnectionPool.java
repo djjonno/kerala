@@ -14,7 +14,6 @@ import org.elkd.core.server.RpcRequestVoteResponse;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class ClusterConnectionPool {
@@ -32,25 +31,19 @@ public class ClusterConnectionPool {
   }
 
   public void initialize() {
-    LOG.info("initializing cluster connections with " + mClusterSet.size() + " nodes");
-
     for (final Node node : mClusterSet.getNodes()) {
       final ManagedChannel channel = ManagedChannelBuilder
           .forTarget(node.getHost() + ":" + node.getPort())
           .usePlaintext() /* TODO: add cert auth */
           .build();
       mChannelMap.put(node, new Channel(channel));
-      LOG.info("init channel -> " + node + " state " + channel.getState(true));
+      LOG.info("initializing channel to instance " + node + " state " + channel.getState(true));
     }
   }
 
   @Nullable
   public Channel getChannel(final Node node) {
     return mChannelMap.get(node);
-  }
-
-  public Iterator<Node> iterator() {
-    return mChannelMap.keySet().iterator();
   }
 
   public static class Channel {

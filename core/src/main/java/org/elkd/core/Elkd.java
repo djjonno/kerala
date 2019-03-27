@@ -4,12 +4,14 @@ import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.elkd.core.config.Config;
 import org.elkd.core.config.ConfigProvider;
-import org.elkd.core.consensus.Raft;
-import org.elkd.core.consensus.RaftFactory;
-import org.elkd.core.consensus.messages.Entry;
+import org.elkd.core.raft.Raft;
+import org.elkd.core.raft.RaftFactory;
+import org.elkd.core.raft.messages.Entry;
 import org.elkd.core.log.InMemoryLog;
 import org.elkd.core.log.LogProvider;
 import org.elkd.core.server.Server;
+import org.elkd.core.server.cluster.ClusterConnectionPool;
+import org.elkd.core.server.cluster.ClusterMessenger;
 import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.server.cluster.ClusterUtils;
 import org.elkd.core.server.cluster.StaticClusterSet;
@@ -62,10 +64,11 @@ public class Elkd {
     final ClusterSet clusterSet = StaticClusterSet.builder(ClusterUtils.buildSelfNode(config))
         .withString(config.get(Config.KEY_CLUSTER_SET))
         .build();
-    LOG.info(clusterSet);
-
+    final ClusterConnectionPool clusterConnectionPool = new ClusterConnectionPool(clusterSet);
+    clusterConnectionPool.initialize();
+    final ClusterMessenger clusterMessenger = new ClusterMessenger(clusterConnectionPool);
     final LogProvider<Entry> logProvider = new LogProvider<>(new InMemoryLog());
-    final Raft raft = RaftFactory.create(config, logProvider, clusterSet);
+    final Raft raft = RaftFactory.create(config, logProvider, clusterMessenger);
     final Elkd elkd = new Elkd(config, raft);
 
     try {
