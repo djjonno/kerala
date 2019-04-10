@@ -39,6 +39,7 @@ constructor(private val raft: Raft,
   override fun delegateAppendEntries(appendEntriesRequest: AppendEntriesRequest,
                                      responseObserver: StreamObserver<AppendEntriesResponse>) {
     try {
+      LOG.info(raft.log)
       validateAppendEntriesRequest(appendEntriesRequest)
       val appendFromCommand = AppendFromCommand
           .build(appendEntriesRequest.prevLogIndex + 1, appendEntriesRequest.entries, LogChangeReason.REPLICATION)

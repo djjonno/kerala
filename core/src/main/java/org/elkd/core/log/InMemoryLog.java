@@ -103,11 +103,10 @@ public class InMemoryLog implements Log<Entry> {
       committed.add(mLogStore.get(i));
     }
 
-    return "InMemoryLog{" +
-        "mLogStore=" + mLogStore +
-        ", mIndex=" + mIndex +
-        ", mCommitIndex=" + mCommitIndex +
-        '}';
+    final StringBuilder builder = new StringBuilder().append("Log[ ");
+    mLogStore.stream().forEach(entry -> builder.append(" " + entry.getTerm() + " "));
+    builder.append(" ]");
+    return builder.toString();
   }
 
   @Override
