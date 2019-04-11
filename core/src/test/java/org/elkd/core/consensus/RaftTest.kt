@@ -64,7 +64,7 @@ class RaftTest {
         .getInitialDelegate(any())
     doReturn(raft2)
         .`when`<AbstractStateFactory>(stateFactory)
-        .getDelegate(any(), any())
+        .getState(any(), any())
     doReturn(log)
         .`when`<LogProvider<Entry>>(logProvider)
         .log
@@ -86,14 +86,14 @@ class RaftTest {
   fun should_transition_state_for_transition() {
     // Given
     unitUnderTest.initialize()
-    val state = RaftLeaderDelegate::class.java
+    val state = RaftLeaderState::class.java
 
     // When
     unitUnderTest.transition(state)
 
     // Then
     verify<RaftState>(raft1).off()
-    verify<AbstractStateFactory>(stateFactory).getDelegate(unitUnderTest, state)
+    verify<AbstractStateFactory>(stateFactory).getState(unitUnderTest, state)
     verify<RaftState>(raft2).on()
   }
 
@@ -160,16 +160,16 @@ class RaftTest {
     doReturn(newTerm)
         .`when`<AppendEntriesRequest>(appendEntriesRequest)
         .term
-    val followerDelegate = mock(RaftFollowerDelegate::class.java)
+    val followerDelegate = mock(RaftFollowerState::class.java)
     doReturn(followerDelegate)
         .`when`<AbstractStateFactory>(stateFactory)
-        .getDelegate(any(), eq(RaftFollowerDelegate::class.java))
+        .getState(any(), eq(RaftFollowerState::class.java))
 
     // When
     unitUnderTest.delegateAppendEntries(appendEntriesRequest, appendEntriesResponseObserver)
 
     // Then
-    verify<AbstractStateFactory>(stateFactory).getDelegate(eq<Raft>(unitUnderTest), eq(RaftFollowerDelegate::class.java))
+    verify<AbstractStateFactory>(stateFactory).getState(eq<Raft>(unitUnderTest), eq(RaftFollowerState::class.java))
     verify<RaftContext>(raftContext).currentTerm = newTerm
     verify<RaftContext>(raftContext).votedFor = null
     verify(followerDelegate).on()
@@ -188,16 +188,16 @@ class RaftTest {
     doReturn(newTerm)
         .`when`<RequestVoteRequest>(requestVoteRequest)
         .term
-    val followerDelegate = mock(RaftFollowerDelegate::class.java)
+    val followerDelegate = mock(RaftFollowerState::class.java)
     doReturn(followerDelegate)
         .`when`<AbstractStateFactory>(stateFactory)
-        .getDelegate(any(), eq(RaftFollowerDelegate::class.java))
+        .getState(any(), eq(RaftFollowerState::class.java))
 
     // When
     unitUnderTest.delegateRequestVote(requestVoteRequest, requestVotesResponseObserver)
 
     // Then
-    verify<AbstractStateFactory>(stateFactory).getDelegate(eq<Raft>(unitUnderTest), eq(RaftFollowerDelegate::class.java))
+    verify<AbstractStateFactory>(stateFactory).getState(eq<Raft>(unitUnderTest), eq(RaftFollowerState::class.java))
     verify<RaftContext>(raftContext).currentTerm = newTerm
     verify<RaftContext>(raftContext).votedFor = null
     verify(followerDelegate).on()

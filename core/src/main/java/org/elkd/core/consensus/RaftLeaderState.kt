@@ -7,7 +7,7 @@ import org.elkd.core.consensus.replication.Replicator
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
 
-class RaftLeaderDelegate(private val raft: Raft) : RaftState {
+class RaftLeaderState(private val raft: Raft) : RaftState {
   private var replicator: Replicator? = null
 
   override fun on() {
@@ -44,6 +44,6 @@ class RaftLeaderDelegate(private val raft: Raft) : RaftState {
   }
 
   companion object {
-    private val LOG = Logger.getLogger(RaftLeaderDelegate::class.java)
+    private val LOG = Logger.getLogger(RaftLeaderState::class.java)
   }
 }

@@ -24,9 +24,9 @@ import java.util.concurrent.Executors
  * and acts as a state machine between the various consensus states.
  *
  * @see [https://raft.github.io/raft.pdf](https://raft.github.io/raft.pdf)
- * @see RaftFollowerDelegate
- * @see RaftCandidateDelegate
- * @see RaftLeaderDelegate
+ * @see RaftFollowerState
+ * @see RaftCandidateState
+ * @see RaftLeaderState
  */
 @Mockable
 class Raft @VisibleForTesting
@@ -88,7 +88,7 @@ internal constructor(val config: Config,
   fun transition(nextState: Class<out RaftState>) {
     serialExecutor.execute {
       raftState?.off()
-      raftState = stateFactory.getDelegate(this, nextState)
+      raftState = stateFactory.getState(this, nextState)
       raftState?.on()
     }
   }
@@ -98,7 +98,7 @@ internal constructor(val config: Config,
     if (requestTerm > raftContext.currentTerm) {
       raftContext.currentTerm = requestTerm
       raftContext.votedFor = null
-      transition(RaftFollowerDelegate::class.java)
+      transition(RaftFollowerState::class.java)
     }
   }
 

@@ -9,8 +9,8 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
 
-class RaftCandidateDelegate(private val raft: Raft,
-                            private val timeoutMonitor: TimeoutMonitor) : RaftState {
+class RaftCandidateState(private val raft: Raft,
+                         private val timeoutMonitor: TimeoutMonitor) : RaftState {
   private val timeout = raft.config.getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS)
   private var electionScheduler: ElectionScheduler? = null
 
@@ -18,7 +18,7 @@ class RaftCandidateDelegate(private val raft: Raft,
       raft,
       TimeoutMonitor {
         LOG.info("election timeout reached. restarting election.")
-        raft.transition(RaftCandidateDelegate::class.java)
+        raft.transition(RaftCandidateState::class.java)
       }
   )
 
@@ -59,8 +59,8 @@ class RaftCandidateDelegate(private val raft: Raft,
     val request = createVoteRequest()
     electionScheduler = ElectionScheduler.create(
         request,
-        Runnable { raft.transition(RaftLeaderDelegate::class.java) },
-        Runnable { raft.transition(RaftFollowerDelegate::class.java) },
+        Runnable { raft.transition(RaftLeaderState::class.java) },
+        Runnable { raft.transition(RaftFollowerState::class.java) },
         raft.clusterMessenger)
     electionScheduler?.schedule()
   }
@@ -79,6 +79,6 @@ class RaftCandidateDelegate(private val raft: Raft,
   }
 
   companion object {
-    private val LOG = Logger.getLogger(RaftCandidateDelegate::class.java.name)
+    private val LOG = Logger.getLogger(RaftCandidateState::class.java.name)
   }
 }

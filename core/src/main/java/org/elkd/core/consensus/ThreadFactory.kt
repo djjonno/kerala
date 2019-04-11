@@ -9,7 +9,7 @@ class ThreadFactory {
 
     @JvmStatic fun raftThreadFactory(): java.util.concurrent.ThreadFactory {
       return object : ThreadFactory {
-        override fun newThread(r: Runnable?) = Thread(r, "$RAFT_THREAD_DOMAIN#${raftThreadCount++}")
+        override fun newThread(r: Runnable?) = Thread(r, "$RAFT_THREAD_DOMAIN-${raftThreadCount++}")
       }
     }
   }

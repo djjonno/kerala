@@ -13,14 +13,14 @@ import org.elkd.shared.math.randomizeNumberPoint
 import kotlin.math.min
 
 @Mockable
-class RaftFollowerDelegate @VisibleForTesting
+class RaftFollowerState @VisibleForTesting
 constructor(private val raft: Raft,
             private val timeoutMonitor: TimeoutMonitor) : RaftState {
   private val timeout = raft.config.getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS)
 
   constructor(raft: Raft) : this(
       raft,
-      TimeoutMonitor { raft.transition(RaftCandidateDelegate::class.java) }
+      TimeoutMonitor { raft.transition(RaftCandidateState::class.java) }
   )
 
   override fun on() {
@@ -116,6 +116,6 @@ constructor(private val raft: Raft,
   }
 
   companion object {
-    private val LOG = Logger.getLogger(RaftFollowerDelegate::class.java.name)
+    private val LOG = Logger.getLogger(RaftFollowerState::class.java.name)
   }
 }

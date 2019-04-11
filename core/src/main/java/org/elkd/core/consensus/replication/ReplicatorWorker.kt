@@ -37,8 +37,6 @@ class ReplicatorWorker(val target: Node,
     while (true) {
       // determine next entries to replicate
       val nextIndex = leaderContext.getNextIndex(target)
-      LOG.info("${raft.log.lastIndex}, $nextIndex")
-
       val nextEntries = mutableListOf<Entry>()
       var prevLogIndex = raft.log.lastIndex
 

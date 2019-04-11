@@ -1,9 +1,6 @@
 package org.elkd.core.consensus.replication
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.LeaderContext
 import org.elkd.core.consensus.Raft

@@ -20,7 +20,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class RaftFollowerDelegateTest {
+public class RaftFollowerStateTest {
   private static final int ELECTION_TIMEOUT = 50;
   private static final int TIMEOUT_BUFFER = 10; // allow some lee-way on timeout
   private static final int CURRENT_TERM = 0;
@@ -43,7 +43,7 @@ public class RaftFollowerDelegateTest {
   @Mock Log<Entry> mLog;
 
   private LogCommandExecutor<Entry> mLogCommandExecutor;
-  private RaftFollowerDelegate mUnitUnderTest;
+  private RaftFollowerState mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
@@ -51,7 +51,7 @@ public class RaftFollowerDelegateTest {
 
     setupCommonExpectations();
 
-    mUnitUnderTest = new RaftFollowerDelegate(mRaft, mTimeoutMonitor);
+    mUnitUnderTest = new RaftFollowerState(mRaft, mTimeoutMonitor);
   }
 
   private void setupCommonExpectations() {
@@ -90,14 +90,14 @@ public class RaftFollowerDelegateTest {
   @Test
   public void should_transition_to_candidateState_when_timeout() throws InterruptedException {
     // Given - builtin electionMonitor
-    mUnitUnderTest = new RaftFollowerDelegate(mRaft);
+    mUnitUnderTest = new RaftFollowerState(mRaft);
 
     // When
     mUnitUnderTest.on();
 
     // Then
     Thread.sleep(ELECTION_TIMEOUT + TIMEOUT_BUFFER);
-    verify(mRaft).transition(RaftCandidateDelegate.class);
+    verify(mRaft).transition(RaftCandidateState.class);
   }
 
   @Test
