@@ -9,6 +9,7 @@ import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.server.cluster.Node
+import org.elkd.shared.annotations.Mockable
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 
@@ -18,6 +19,7 @@ import kotlin.math.max
  * @see Node
  * @see Replicator
  */
+@Mockable
 class ReplicatorWorker(val target: Node,
                        val leaderContext: LeaderContext,
                        val raft: Raft,
