@@ -14,7 +14,7 @@ class RaftLeaderDelegate(private val raft: Raft) : RaftState {
     /* for test sake, append a new entry to the log here so we have something to replicate */
     val leaderContext = LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex)
     val command = AppendCommand.build(
-        Entry.builder(raft.raftContext.currentTerm, raft.clusterSet.localNode().id).build(),
+        Entry.builder(raft.raftContext.currentTerm, raft.clusterSet.localNode.id).build(),
         LogChangeReason.CLIENT)
     raft.logCommandExecutor.execute(command)
 
@@ -28,13 +28,13 @@ class RaftLeaderDelegate(private val raft: Raft) : RaftState {
     replicator?.stop()
   }
 
-  override fun delegateAppendEntries(appendEntriesRequest: AppendEntriesRequest,
+  override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      responseObserver: StreamObserver<AppendEntriesResponse>) {
     responseObserver.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
     responseObserver.onCompleted()
   }
 
-  override fun delegateRequestVote(requestVoteRequest: RequestVoteRequest,
+  override fun delegateRequestVote(request: RequestVoteRequest,
                                    responseObserver: StreamObserver<RequestVoteResponse>) {
     /* If term > currentTerm, Raft will always transition to Follower state. messages received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.

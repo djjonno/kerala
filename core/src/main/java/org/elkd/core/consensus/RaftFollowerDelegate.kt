@@ -4,10 +4,7 @@ import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.messages.AppendEntriesRequest
-import org.elkd.core.consensus.messages.AppendEntriesResponse
-import org.elkd.core.consensus.messages.RequestVoteRequest
-import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.messages.*
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendFromCommand
 import org.elkd.core.log.commands.CommitCommand
@@ -36,75 +33,80 @@ constructor(private val raft: Raft,
     timeoutMonitor.stop()
   }
 
-  override fun delegateAppendEntries(appendEntriesRequest: AppendEntriesRequest,
+  override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      responseObserver: StreamObserver<AppendEntriesResponse>) {
     try {
       LOG.info(raft.log)
-      validateAppendEntriesRequest(appendEntriesRequest)
-      val appendFromCommand = AppendFromCommand
-          .build(appendEntriesRequest.prevLogIndex + 1, appendEntriesRequest.entries, LogChangeReason.REPLICATION)
-      raft.logCommandExecutor.execute(appendFromCommand)
+      with (request) {
+        validateAppendEntriesRequest(this)
+        if (entries.size > 0) {
+          raft.logCommandExecutor.execute(AppendFromCommand.build(prevLogIndex + 1, entries, LogChangeReason.REPLICATION))
+        }
+      }
+      commitIfNecessary(request)
+      replyAppendEntries(raft.raftContext, true, responseObserver)
 
-      commitIfNecessary(appendEntriesRequest)
-      replyAppendEntries(true, responseObserver)
     } catch (e: Exception) {
       LOG.error(e)
-      replyAppendEntries(false, responseObserver)
+      replyAppendEntries(raft.raftContext, false, responseObserver)
+
     } finally {
       resetTimeout()
     }
   }
 
-  private fun commitIfNecessary(appendEntriesRequest: AppendEntriesRequest) {
-    if (appendEntriesRequest.leaderCommit > raft.log.commitIndex) {
-      val commitIndex = min(appendEntriesRequest.leaderCommit, raft.log.lastIndex)
-      raft.logCommandExecutor.execute(CommitCommand.build(commitIndex, LogChangeReason.REPLICATION))
+  private fun commitIfNecessary(request: AppendEntriesRequest) {
+    with(request) {
+      if (leaderCommit > raft.log.commitIndex) {
+        val commitIndex = min(leaderCommit, raft.log.lastIndex)
+        raft.logCommandExecutor.execute(CommitCommand.build(commitIndex, LogChangeReason.REPLICATION))
+      }
     }
   }
 
-  override fun delegateRequestVote(requestVoteRequest: RequestVoteRequest,
+  override fun delegateRequestVote(request: RequestVoteRequest,
                                    responseObserver: StreamObserver<RequestVoteResponse>) {
-    val raftContext = raft.raftContext
-    val currentTerm = raftContext.currentTerm
 
-    if (requestVoteRequest.term < currentTerm) {
-      replyRequestVote(false, responseObserver)
+    if (request.term < raft.raftContext.currentTerm) {
+      replyRequestVote(raft.raftContext, false, responseObserver)
       return
     }
 
-    if (raftContext.votedFor in listOf(null, requestVoteRequest.candidateId)
-        && raft.log.lastIndex <= requestVoteRequest.lastLogIndex
-        && raft.log.lastEntry.term <= requestVoteRequest.lastLogTerm) {
-      raftContext.votedFor = requestVoteRequest.candidateId
-      raftContext.currentTerm = requestVoteRequest.term
-      replyRequestVote(true, responseObserver)
+    if (raft.raftContext.votedFor in listOf(null, request.candidateId)
+        && raft.log.lastIndex <= request.lastLogIndex
+        && raft.log.lastEntry.term <= request.lastLogTerm) {
+      with (raft.raftContext) {
+        votedFor = request.candidateId
+        currentTerm = request.term
+      }
+      replyRequestVote(raft.raftContext, true, responseObserver)
       return
     }
 
-    replyRequestVote(false, responseObserver)
+    replyRequestVote(raft.raftContext, false, responseObserver)
     return
   }
 
-  @Throws(Exception::class)
-  private fun validateAppendEntriesRequest(appendEntriesRequest: AppendEntriesRequest) {
-    if (appendEntriesRequest.term < raft.raftContext.currentTerm) {
-      throw Exception("Term mismatch. Validation Failed: requestTerm: ${appendEntriesRequest.term}, currentTerm:${raft.raftContext.currentTerm}")
+  @Throws(InvalidRequestException::class)
+  private fun validateAppendEntriesRequest(request: AppendEntriesRequest) {
+    /*
+     * request term must equal to or greater than raftContext.currentTerm, invalid.
+     */
+    if (request.term < raft.raftContext.currentTerm) {
+      throw InvalidRequestException("Term mismatch. Validation Failed: requestTerm: ${request.term}, currentTerm:${raft.raftContext.currentTerm}")
     }
 
-    val prevEntry = raft.log.read(appendEntriesRequest.prevLogIndex)
-    if (prevEntry != null && prevEntry.term != appendEntriesRequest.prevLogTerm) {
-      throw Exception("Entry.term mismatch. Validation Failed: prevLogIndex: ${appendEntriesRequest.prevLogIndex}, request: ${appendEntriesRequest.prevLogTerm}, prevEntry: ${prevEntry?.term}")
+    /*
+     * If no log at previous index, we are missing an entry and this is invalid.
+     */
+    val prevEntry = raft.log.read(request.prevLogIndex) ?: throw InvalidRequestException("No Entry at prevLogIndex: ${request.prevLogIndex}")
+
+    /*
+     * If previous entry of request term does not match this log previous log entry term, invalid.
+     */
+    if (request.prevLogTerm != prevEntry.term) {
+      throw InvalidRequestException("Entry.term mismatch. Validation Failed: prevLogIndex: ${request.prevLogIndex}, request: ${request.prevLogTerm}, prevEntry: ${prevEntry.term}")
     }
-  }
-
-  private fun replyAppendEntries(response: Boolean, responseObserver: StreamObserver<AppendEntriesResponse>) {
-    responseObserver.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, response).build())
-    responseObserver.onCompleted()
-  }
-
-  private fun replyRequestVote(response: Boolean, responseObserver: StreamObserver<RequestVoteResponse>) {
-    responseObserver.onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, response).build())
-    responseObserver.onCompleted()
   }
 
   private fun resetTimeout() {

@@ -10,8 +10,8 @@ import java.util.List;
 public class InMemoryLog implements Log<Entry> {
   private static final int START_INDEX = 0;
   private List<Entry> mLogStore;
-  private long mIndex = -1;
-  private long mCommitIndex = 0;
+  private long mIndex;
+  private long mCommitIndex;
 
   public InMemoryLog() {
     mLogStore = new ArrayList<>();
@@ -25,10 +25,9 @@ public class InMemoryLog implements Log<Entry> {
   public long append(final Entry entry) {
     Preconditions.checkNotNull(entry, "entry");
 
-    mIndex++;
     insertOrReplace((int) mIndex, entry);
 
-    return mIndex;
+    return mIndex++;
   }
 
   @Override
@@ -66,7 +65,7 @@ public class InMemoryLog implements Log<Entry> {
 
   @Override
   public CommitResult<Entry> commit(final long index) {
-    Preconditions.checkState(START_INDEX <= index && index <= mIndex);
+    Preconditions.checkState(START_INDEX <= index && index < mIndex);
     final long oldCommit = mCommitIndex;
     mCommitIndex = index;
 
@@ -80,8 +79,8 @@ public class InMemoryLog implements Log<Entry> {
     Preconditions.checkState(mCommitIndex < index);
     /* delete up to index */
     if (index <= mIndex) {
-      while (index <= mIndex) {
-        mLogStore.remove((int) mIndex--);
+      while (index < mIndex) {
+        mLogStore.remove((int) --mIndex);
       }
     }
   }
@@ -93,7 +92,7 @@ public class InMemoryLog implements Log<Entry> {
 
   @Override
   public long getLastIndex() {
-    return mIndex;
+    return mIndex - 1;
   }
 
   @Override

@@ -41,7 +41,7 @@ public final class StaticClusterSet implements ClusterSet {
   }
 
   @Override
-  public Node localNode() {
+  public Node getLocalNode() {
     return mSelfNode;
   }
 

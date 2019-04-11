@@ -49,7 +49,7 @@ class ReplicatorWorker(val target: Node,
       val prevLogTerm = raft.log.read(prevLogIndex)?.term
 
       val listenableFuture = raft.clusterMessenger.appendEntries(target, AppendEntriesRequest
-          .builder(raft.raftContext.currentTerm, prevLogTerm!!, prevLogIndex, raft.clusterSet.localNode().id, -1)
+          .builder(raft.raftContext.currentTerm, prevLogTerm!!, prevLogIndex, raft.clusterSet.localNode.id, raft.log.commitIndex)
           .withEntries(nextEntries)
           .build())
 
@@ -71,7 +71,12 @@ class ReplicatorWorker(val target: Node,
   }
 
   private fun sendHeartbeat() {
-    raft.clusterMessenger.appendEntries(target, AppendEntriesRequest.builder(raft.raftContext.currentTerm, raft.log.lastEntry.term, raft.log.lastIndex, raft.clusterSet.localNode().id, -1).build())
+    raft.clusterMessenger.appendEntries(target, AppendEntriesRequest.builder(
+        raft.raftContext.currentTerm,
+        raft.log.lastEntry.term,
+        raft.log.lastIndex,
+        raft.clusterSet.localNode.id,
+        raft.log.commitIndex).build())
   }
 
   companion object {

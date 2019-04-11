@@ -1,11 +1,10 @@
 package org.elkd.core.consensus.election
 
+import com.google.common.util.concurrent.MoreExecutors
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.RequestVoteRequest
-import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.Node
-import java.util.concurrent.Executors
 
 /**
  * Performs an election across the cluster, requesting votes and tallying responses.
@@ -31,7 +30,7 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     scheduled = true
 
     /* Vote for self */
-    handleVoteResponse(clusterMessenger.clusterSet.localNode(), true)
+    handleVoteResponse(clusterMessenger.clusterSet.localNode, true)
 
     /* dispatch votes across cluster */
     dispatchVoteRequest()
@@ -44,12 +43,13 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
   }
 
   private fun dispatchVoteRequest() {
-    val executor = Executors.newSingleThreadExecutor()
     clusterMessenger.clusterSet.nodes.forEach {
       val future = clusterMessenger.requestVote(it, voteRequest)
       future.addListener(Runnable {
-        handleVoteResponse(it, future.get().isVoteGranted)
-      }, executor)
+        try {
+          handleVoteResponse(it, future.get().isVoteGranted)
+        } catch (e: Exception) { }
+      }, MoreExecutors.directExecutor())
     }
   }
 

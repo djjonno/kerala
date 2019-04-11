@@ -34,15 +34,16 @@ class RaftCandidateDelegate(private val raft: Raft,
     stopElection()
   }
 
-  override fun delegateAppendEntries(appendEntriesRequest: AppendEntriesRequest,
+  override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      responseObserver: StreamObserver<AppendEntriesResponse>) {
     /* If term > currentTerm, Raft will always transition to Follower state. messages received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
+    responseObserver.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
     responseObserver.onCompleted()
   }
 
-  override fun delegateRequestVote(requestVoteRequest: RequestVoteRequest,
+  override fun delegateRequestVote(request: RequestVoteRequest,
                                    responseObserver: StreamObserver<RequestVoteResponse>) {
     /* If term > currentTerm, Raft will always transition to Follower state. messages received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
@@ -53,7 +54,7 @@ class RaftCandidateDelegate(private val raft: Raft,
 
   private fun startElection() {
     raft.raftContext.currentTerm = raft.raftContext.currentTerm + 1
-    raft.raftContext.votedFor = raft.clusterSet.localNode().id
+    raft.raftContext.votedFor = raft.clusterSet.localNode.id
 
     val request = createVoteRequest()
     electionScheduler = ElectionScheduler.create(
@@ -71,7 +72,7 @@ class RaftCandidateDelegate(private val raft: Raft,
   private fun createVoteRequest(): RequestVoteRequest {
     return RequestVoteRequest.builder(
         raft.raftContext.currentTerm,
-        raft.clusterSet.localNode().id,
+        raft.clusterSet.localNode.id,
         raft.log.lastIndex,
         raft.log.lastEntry.term
     ).build()

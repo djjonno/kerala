@@ -20,7 +20,10 @@ import org.elkd.core.server.converters.ListenableFutureConverterDecorator;
  * Send a message to a target in the provided ClusterConnectionPool.
  *
  * Handles message conversion between server & consensus types.
+ *
+ * @deprecated update to use suspend functions instead of futures, improved error-handling.
  */
+@Deprecated
 public class ClusterMessenger {
   private final ClusterConnectionPool mClusterConnectionPool;
   private final ConverterRegistry mConverterRegistry;

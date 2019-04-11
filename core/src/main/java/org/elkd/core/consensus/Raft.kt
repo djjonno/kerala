@@ -69,20 +69,20 @@ internal constructor(val config: Config,
     }
   }
 
-  override fun delegateAppendEntries(appendEntriesRequest: AppendEntriesRequest,
+  override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      responseObserver: StreamObserver<AppendEntriesResponse>) {
     /* perform state-agnostic logic */
-    termCheck(appendEntriesRequest.term)
+    termCheck(request.term)
 
-    serialExecutor.execute { raftState?.delegateAppendEntries(appendEntriesRequest, responseObserver) }
+    serialExecutor.execute { raftState?.delegateAppendEntries(request, responseObserver) }
   }
 
-  override fun delegateRequestVote(requestVoteRequest: RequestVoteRequest,
+  override fun delegateRequestVote(request: RequestVoteRequest,
                                    responseObserver: StreamObserver<RequestVoteResponse>) {
     /* perform state-agnostic logic */
-    termCheck(requestVoteRequest.term)
+    termCheck(request.term)
 
-    serialExecutor.execute { raftState?.delegateRequestVote(requestVoteRequest, responseObserver) }
+    serialExecutor.execute { raftState?.delegateRequestVote(request, responseObserver) }
   }
 
   fun transition(nextState: Class<out RaftState>) {
