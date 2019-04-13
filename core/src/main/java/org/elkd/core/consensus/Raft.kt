@@ -4,15 +4,11 @@ import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.messages.AppendEntriesRequest
-import org.elkd.core.consensus.messages.AppendEntriesResponse
-import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.consensus.messages.RequestVoteRequest
-import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.messages.*
 import org.elkd.core.log.Log
 import org.elkd.core.log.LogCommandExecutor
 import org.elkd.core.log.LogProvider
-import org.elkd.core.server.cluster.ClusterMessenger
+import org.elkd.core.server.cluster.ClusterMessengerV2
 import org.elkd.core.server.cluster.ClusterSet
 import org.elkd.shared.annotations.Mockable
 import java.util.concurrent.ExecutorService
@@ -31,14 +27,14 @@ import java.util.concurrent.Executors
 @Mockable
 class Raft @VisibleForTesting
 internal constructor(val config: Config,
-                     val clusterMessenger: ClusterMessenger,
+                     val clusterMessenger: ClusterMessengerV2,
                      val raftContext: RaftContext,
                      val stateFactory: AbstractStateFactory,
                      val logProvider: LogProvider<Entry>,
                      val serialExecutor: ExecutorService) : RaftDelegate {
 
   constructor(config: Config,
-              clusterMessenger: ClusterMessenger,
+              clusterMessenger: ClusterMessengerV2,
               raftContext: RaftContext,
               stateFactory: AbstractStateFactory,
               logProvider: LogProvider<Entry>) : this(

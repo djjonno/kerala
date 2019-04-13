@@ -35,13 +35,13 @@ class ReplicatorTest {
   }
 
   @Test
-  fun should_initialize_workers_for_nodes() {
+  fun should_initialize_workers_for_nodes() = runBlocking {
     // Given
     val nodes = setOf<Node>(mock(), mock(), mock())
     configureClusterSet(nodes)
 
     // When
-    runBlocking { replicator.start() }
+    replicator.start()
 
     // Then
     nodes.forEach { verify(replicatorWorkerFactory).create(eq(it), eq(leaderContext), eq(raft), any()) }

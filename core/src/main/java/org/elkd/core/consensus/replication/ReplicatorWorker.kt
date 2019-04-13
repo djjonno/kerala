@@ -1,12 +1,12 @@
 package org.elkd.core.consensus.replication
 
-import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.delay
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
+import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.server.cluster.Node
 import org.elkd.shared.annotations.Mockable
@@ -48,30 +48,27 @@ class ReplicatorWorker(val target: Node,
 
       val prevLogTerm = raft.log.read(prevLogIndex)?.term
 
-      val listenableFuture = raft.clusterMessenger.appendEntries(target, AppendEntriesRequest
+      val message = AppendEntriesRequest
           .builder(raft.raftContext.currentTerm, prevLogTerm!!, prevLogIndex, raft.clusterSet.localNode.id, raft.log.commitIndex)
           .withEntries(nextEntries)
-          .build())
-
-      listenableFuture.addListener(Runnable {
-        try {
-          if (listenableFuture.get().isSuccessful) {
-            leaderContext.updateMatchIndex(target, raft.log.lastIndex)
-            leaderContext.updateNextIndex(target, raft.log.lastIndex + 1)
-          } else {
-            LOG.info("rolling back nextIndex")
-            leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
+          .build()
+      raft.clusterMessenger.dispatch<AppendEntriesResponse>(target, message, {
+        if (it.isSuccessful) {
+          with(leaderContext) {
+            updateMatchIndex(target, raft.log.lastIndex)
+            updateNextIndex(target, raft.log.lastIndex + 1)
           }
-        } catch (e: Exception) {
-          LOG.info("unreachable: $target")
+        } else {
+          LOG.info("rolling back nextIndex")
+          leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
         }
-      }, MoreExecutors.directExecutor())
-      delay(400)
+      })
+      delay(500)
     }
   }
 
-  private fun sendHeartbeat() {
-    raft.clusterMessenger.appendEntries(target, AppendEntriesRequest.builder(
+  private suspend fun sendHeartbeat() {
+    raft.clusterMessenger.dispatch<AppendEntriesResponse>(target, AppendEntriesRequest.builder(
         raft.raftContext.currentTerm,
         raft.log.lastEntry.term,
         raft.log.lastIndex,

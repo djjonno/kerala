@@ -1,10 +1,15 @@
 package org.elkd.core.consensus.election
 
-import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.RequestVoteRequest
-import org.elkd.core.server.cluster.ClusterMessenger
+import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.server.cluster.ClusterMessengerV2
 import org.elkd.core.server.cluster.Node
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Performs an election across the cluster, requesting votes and tallying responses.
@@ -19,7 +24,12 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
                                             private val electionStrategy: ElectionStrategy,
                                             private var onSuccess: Runnable?,
                                             private var onFailure: Runnable?,
-                                            private val clusterMessenger: ClusterMessenger) {
+                                            private val clusterMessenger: ClusterMessengerV2): CoroutineScope {
+  val job: Job
+    get() = Job()
+  override val coroutineContext: CoroutineContext
+    get() = job + Dispatchers.IO
+
   private var scheduled = false
   private var finished = false
   private var electionTally: ElectionTally = ElectionTally(clusterMessenger.clusterSet.allNodes.size)
@@ -33,7 +43,7 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     handleVoteResponse(clusterMessenger.clusterSet.localNode, true)
 
     /* dispatch votes across cluster */
-    dispatchVoteRequest()
+    launch(coroutineContext) { dispatchVoteRequest() }
   }
 
   fun finish() {
@@ -42,18 +52,14 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     finished = true
   }
 
-  private fun dispatchVoteRequest() {
+  private suspend fun dispatchVoteRequest() {
     clusterMessenger.clusterSet.nodes.forEach {
-      val future = clusterMessenger.requestVote(it, voteRequest)
-      future.addListener(Runnable {
-        try {
-          handleVoteResponse(it, future.get().isVoteGranted)
-        } catch (e: Exception) { }
-      }, MoreExecutors.directExecutor())
+      val response = clusterMessenger.dispatch<RequestVoteResponse>(it, voteRequest)
+      handleVoteResponse(it, response?.isVoteGranted)
     }
   }
 
-  private fun handleVoteResponse(node: Node, isVoteGranted: Boolean) {
+  private fun handleVoteResponse(node: Node, isVoteGranted: Boolean?) {
     try {
       when (isVoteGranted) {
         true -> electionTally.recordUpVote(node.id)
@@ -84,7 +90,7 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     @JvmStatic fun create(voteRequest: RequestVoteRequest,
                           onSuccess: Runnable?,
                           onFailure: Runnable?,
-                          clusterMessenger: ClusterMessenger): ElectionScheduler {
+                          clusterMessenger: ClusterMessengerV2): ElectionScheduler {
       return ElectionScheduler(
           voteRequest,
           /* Raft uses majority, so we'll just hard-code this strategy for now. */

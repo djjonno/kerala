@@ -8,6 +8,7 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.server.cluster.ClusterMessengerV2
 
 class RaftCandidateState(private val raft: Raft,
                          private val timeoutMonitor: TimeoutMonitor) : RaftState {

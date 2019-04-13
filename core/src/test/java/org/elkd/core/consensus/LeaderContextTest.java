@@ -29,7 +29,7 @@ public class LeaderContextTest {
 
   @Test
   public void should_initialize_next_indices() {
-    // Given / When - mUnitUnderTest
+    // Given / When - unitUnderTest
 
     // Then
     assertEquals(LAST_LOG_INDEX + 1, mUnitUnderTest.getNextIndex(mNode1));
@@ -67,7 +67,7 @@ public class LeaderContextTest {
 
   @Test
   public void should_initialize_match_indices() {
-    // Given / When - mUnitUnderTest
+    // Given / When - unitUnderTest
 
     // Then
     assertEquals(LeaderContext.DEFAULT_MATCH_INDEX, mUnitUnderTest.getMatchIndex(mNode1));

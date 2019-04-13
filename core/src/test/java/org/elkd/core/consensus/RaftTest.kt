@@ -2,10 +2,10 @@ package org.elkd.core.consensus
 
 import io.grpc.stub.StreamObserver
 import org.elkd.core.config.Config
+import org.elkd.core.consensus.messages.*
 import org.elkd.core.log.Log
 import org.elkd.core.log.LogProvider
-import org.elkd.core.consensus.messages.*
-import org.elkd.core.server.cluster.ClusterMessenger
+import org.elkd.core.server.cluster.ClusterMessengerV2
 import org.elkd.core.server.cluster.ClusterSet
 import org.elkd.core.testutil.Executors
 import org.junit.Assert.assertSame
@@ -24,7 +24,7 @@ class RaftTest {
   @Mock internal lateinit var raft2: RaftState
   @Mock internal lateinit var raftContext: RaftContext
   @Mock internal lateinit var clusterSet: ClusterSet
-  @Mock internal lateinit var clusterMessenger: ClusterMessenger
+  @Mock internal lateinit var clusterMessenger: ClusterMessengerV2
   @Mock internal lateinit var logProvider: LogProvider<Entry>
   @Mock internal lateinit var log: Log<Entry>
   @Mock internal lateinit var stateFactory: AbstractStateFactory
