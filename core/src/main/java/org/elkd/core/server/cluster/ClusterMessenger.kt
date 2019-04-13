@@ -50,7 +50,7 @@ class ClusterMessengerV2
         }
       } catch (e: Exception) {
         onFailure(ElkdRuntimeException(e))
-        return@coroutineScope e
+        return@coroutineScope Unit
       }
     }
 

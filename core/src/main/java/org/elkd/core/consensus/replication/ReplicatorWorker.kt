@@ -68,12 +68,14 @@ class ReplicatorWorker(val target: Node,
   }
 
   private suspend fun sendHeartbeat() {
-    raft.clusterMessenger.dispatch<AppendEntriesResponse>(target, AppendEntriesRequest.builder(
-        raft.raftContext.currentTerm,
-        raft.log.lastEntry.term,
-        raft.log.lastIndex,
-        raft.clusterSet.localNode.id,
-        raft.log.commitIndex).build())
+    with(raft) {
+      clusterMessenger.dispatch<AppendEntriesResponse>(target, AppendEntriesRequest.builder(
+          raftContext.currentTerm,
+          log.lastEntry.term,
+          log.lastIndex,
+          clusterSet.localNode.id,
+          log.commitIndex).build())
+    }
   }
 
   companion object {
