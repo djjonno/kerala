@@ -23,7 +23,6 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
   }
 
   override fun off() {
-    LOG.info("leader offline")
     /* Force-stop the replication process - we must honor the transition */
     replicator?.stop()
   }

@@ -22,7 +22,7 @@ import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import java.util.concurrent.ExecutionException
 
-class ClusterMessengerV2Test {
+class ClusterMessengerTest {
   @Mock lateinit var node: Node
   @Mock lateinit var channel: ClusterConnectionPool.Channel
   @Mock lateinit var clusterConnectionPool: ClusterConnectionPool
@@ -40,7 +40,7 @@ class ClusterMessengerV2Test {
   private lateinit var rpcRequestVoteRequest: RpcRequestVoteRequest
   private lateinit var rpcRequestVoteResponse: RpcRequestVoteResponse
 
-  private lateinit var unitUnderTest: ClusterMessengerV2
+  private lateinit var unitUnderTest: ClusterMessenger
 
   @Before
   @Throws(Exception::class)
@@ -55,7 +55,7 @@ class ClusterMessengerV2Test {
     setupConverterRegistry()
     setupCluster()
 
-    unitUnderTest = ClusterMessengerV2(clusterConnectionPool, converterRegistry)
+    unitUnderTest = ClusterMessenger(clusterConnectionPool, converterRegistry)
   }
 
   @Throws(ExecutionException::class, InterruptedException::class)
@@ -148,7 +148,7 @@ class ClusterMessengerV2Test {
     val appendEntriesResponse = unitUnderTest.dispatch<AppendEntriesResponse>(node, appendEntriesRequest)
 
     // Then
-    assertSame(this@ClusterMessengerV2Test.appendEntriesResponse, appendEntriesResponse)
+    assertSame(this@ClusterMessengerTest.appendEntriesResponse, appendEntriesResponse)
   }
 
   @Test
@@ -158,7 +158,7 @@ class ClusterMessengerV2Test {
     val requestVoteResponse = unitUnderTest.dispatch<RequestVoteResponse>(node, requestVoteRequest)
 
     // Then
-    assertSame(this@ClusterMessengerV2Test.requestVoteResponse, requestVoteResponse)
+    assertSame(this@ClusterMessengerTest.requestVoteResponse, requestVoteResponse)
   }
 
   @Test

@@ -41,7 +41,6 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
       final AppendEntriesRequest request = mConverterRegistry.convert(appendEntriesRequest);
       final StreamConverterDecorator<AppendEntriesResponse, RpcAppendEntriesResponse> observer =
           new StreamConverterDecorator<>(responseObserver, mConverterRegistry);
-
       mRaftDelegate.delegateAppendEntries(
           request,
           observer
@@ -60,7 +59,6 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
       final RequestVoteRequest request = mConverterRegistry.convert(requestVotesRequest);
       final StreamConverterDecorator<RequestVoteResponse, RpcRequestVoteResponse> observer =
           new StreamConverterDecorator<>(responseObserver, mConverterRegistry);
-
       mRaftDelegate.delegateRequestVote(
           request,
           observer

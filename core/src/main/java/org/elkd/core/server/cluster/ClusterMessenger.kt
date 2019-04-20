@@ -14,15 +14,13 @@ import org.elkd.shared.annotations.Mockable
 import kotlin.coroutines.CoroutineContext
 
 @Mockable
-class ClusterMessengerV2
+class ClusterMessenger
 @JvmOverloads constructor(private val clusterConnectionPool: ClusterConnectionPool,
                           private val converterRegistry: ConverterRegistry = ConverterRegistry.getInstance()): CoroutineScope {
-  val job: Job
-    get() = Job()
   val clusterSet: ClusterSet
     get() = clusterConnectionPool.clusterSet
   override val coroutineContext: CoroutineContext
-    get() = job + Dispatchers.IO
+    get() = Job() + Dispatchers.IO
 
   /**
    * Send message to a node in the cluster.
@@ -49,6 +47,7 @@ class ClusterMessengerV2
           else -> onFailure(ElkdRuntimeException("Unsupported message type ${message.javaClass}"))
         }
       } catch (e: Exception) {
+        LOG.info("message not delivered. $node is probably offline")
         onFailure(ElkdRuntimeException(e))
         return@coroutineScope Unit
       }
@@ -68,6 +67,6 @@ class ClusterMessengerV2
   }
 
   companion object {
-    private val LOG = Logger.getLogger(ClusterMessengerV2::class.java)
+    private val LOG = Logger.getLogger(ClusterMessenger::class.java)
   }
 }

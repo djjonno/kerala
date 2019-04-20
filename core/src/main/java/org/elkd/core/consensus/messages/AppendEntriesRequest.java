@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppendEntriesRequest {
+public class AppendEntriesRequest implements Request {
   private final int mTerm;
   private final int mPrevLogTerm;
   private final long mPrevLogIndex;

@@ -11,7 +11,7 @@ class LeaderContext(nodes: Set<Node>, lastLogIndex: Long) {
   private val matchIndex = HashMap<Node, Long>()
 
   init {
-    for (node in nodes) {
+    nodes.forEach { node ->
       nextIndex[node] = lastLogIndex + 1
       matchIndex[node] = DEFAULT_MATCH_INDEX
     }

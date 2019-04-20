@@ -7,11 +7,10 @@ import org.elkd.core.consensus.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
-import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.server.cluster.Node
 import org.elkd.shared.annotations.Mockable
-import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
+import kotlin.system.measureTimeMillis
 
 /**
  * ReplicationWorker replicates the given raft state to the target {$link Node}.
@@ -23,48 +22,42 @@ import kotlin.math.max
 class ReplicatorWorker(val target: Node,
                        val leaderContext: LeaderContext,
                        val raft: Raft,
-                       val coroutineContext: CoroutineContext) {
+                       private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(raft)) {
   private val broadcastInterval: Long
 
   init {
-    LOG.info("replication target: $target (in $coroutineContext)")
+    LOG.info("replication target: $target")
     broadcastInterval = raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS)
   }
 
   suspend fun start() {
+    /* send heartbeat to followers as newly elected leader, we want
+      to ensure we account for overhead of initializing the new leader state */
     sendHeartbeat()
-
     while (true) {
-      // determine next entries to replicate
-      val nextIndex = leaderContext.getNextIndex(target)
-      val nextEntries = mutableListOf<Entry>()
-      var prevLogIndex = raft.log.lastIndex
-
-      if (raft.log.lastIndex >= nextIndex) {
-        nextEntries += raft.log.read(nextIndex, raft.log.lastIndex)
-        prevLogIndex -= nextEntries.size
-        LOG.info("replicating $nextEntries to ${target.id}")
-      }
-
-      val prevLogTerm = raft.log.read(prevLogIndex)?.term
-
-      val message = AppendEntriesRequest
-          .builder(raft.raftContext.currentTerm, prevLogTerm!!, prevLogIndex, raft.clusterSet.localNode.id, raft.log.commitIndex)
-          .withEntries(nextEntries)
-          .build()
-      raft.clusterMessenger.dispatch<AppendEntriesResponse>(target, message, {
-        if (it.isSuccessful) {
-          with(leaderContext) {
-            updateMatchIndex(target, raft.log.lastIndex)
-            updateNextIndex(target, raft.log.lastIndex + 1)
-          }
-        } else {
-          LOG.info("rolling back nextIndex")
-          leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
-        }
-      })
-      delay(500)
+      /* Delay for remainder of broadcast interval and the time taken to replicate to target. If exceeded,
+        zero delay, in which case a follower has probably timed out and transitioned to a candidate state. */
+      delay(max(broadcastInterval - measureTimeMillis { replicate() }, 0))
     }
+  }
+
+  private suspend fun replicate() {
+    // determine next entries to replicate
+    val nextIndex = leaderContext.getNextIndex(target)
+    raft.clusterMessenger.dispatch<AppendEntriesResponse>(
+        target,
+        replicatorStrategy.generateRequest(nextIndex),
+        { response ->
+          if (response.isSuccessful) {
+            with(leaderContext) {
+              updateMatchIndex(target, raft.log.lastIndex)
+              updateNextIndex(target, raft.log.lastIndex + 1)
+            }
+          } else {
+            LOG.info("rolling back nextIndex")
+            leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
+          }
+        })
   }
 
   private suspend fun sendHeartbeat() {

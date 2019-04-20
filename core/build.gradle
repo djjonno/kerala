@@ -13,8 +13,8 @@ buildscript {
 }
 
 def grpcVersion = "1.18.0"
-def protobufVersion = "3.6.1"
-def protocVersion = "3.6.1"
+def protobufVersion = "3.7.1"
+def protocVersion = "3.7.1"
 
 dependencies {
     compile project(":shared")

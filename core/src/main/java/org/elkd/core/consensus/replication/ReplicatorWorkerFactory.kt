@@ -12,7 +12,7 @@ interface ReplicatorWorkerFactory {
   companion object {
     val DEFAULT: ReplicatorWorkerFactory = object : ReplicatorWorkerFactory {
       override fun create(node: Node, leaderContext: LeaderContext, raft: Raft, coroutineContext: CoroutineContext) =
-          ReplicatorWorker(node, leaderContext, raft, coroutineContext)
+          ReplicatorWorker(node, leaderContext, raft)
     }
   }
 }

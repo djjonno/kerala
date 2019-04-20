@@ -2,7 +2,7 @@ package org.elkd.core.consensus.messages;
 
 import com.google.common.base.Preconditions;
 
-public class RequestVoteRequest {
+public class RequestVoteRequest implements Request {
   private final int mTerm;
   private final String mCandidateId;
   private final long mLastLogIndex;

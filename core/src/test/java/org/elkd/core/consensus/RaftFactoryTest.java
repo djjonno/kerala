@@ -4,7 +4,7 @@ import org.elkd.core.config.Config;
 import org.elkd.core.log.Log;
 import org.elkd.core.log.LogCommandExecutor;
 import org.elkd.core.log.LogProvider;
-import org.elkd.core.server.cluster.ClusterMessengerV2;
+import org.elkd.core.server.cluster.ClusterMessenger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 
 public class RaftFactoryTest {
 
-  @Mock ClusterMessengerV2 mClusterMessenger;
+  @Mock ClusterMessenger mClusterMessenger;
   @Mock Log mLog;
   @Mock LogProvider mLogProvider;
   @Mock LogCommandExecutor mLogCommandExecutor;

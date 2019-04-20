@@ -11,7 +11,7 @@ import org.elkd.core.log.InMemoryLog;
 import org.elkd.core.log.LogProvider;
 import org.elkd.core.server.Server;
 import org.elkd.core.server.cluster.ClusterConnectionPool;
-import org.elkd.core.server.cluster.ClusterMessengerV2;
+import org.elkd.core.server.cluster.ClusterMessenger;
 import org.elkd.core.server.cluster.ClusterSet;
 import org.elkd.core.server.cluster.ClusterUtils;
 import org.elkd.core.server.cluster.StaticClusterSet;
@@ -27,7 +27,7 @@ public class Elkd {
   private final Server mServer;
 
   Elkd(final Config config, final Raft raft) {
-    this(config, raft, new Server(raft));
+    this(config, raft, new Server(raft.getDelegator()));
   }
 
   Elkd(final Config config,
@@ -66,7 +66,7 @@ public class Elkd {
         .build();
     final ClusterConnectionPool clusterConnectionPool = new ClusterConnectionPool(clusterSet);
     clusterConnectionPool.initialize();
-    final ClusterMessengerV2 clusterMessenger = new ClusterMessengerV2(clusterConnectionPool);
+    final ClusterMessenger clusterMessenger = new ClusterMessenger(clusterConnectionPool);
     final LogProvider<Entry> logProvider = new LogProvider<>(new InMemoryLog());
     final Raft raft = RaftFactory.create(config, logProvider, clusterMessenger);
     final Elkd elkd = new Elkd(config, raft);

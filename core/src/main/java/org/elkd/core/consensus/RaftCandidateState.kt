@@ -8,8 +8,9 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
-import org.elkd.core.server.cluster.ClusterMessengerV2
+import org.elkd.shared.annotations.Mockable
 
+@Mockable
 class RaftCandidateState(private val raft: Raft,
                          private val timeoutMonitor: TimeoutMonitor) : RaftState {
   private val timeout = raft.config.getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS)
@@ -19,18 +20,16 @@ class RaftCandidateState(private val raft: Raft,
       raft,
       TimeoutMonitor {
         LOG.info("election timeout reached. restarting election.")
-        raft.transition(RaftCandidateState::class.java)
+        raft.delegator.transition(State.CANDIDATE)
       }
   )
 
   override fun on() {
-    LOG.info("candidate ready")
     timeoutMonitor.reset(timeout.toLong())
     startElection()
   }
 
   override fun off() {
-    LOG.info("candidate offline")
     timeoutMonitor.stop()
     stopElection()
   }
@@ -60,8 +59,8 @@ class RaftCandidateState(private val raft: Raft,
     val request = createVoteRequest()
     electionScheduler = ElectionScheduler.create(
         request,
-        Runnable { raft.transition(RaftLeaderState::class.java) },
-        Runnable { raft.transition(RaftFollowerState::class.java) },
+        { raft.delegator.transition(State.LEADER) },
+        { raft.delegator.transition(State.FOLLOWER) },
         raft.clusterMessenger)
     electionScheduler?.schedule()
   }

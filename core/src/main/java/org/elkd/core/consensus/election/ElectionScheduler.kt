@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
-import org.elkd.core.server.cluster.ClusterMessengerV2
+import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.Node
 import kotlin.coroutines.CoroutineContext
 
@@ -22,9 +22,9 @@ import kotlin.coroutines.CoroutineContext
  */
 class ElectionScheduler private constructor(private val voteRequest: RequestVoteRequest,
                                             private val electionStrategy: ElectionStrategy,
-                                            private var onSuccess: Runnable?,
-                                            private var onFailure: Runnable?,
-                                            private val clusterMessenger: ClusterMessengerV2): CoroutineScope {
+                                            private var onSuccess: () -> Unit,
+                                            private var onFailure: () -> Unit,
+                                            private val clusterMessenger: ClusterMessenger): CoroutineScope {
   val job: Job
     get() = Job()
   override val coroutineContext: CoroutineContext
@@ -37,6 +37,7 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
   fun schedule() {
     if (scheduled) return
     LOG.info("scheduling a new election with $voteRequest")
+
     scheduled = true
 
     /* Vote for self */
@@ -47,8 +48,6 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
   }
 
   fun finish() {
-    onSuccess = null
-    onFailure = null
     finished = true
   }
 
@@ -74,11 +73,11 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
       when (electionStrategy.isSuccessful(electionTally)) {
         true -> {
           LOG.info("successful election $electionTally")
-          onSuccess?.run()
+          onSuccess()
         }
         false -> {
           LOG.info("unsuccessful election $electionTally")
-          onFailure?.run()
+          onFailure()
         }
       }
       finish()
@@ -88,9 +87,9 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
   companion object {
     private val LOG = Logger.getLogger(ElectionScheduler::class.java.name)
     @JvmStatic fun create(voteRequest: RequestVoteRequest,
-                          onSuccess: Runnable?,
-                          onFailure: Runnable?,
-                          clusterMessenger: ClusterMessengerV2): ElectionScheduler {
+                          onSuccess: () -> Unit,
+                          onFailure: () -> Unit,
+                          clusterMessenger: ClusterMessenger): ElectionScheduler {
       return ElectionScheduler(
           voteRequest,
           /* Raft uses majority, so we'll just hard-code this strategy for now. */

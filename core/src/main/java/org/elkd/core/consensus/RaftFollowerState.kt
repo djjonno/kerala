@@ -20,16 +20,16 @@ constructor(private val raft: Raft,
 
   constructor(raft: Raft) : this(
       raft,
-      TimeoutMonitor { raft.transition(RaftCandidateState::class.java) }
+      TimeoutMonitor {
+        raft.delegator.transition(State.CANDIDATE)
+      }
   )
 
   override fun on() {
-    LOG.info("follower ready")
     resetTimeout()
   }
 
   override fun off() {
-    LOG.info("follower offline")
     timeoutMonitor.stop()
   }
 
