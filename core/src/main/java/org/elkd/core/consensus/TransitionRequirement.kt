@@ -8,6 +8,6 @@ import org.elkd.core.consensus.messages.Request
 interface TransitionRequirement {
   fun isTransitionRequired(request: Request): Boolean = true
   val transitionTo: State
-  val onTransitionPreHook: (request: Request) -> Unit
-  val onTransitionPostHook: (request: Request) -> Unit
+  val transitionPreHook: (request: Request) -> Unit
+  val transitionPostHook: (request: Request) -> Unit
 }

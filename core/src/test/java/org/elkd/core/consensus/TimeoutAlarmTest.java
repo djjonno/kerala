@@ -12,14 +12,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class TimeoutMonitorTest {
+public class TimeoutAlarmTest {
   private static final long TIMEOUT = 50;
 
-  @Mock TimeoutMonitor.TimerFactory mTimerFactory;
+  @Mock TimeoutAlarm.TimerFactory mTimerFactory;
   @Mock Runnable mTimeoutTask;
   @Mock Timer mTimer;
 
-  private TimeoutMonitor mUnitUnderTest;
+  private TimeoutAlarm mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
@@ -37,7 +37,7 @@ public class TimeoutMonitorTest {
         .when(mTimer)
         .schedule(any(TimerTask.class), eq(TIMEOUT));
 
-    mUnitUnderTest = new TimeoutMonitor(mTimeoutTask, mTimerFactory);
+    mUnitUnderTest = new TimeoutAlarm(mTimeoutTask, mTimerFactory);
   }
 
   @Test

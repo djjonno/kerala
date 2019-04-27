@@ -15,12 +15,12 @@ import kotlin.math.min
 @Mockable
 class RaftFollowerState @VisibleForTesting
 constructor(private val raft: Raft,
-            private val timeoutMonitor: TimeoutMonitor) : RaftState {
+            @VisibleForTesting private val timeoutAlarm: TimeoutAlarm) : RaftState {
   private val timeout = raft.config.getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS)
 
   constructor(raft: Raft) : this(
       raft,
-      TimeoutMonitor {
+      TimeoutAlarm {
         raft.delegator.transition(State.CANDIDATE)
       }
   )
@@ -30,11 +30,12 @@ constructor(private val raft: Raft,
   }
 
   override fun off() {
-    timeoutMonitor.stop()
+    timeoutAlarm.stop()
   }
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
-                                     responseObserver: StreamObserver<AppendEntriesResponse>) {
+                                     stream: StreamObserver<AppendEntriesResponse>) {
+    resetTimeout()
     try {
       LOG.info(raft.log)
       with (request) {
@@ -44,14 +45,12 @@ constructor(private val raft: Raft,
         }
       }
       commitIfNecessary(request)
-      replyAppendEntries(raft.raftContext, true, responseObserver)
+      replyAppendEntries(raft.raftContext, true, stream)
 
     } catch (e: Exception) {
       LOG.error(e)
-      replyAppendEntries(raft.raftContext, false, responseObserver)
+      replyAppendEntries(raft.raftContext, false, stream)
 
-    } finally {
-      resetTimeout()
     }
   }
 
@@ -65,10 +64,10 @@ constructor(private val raft: Raft,
   }
 
   override fun delegateRequestVote(request: RequestVoteRequest,
-                                   responseObserver: StreamObserver<RequestVoteResponse>) {
-
+                                   stream: StreamObserver<RequestVoteResponse>) {
+    resetTimeout()
     if (request.term < raft.raftContext.currentTerm) {
-      replyRequestVote(raft.raftContext, false, responseObserver)
+      replyRequestVote(raft.raftContext, false, stream)
       return
     }
 
@@ -79,11 +78,11 @@ constructor(private val raft: Raft,
         votedFor = request.candidateId
         currentTerm = request.term
       }
-      replyRequestVote(raft.raftContext, true, responseObserver)
+      replyRequestVote(raft.raftContext, true, stream)
       return
     }
 
-    replyRequestVote(raft.raftContext, false, responseObserver)
+    replyRequestVote(raft.raftContext, false, stream)
     return
   }
 
@@ -112,7 +111,7 @@ constructor(private val raft: Raft,
   private fun resetTimeout() {
     val newTimeout = randomizeNumberPoint(timeout, 0.2)
     LOG.info("timeout in " + newTimeout + "ms")
-    timeoutMonitor.reset(newTimeout.toLong())
+    timeoutAlarm.reset(newTimeout.toLong())
   }
 
   companion object {

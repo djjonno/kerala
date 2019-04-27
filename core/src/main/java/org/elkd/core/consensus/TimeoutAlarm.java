@@ -7,19 +7,18 @@ import javax.annotation.Nonnull;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TimeoutMonitor {
+public class TimeoutAlarm {
   private final Runnable mTimeoutTask;
   private final TimerFactory mTimerFactory;
 
-  private long mTimeout;
   private Timer mTimer;
 
-  public TimeoutMonitor(@Nonnull final Runnable timeoutTask) {
+  public TimeoutAlarm(@Nonnull final Runnable timeoutTask) {
     this(timeoutTask, new TimerFactory());
   }
 
   @VisibleForTesting
-  TimeoutMonitor(final Runnable timeoutTask, final TimerFactory timerFactory) {
+  TimeoutAlarm(final Runnable timeoutTask, final TimerFactory timerFactory) {
     mTimeoutTask = Preconditions.checkNotNull(timeoutTask, "timeoutTask");
     mTimerFactory = Preconditions.checkNotNull(timerFactory, "timerFactory");
   }
@@ -27,14 +26,13 @@ public class TimeoutMonitor {
   public void reset(final long timeout) {
     Preconditions.checkState(timeout > 0);
     stop();
-    mTimeout = timeout;
     mTimer = mTimerFactory.createDaemonTimer();
     mTimer.schedule(new TimerTask() {
       @Override
       public void run() {
         mTimeoutTask.run();
       }
-    }, mTimeout);
+    }, timeout);
   }
 
   public void stop() {
@@ -42,7 +40,6 @@ public class TimeoutMonitor {
       mTimer.cancel();
     }
   }
-
   @VisibleForTesting static class TimerFactory {
     Timer createDaemonTimer() {
       return new Timer(true);

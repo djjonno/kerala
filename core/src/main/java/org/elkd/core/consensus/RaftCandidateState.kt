@@ -12,44 +12,44 @@ import org.elkd.shared.annotations.Mockable
 
 @Mockable
 class RaftCandidateState(private val raft: Raft,
-                         private val timeoutMonitor: TimeoutMonitor) : RaftState {
+                         private val timeoutAlarm: TimeoutAlarm) : RaftState {
   private val timeout = raft.config.getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS)
   private var electionScheduler: ElectionScheduler? = null
 
   constructor(raft: Raft) : this(
       raft,
-      TimeoutMonitor {
+      TimeoutAlarm {
         LOG.info("election timeout reached. restarting election.")
         raft.delegator.transition(State.CANDIDATE)
       }
   )
 
   override fun on() {
-    timeoutMonitor.reset(timeout.toLong())
+    timeoutAlarm.reset(timeout.toLong())
     startElection()
   }
 
   override fun off() {
-    timeoutMonitor.stop()
+    timeoutAlarm.stop()
     stopElection()
   }
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
-                                     responseObserver: StreamObserver<AppendEntriesResponse>) {
+                                     stream: StreamObserver<AppendEntriesResponse>) {
     /* If term > currentTerm, Raft will always transition to Follower state. messages received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
-    responseObserver.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
-    responseObserver.onCompleted()
+    stream.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
+    stream.onCompleted()
   }
 
   override fun delegateRequestVote(request: RequestVoteRequest,
-                                   responseObserver: StreamObserver<RequestVoteResponse>) {
+                                   stream: StreamObserver<RequestVoteResponse>) {
     /* If term > currentTerm, Raft will always transition to Follower state. messages received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
-    responseObserver.onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())
-    responseObserver.onCompleted()
+    stream.onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())
+    stream.onCompleted()
   }
 
   private fun startElection() {

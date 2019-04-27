@@ -47,13 +47,13 @@ internal constructor(val config: Config,
         override val transitionTo: State
           get() = State.FOLLOWER
 
-        override val onTransitionPreHook: (request: Request) -> Unit
+        override val transitionPreHook: (request: Request) -> Unit
           get() = { request ->
             raftContext.currentTerm = request.term
             raftContext.votedFor = null
           }
 
-        override val onTransitionPostHook: (request: Request) -> Unit
+        override val transitionPostHook: (request: Request) -> Unit
           get() = { } /* no op */
       }
   ))

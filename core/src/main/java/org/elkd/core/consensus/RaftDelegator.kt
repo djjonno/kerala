@@ -1,13 +1,11 @@
 package org.elkd.core.consensus
 
+import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.runBlocking
 import org.elkd.core.consensus.messages.*
+import org.elkd.shared.annotations.Mockable
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.coroutines.CoroutineContext
 
 /**
  * RaftDelegator delegates messages to the correct internal raft state [follower, candidate, leader]
@@ -30,11 +28,10 @@ import kotlin.coroutines.CoroutineContext
  * and the message delivery is atomic.
  * @see serialDispatcher
  */
+@Mockable
 class RaftDelegator(private val stateFactory: AbstractStateFactory,
-                    private val transitionRequirements: List<TransitionRequirement> = emptyList()) : RaftDelegate, CoroutineScope {
-
-  override val coroutineContext: CoroutineContext
-    get() = Executors.newSingleThreadExecutor { Thread(it, "raft-delegator") }.asCoroutineDispatcher() + Job()
+                    private val transitionRequirements: List<TransitionRequirement> = emptyList(),
+                    @VisibleForTesting private val serialExecutor: ExecutorService = Executors.newSingleThreadExecutor()) : RaftDelegate {
 
   /**
    * Raft state is the internal state representation. Using the state design pattern,
@@ -64,7 +61,7 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
     serialOperation {
-      evaluateTransitionRequirement(request) {
+      evaluateTransitionRequirements(request) {
         delegate?.delegateAppendEntries(request, stream)
       }
     }
@@ -76,20 +73,20 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
   override fun delegateRequestVote(request: RequestVoteRequest,
                                    stream: StreamObserver<RequestVoteResponse>) {
     serialOperation {
-      evaluateTransitionRequirement(request) {
+      evaluateTransitionRequirements(request) {
         delegate?.delegateRequestVote(request, stream)
       }
     }
   }
 
   private fun serialOperation(block: () -> Unit) {
-    runBlocking(coroutineContext) { block() }
+    serialExecutor.execute(block)
   }
 
-  private fun evaluateTransitionRequirement(request: Request, block: () -> Unit) {
-    transitionRequirements.forEach { pre ->
-      if (pre.isTransitionRequired(request)) {
-        transition(pre.transitionTo, { pre.onTransitionPreHook(request) }, { pre.onTransitionPostHook(request) })
+  private fun evaluateTransitionRequirements(request: Request, block: () -> Unit) {
+    transitionRequirements.forEach { req ->
+      if (req.isTransitionRequired(request)) {
+        transition(req.transitionTo, { req.transitionPreHook(request) }, { req.transitionPostHook(request) })
         return@forEach
       }
     }
