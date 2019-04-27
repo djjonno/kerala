@@ -1,13 +1,11 @@
 package org.elkd.core.server.cluster;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.elkd.shared.schemes.URI;
 
 import java.util.Objects;
 
 public class Node {
-  private static final int ID_LEN = 6;
   private URI mUri;
 
   public Node(final URI uri) {
@@ -15,7 +13,7 @@ public class Node {
   }
 
   public String getId() {
-    return "elkd-node@" + DigestUtils.shaHex(mUri.toString()).substring(0, ID_LEN + 1);
+    return "elkd-node@" + mUri;
   }
 
   public URI getURI() {
@@ -49,6 +47,6 @@ public class Node {
 
   @Override
   public String toString() {
-    return getId() + "(" + mUri.toString() + ")";
+    return getId();
   }
 }

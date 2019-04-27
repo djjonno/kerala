@@ -334,6 +334,9 @@ public class RaftFollowerStateTest {
     doReturn(lastLogTerm - 1)
         .when(entry)
         .getTerm();
+    doReturn(entry)
+        .when(mLog)
+        .getLastEntry();
 
     // When
     mUnitUnderTest.delegateRequestVote(requestVoteRequest, mRequestVoteResponseStreamObserver);

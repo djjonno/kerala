@@ -50,7 +50,6 @@ constructor(private val raft: Raft,
     } catch (e: Exception) {
       LOG.error(e)
       replyAppendEntries(raft.raftContext, false, stream)
-
     }
   }
 
@@ -66,24 +65,23 @@ constructor(private val raft: Raft,
   override fun delegateRequestVote(request: RequestVoteRequest,
                                    stream: StreamObserver<RequestVoteResponse>) {
     resetTimeout()
-    if (request.term < raft.raftContext.currentTerm) {
+    if (raft.raftContext.currentTerm > request.term ||
+        raft.raftContext.votedFor !in listOf(null, request.candidateId) ||
+        !isRequestLogLatest(request)) {
       replyRequestVote(raft.raftContext, false, stream)
       return
     }
 
-    if (raft.raftContext.votedFor in listOf(null, request.candidateId)
-        && raft.log.lastIndex <= request.lastLogIndex
-        && raft.log.lastEntry.term <= request.lastLogTerm) {
-      with (raft.raftContext) {
-        votedFor = request.candidateId
-        currentTerm = request.term
-      }
-      replyRequestVote(raft.raftContext, true, stream)
-      return
+    with (raft.raftContext) {
+      votedFor = request.candidateId
+      currentTerm = request.term
     }
+    replyRequestVote(raft.raftContext, true, stream)
+  }
 
-    replyRequestVote(raft.raftContext, false, stream)
-    return
+  private fun isRequestLogLatest(request: RequestVoteRequest): Boolean {
+    return raft.log.lastIndex <= request.lastLogIndex
+        && raft.log.lastEntry.term <= request.lastLogTerm
   }
 
   @Throws(InvalidRequestException::class)
