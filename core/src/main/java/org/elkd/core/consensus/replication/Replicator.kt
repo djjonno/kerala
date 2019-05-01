@@ -29,8 +29,9 @@ class Replicator @JvmOverloads constructor (
     raft.clusterSet.nodes.forEach {
       /* launch in scope so we can easily cancel all child coroutines when
         raft requests a state transition */
-      launch(coroutineContext) {
-        replicatorWorkerFactory.create(it, leaderContext, raft, coroutineContext).start()
+      val worker = replicatorWorkerFactory.create(it, leaderContext, raft, coroutineContext)
+      launch {
+        worker.start()
       }
     }
   }
