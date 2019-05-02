@@ -12,7 +12,7 @@ import kotlin.coroutines.CoroutineContext
 class Replicator @JvmOverloads constructor (
     private val raft: Raft,
     private val leaderContext: LeaderContext,
-    private val replicatorWorkerFactory: ReplicatorWorkerFactory = ReplicatorWorkerFactory.DEFAULT) : CoroutineScope {
+    private val replicationControllerFactory: ReplicationControllerFactory = ReplicationControllerFactory.DEFAULT) : CoroutineScope {
   private val job = Job()
 
   /**
@@ -29,7 +29,7 @@ class Replicator @JvmOverloads constructor (
     raft.clusterSet.nodes.forEach {
       /* launch in scope so we can easily cancel all child coroutines when
         raft requests a state transition */
-      val worker = replicatorWorkerFactory.create(it, leaderContext, raft, coroutineContext)
+      val worker = replicationControllerFactory.create(it, leaderContext, raft, coroutineContext)
       launch {
         worker.start()
       }

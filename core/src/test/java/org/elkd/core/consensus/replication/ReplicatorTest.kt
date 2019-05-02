@@ -6,7 +6,6 @@ import org.elkd.core.consensus.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.server.cluster.ClusterSet
 import org.elkd.core.server.cluster.Node
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -17,7 +16,7 @@ class ReplicatorTest {
   @Mock lateinit var raft: Raft
   @Mock lateinit var clusterSet: ClusterSet
   @Mock lateinit var leaderContext: LeaderContext
-  @Mock lateinit var replicatorWorkerFactory: ReplicatorWorkerFactory
+  @Mock lateinit var replicationControllerFactory: ReplicationControllerFactory
 
   private lateinit var replicator: Replicator
 
@@ -25,12 +24,12 @@ class ReplicatorTest {
   fun setup() {
     MockitoAnnotations.initMocks(this)
     configureCommonExpectations()
-    replicator = Replicator(raft, leaderContext, replicatorWorkerFactory)
+    replicator = Replicator(raft, leaderContext, replicationControllerFactory)
   }
 
   private fun configureCommonExpectations() {
-    doReturn(mock<ReplicatorWorker>())
-        .whenever(replicatorWorkerFactory)
+    doReturn(mock<ReplicationController>())
+        .whenever(replicationControllerFactory)
         .create(any(), any(), any(), any())
   }
 
@@ -44,7 +43,7 @@ class ReplicatorTest {
     replicator.start()
 
     // Then
-    nodes.forEach { verify(replicatorWorkerFactory).create(eq(it), eq(leaderContext), eq(raft), any()) }
+    nodes.forEach { verify(replicationControllerFactory).create(eq(it), eq(leaderContext), eq(raft), any()) }
   }
 
   private fun configureClusterSet(nodes: Set<Node>) {

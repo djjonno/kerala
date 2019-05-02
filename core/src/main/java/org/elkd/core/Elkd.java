@@ -26,7 +26,7 @@ public class Elkd {
   private final Raft mRaft;
   private final Server mServer;
 
-  Elkd(final Config config, final Raft raft) {
+  private Elkd(final Config config, final Raft raft) {
     this(config, raft, new Server(raft.getDelegator()));
   }
 
@@ -85,10 +85,7 @@ public class Elkd {
     try {
       config = ConfigProvider.compileConfig(args);
     } catch (final Exception e) {
-      final String message = e.getMessage();
-      if (message != null) {
-        System.out.println(message);
-      }
+      System.out.println(e.getMessage());
       return null;
     }
     return config;

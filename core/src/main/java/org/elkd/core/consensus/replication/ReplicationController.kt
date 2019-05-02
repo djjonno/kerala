@@ -13,16 +13,16 @@ import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 /**
- * ReplicationWorker replicates the given raft state to the target {$link Node}.
+ * ReplicationController replicates the given raft state to the target {$link Node}.
  *
  * @see Node
  * @see Replicator
  */
 @Mockable
-class ReplicatorWorker(val target: Node,
-                       val leaderContext: LeaderContext,
-                       val raft: Raft,
-                       private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(raft)) {
+class ReplicationController(val target: Node,
+                            val leaderContext: LeaderContext,
+                            val raft: Raft,
+                            private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(raft)) {
   private val broadcastInterval: Long
 
   init {
@@ -72,6 +72,6 @@ class ReplicatorWorker(val target: Node,
   }
 
   companion object {
-    private val LOG = Logger.getLogger(ReplicatorWorker::class.java)
+    private val LOG = Logger.getLogger(ReplicationController::class.java)
   }
 }
