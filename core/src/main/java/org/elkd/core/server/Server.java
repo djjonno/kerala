@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import io.grpc.ServerBuilder;
 import org.apache.log4j.Logger;
 import org.elkd.core.consensus.RaftDelegate;
+import org.elkd.core.server.client.ClientService;
 import org.elkd.core.server.cluster.ClusterService;
 import org.elkd.core.server.converters.ConverterRegistry;
 
@@ -26,6 +27,7 @@ public class Server {
   public void start(final int port) throws IOException {
     mRpcClusterServer = ServerBuilder.forPort(port)
         .addService(new ClusterService(mRaftDelegate, mConverterRegistry))
+        .addService(new ClientService())
         .build()
         .start();
 

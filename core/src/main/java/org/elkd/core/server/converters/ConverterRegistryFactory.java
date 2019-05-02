@@ -15,8 +15,7 @@ class ConverterRegistryFactory {
         new AppendEntriesResponseConverter(),
         new RequestVoteRequestConverter(),
         new RequestVoteResponseConverter(),
-        new EntryConverter(),
-        new StateMachineCommandConverter()
+        new EntryConverter()
     );
   }
 }

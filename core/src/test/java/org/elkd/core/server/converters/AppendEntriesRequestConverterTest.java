@@ -3,18 +3,13 @@ package org.elkd.core.server.converters;
 import com.google.common.collect.ImmutableList;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.Entry;
-import org.elkd.core.server.RpcAppendEntriesRequest;
-import org.elkd.core.server.RpcEntry;
-import org.elkd.core.server.RpcStateMachineCommand;
-import org.elkd.core.statemachine.SetStateMachineCommand;
-import org.elkd.core.statemachine.UnSetStateMachineCommand;
+import org.elkd.core.server.cluster.RpcAppendEntriesRequest;
+import org.elkd.core.server.cluster.RpcEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.elkd.core.server.RpcStateMachineCommand.Operation.SET;
-import static org.elkd.core.server.RpcStateMachineCommand.Operation.UNSET;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
@@ -25,18 +20,11 @@ public class AppendEntriesRequestConverterTest {
   private static final String LEADER_ID = "leaderId";
   private static final int LEADER_COMMIT = 4;
   private static final String EVENT_NAME = "event";
-  private static final String KEY = "key";
-  private static final String VALUE = "value";
   private static final Entry ENTRY = Entry.builder(TERM, EVENT_NAME)
-      .withCommand(new SetStateMachineCommand(KEY, VALUE))
-      .withCommand(new UnSetStateMachineCommand(KEY))
       .build();
   private static final RpcEntry RPC_ENTRY = RpcEntry.newBuilder()
       .setEvent(EVENT_NAME)
-      .addAllCommands(ImmutableList.of(
-          RpcStateMachineCommand.newBuilder().setKey(KEY).setValue(VALUE).setOperation(SET).build(),
-          RpcStateMachineCommand.newBuilder().setKey(KEY).setOperation(UNSET).build()
-      )).build();
+      .build();
 
   private static final AppendEntriesRequest APPEND_ENTRIES_REQUEST = AppendEntriesRequest.builder(
       TERM,

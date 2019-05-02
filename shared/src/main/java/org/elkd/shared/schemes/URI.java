@@ -3,7 +3,6 @@ package org.elkd.shared.schemes;
 import com.google.common.base.Preconditions;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Objects;
 
 /**
@@ -76,13 +75,7 @@ public class URI {
 
     Preconditions.checkState(split.length == 2, "Malformed URI " + uri);
 
-    final String host;
-    try {
-      host = InetAddress.getByName(split[HOST_INDEX]).getHostName();
-    } catch (final UnknownHostException e) {
-      throw new InvalidHostException(split[HOST_INDEX], e);
-    }
-
+    final String host = split[HOST_INDEX];
     final int port;
     try {
       port = Integer.parseUnsignedInt(split[PORT_INDEX]);

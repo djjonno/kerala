@@ -1,11 +1,11 @@
 package org.elkd.core.server.converters;
 
 import org.elkd.core.consensus.messages.RequestVoteRequest;
-import org.elkd.core.server.RpcRequestVoteRequest;
+import org.elkd.core.server.cluster.RpcRequestVoteRequest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class RequestVoteRequestConverterTest {

@@ -1,11 +1,8 @@
 package org.elkd.core.consensus.payload;
 
-import com.google.common.collect.ImmutableList;
 import org.elkd.core.consensus.messages.Entry;
-import org.elkd.core.statemachine.StateMachineCommand;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
@@ -13,8 +10,6 @@ import static org.junit.Assert.assertEquals;
 public class EntryTest {
   private static final int TERM = 1;
   private static final String EVENT_NAME = "eventName";
-
-  @Mock StateMachineCommand mStateMachineCommand;
 
   private Entry.Builder mEventBuilder;
 
@@ -38,19 +33,17 @@ public class EntryTest {
   public void should_return_value_given_key() {
     // Given / When
     final Entry entry = mEventBuilder
-        .withCommand(mStateMachineCommand)
         .build();
 
     // Then
     assertEquals(EVENT_NAME, entry.getEvent());
-    assertEquals(entry.getCommands(), ImmutableList.of(mStateMachineCommand));
   }
 
   @Test
   public void should_have_equality_given_consistent_builder_args() {
     // Given / When
-    final Entry e1 = Entry.builder(TERM, EVENT_NAME).withCommand(mStateMachineCommand).build();
-    final Entry e2 = Entry.builder(TERM, EVENT_NAME).withCommand(mStateMachineCommand).build();
+    final Entry e1 = Entry.builder(TERM, EVENT_NAME).build();
+    final Entry e2 = Entry.builder(TERM, EVENT_NAME).build();
 
     // Then
     assertEquals(e1, e2);

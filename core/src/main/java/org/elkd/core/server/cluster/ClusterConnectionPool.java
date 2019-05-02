@@ -5,12 +5,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.log4j.Logger;
-import org.elkd.core.server.ElkdClusterServiceGrpc;
-import org.elkd.core.server.ElkdClusterServiceGrpc.ElkdClusterServiceFutureStub;
-import org.elkd.core.server.RpcAppendEntriesRequest;
-import org.elkd.core.server.RpcAppendEntriesResponse;
-import org.elkd.core.server.RpcRequestVoteRequest;
-import org.elkd.core.server.RpcRequestVoteResponse;
+import org.elkd.core.server.cluster.ElkdClusterServiceGrpc.ElkdClusterServiceFutureStub;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

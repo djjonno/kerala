@@ -1,0 +1,38 @@
+
+Overall API
+===========
+@component: server
+	client-api
+	- create-topic (rpc)
+		• create topic record in server
+	- write-topic (rpc stream)
+		• if node is not leader, node will throw redirect error so client can re-send message to correct leader node.  in order to do this, we need a mechanism on the server to know who the current leader is. this will likely require the votedFor node or the last successful appendEntries message origin.
+		• message should include whether to wait for commit or not
+			• commit = take longer but guarantees delivery
+			• no commit = faster, no guarantee of delivery
+	- read-topic (rpc stream)
+		• client will establish a stream connection with the server and server will bind this client connection to a listener of the topic.
+		• server will continuously dispatch messages on that stream. To prevent overwhelming the client with message, there may be some kind of contract where the server will only send 100~ messages before requiring some confirmation from the client.
+
+@component: client
+
+Task
+====
+- server will need some client connection management
+	- if connection is closed, unsubscribe connection from all topics, etc
+	- connection configuration
+		- message throttling
+		- pressure managing
+- server will need to expose client service interface (create-topic, write-topic, read-topic)
+- server will need Topic abstraction
+	- listening to commit changes on log
+	- dispatching all messages on topic to subsribed connections
+	- decay
+
+[ ] create client service interface
+[ ] client connection store
+[ ] create basic client
+[ ] mechanism to communicate leader node to client
+
+
+

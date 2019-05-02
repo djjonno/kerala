@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.elkd.core.server.client";
+
+service ElkdClientService {
+    // @EvolvingApi
+    //
+    // Blocking Call
+    rpc ClientCommand (RpcClientCommand) returns (RpcClientCommandResponse) {}
+
+    // @EvolvingApi
+    //
+    // Client can publish KV's to this streaming interface.
+    rpc TopicPublishingStream (stream RpcKV) returns (stream RpcTopicPublishingNotification) {}
+}
+
+// @EvolvingApi
+//
+// RpcClientCommand contains the command parameters at its most basic level.
+// To prevent having to change the RPC service definition each time we wish
+// to add a new client command, we can instead use this flexible model.
+//
+// @property command    - command name to execute
+// @property params - parameter names for args (index of parameter in list has corresponding value in `args`.
+// @property args  - values for each parameter
+message RpcClientCommand {
+    string command = 1;
+    repeated string params = 2;
+    repeated string args = 3;
+}
+
+// @EvolvingApi
+//
+// Response returned by invoking ClientCommand.
+//
+// @property response       - command response
+message RpcClientCommandResponse {
+    string response = 1;
+}
+
+// @EvolvingApi
+//
+// Notification for
+message RpcTopicPublishingNotification {
+    string name = 1;
+}
+
+// @EvolvingApi
+//
+// Common stream payload, representing a key and value.
+//
+// @property topic - topic to send Key/Value to.
+// @property key byte string - opaque field, client determines data type
+// @property value byte string - opaque field, client determines data type
+message RpcKV {
+    string topic = 1;
+    bytes key = 2;
+    bytes value = 3;
+}
+

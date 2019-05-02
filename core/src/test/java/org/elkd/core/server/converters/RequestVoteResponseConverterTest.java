@@ -1,7 +1,7 @@
 package org.elkd.core.server.converters;
 
 import org.elkd.core.consensus.messages.RequestVoteResponse;
-import org.elkd.core.server.RpcRequestVoteResponse;
+import org.elkd.core.server.cluster.RpcRequestVoteResponse;
 import org.junit.Before;
 import org.junit.Test;
 

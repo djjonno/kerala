@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "org.elkd.core.server";
+option java_package = "org.elkd.core.server.cluster";
 
 service ElkdClusterService {
     rpc AppendEntries (RpcAppendEntriesRequest) returns (RpcAppendEntriesResponse) {}
@@ -22,21 +22,9 @@ message RpcAppendEntriesResponse {
     bool success = 2;
 }
 
-message RpcStateMachineCommand {
-    string key = 1;
-    string value = 2;
-    Operation operation = 3;
-
-    enum Operation {
-        SET = 0;
-        UNSET = 1;
-    }
-}
-
 message RpcEntry {
     uint32 term = 1;
     string event = 2;
-    repeated RpcStateMachineCommand commands = 3;
 }
 
 message RpcRequestVoteRequest {

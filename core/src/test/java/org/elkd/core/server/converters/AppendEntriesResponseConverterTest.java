@@ -1,11 +1,11 @@
 package org.elkd.core.server.converters;
 
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
-import org.elkd.core.server.RpcAppendEntriesResponse;
+import org.elkd.core.server.cluster.RpcAppendEntriesResponse;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class AppendEntriesResponseConverterTest {

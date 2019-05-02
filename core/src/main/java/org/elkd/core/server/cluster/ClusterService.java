@@ -8,11 +8,6 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;
-import org.elkd.core.server.ElkdClusterServiceGrpc;
-import org.elkd.core.server.RpcAppendEntriesRequest;
-import org.elkd.core.server.RpcAppendEntriesResponse;
-import org.elkd.core.server.RpcRequestVoteRequest;
-import org.elkd.core.server.RpcRequestVoteResponse;
 import org.elkd.core.server.converters.ConverterRegistry;
 import org.elkd.core.server.converters.StreamConverterDecorator;
 
@@ -25,7 +20,7 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
   private final ConverterRegistry mConverterRegistry;
 
   public ClusterService(@Nonnull final RaftDelegate raftDelegate,
-                               @Nonnull final ConverterRegistry converterRegistry) {
+                        @Nonnull final ConverterRegistry converterRegistry) {
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
 

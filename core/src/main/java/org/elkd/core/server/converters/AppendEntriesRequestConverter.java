@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.Entry;
-import org.elkd.core.server.RpcAppendEntriesRequest;
-import org.elkd.core.server.RpcEntry;
+import org.elkd.core.server.cluster.RpcAppendEntriesRequest;
+import org.elkd.core.server.cluster.RpcEntry;
 import org.elkd.core.server.converters.exceptions.ConverterException;
 import org.elkd.core.server.converters.exceptions.ConverterNotFoundException;
 
