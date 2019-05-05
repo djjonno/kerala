@@ -84,13 +84,15 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
   }
 
   private fun evaluateTransitionRequirements(request: Request, block: () -> Unit) {
-    transitionRequirements.forEach { req ->
-      if (req.isTransitionRequired(request)) {
-        transition(req.transitionTo, { req.transitionPreHook(request) }, { req.transitionPostHook(request) })
-        return@forEach
-      }
-    }
+    val req = transitionRequirements.firstOrNull { it.isTransitionRequired(request) }
 
-    block()
+    if (req != null) {
+      transition(req.transitionTo, { req.transitionPreHook(request) }, {
+        req.transitionPostHook(request)
+        block()
+      })
+    } else {
+      block()
+    }
   }
 }

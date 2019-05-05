@@ -1,39 +1,42 @@
 # elkd 🦌
-[![Build Status](https://travis-ci.com/elkd/elkd.svg?branch=master)](https://travis-ci.com/elkd/elkd)
-[![Releases](https://img.shields.io/github/release/elkd/elkd/all.svg?style=flat-square)](https://github.com/elkd/elkd/releases)
+
+[![Build Status](https://img.shields.io/travis/com/elkd/elkd/master.svg)](https://travis-ci.com/elkd/elkd)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/mockito/mockito/blob/master/LICENSE)
 
-
-[![codecov](https://codecov.io/gh/elkd/elkd/branch/master/graph/badge.svg)](https://codecov.io/gh/elkd/elkd)
-[![Maintainability](https://api.codeclimate.com/v1/badges/584249e219d2df7bb0ae/maintainability)](https://codeclimate.com/github/elkd/elkd/maintainability)
-
-elkd is a distributed and reliable store for time-series data and machine-learning analysis.  We emphasise on being:
-- *Simple*: powerful, minimalistic, extensive query language
-- *Secure*: TLS + Certificates
-- *Fast*: 10,000 writes/sec
-- *Robust*: raft distribution consensus protocol 
+elkd is a distributed streaming platform built in the modern day, from absolute scratch.  It is robust, lightweight and fast.
+- **Pubsub** - Create a topic, write to a topic, consume from a topic. 
+- **Process** - Write scalable stream processing logic that process events in realtime.
+- **Distribute** - Write events and distribute them reliably across all cluster consumers.
 
 ### Features
+- Produce and consume from topics
+- Rich Processing API (functional friendly) to process events in realtime, publish result to a new stream.
+- The underlying datastore is an in-memory append-only log; elkd does not store events **(although we may do this is in the future)** it's main priority is fast routing and processing of events in a distributed fashion.
+- Consensus algorithm is built with Raft so it's familiar to developers but incredibly robust.
 
-- Store time-series data in streams.
-- Expressive but minimal query language:
-    - Analogous to traditional programming languages - opting for familiarity
-    - Programmatic access in Kotlin/Java (no SQL statements)
-    - Extensible with elkd plugins
-- Static cluster configuration
-    - Will be dynamic in future release
+### Get Started
+We haven't setup our release pipeline yet so this is how you can run us for the time being.
 
-*elkd is under active development and features are in flux.*
+#### Build a jar
+```bash
+$ gradlew build installDist
+```
+You will find the `elkd-server` executable here: `core/build/install/elkd-server/bin`
 
-### Schedule for 0.1 (first release)
-- Fully distributed and reliable key/value store
-    - elkd-core consensus & replicated log stabilized
-    - eventually consistent
-- Simple query language exposed 
-	- `set [key] [value]`
-	- `get [key]`
-	- `rm [key]`
-- Java/Kotlin client
+#### Run with Docker
+To create a elkd cluster with 4 nodes, run the docker-compose configuration:
+```bash
+$ docker-compose up
+```
 
-### Project Names
-- cloudburst
+#### Run tests
+```bash
+$ ./gradlew build
+```
+---
+
+#### Docs
+- [client docs (wip)](https://github.com/elkd/elkd/wiki/Client-Docs)
+- [server-docs (wip)](https://github.com/elkd/elkd/wiki/Server-Docs)
+
+*an open source project by [@djjonno](https://github.com/djjonno)*

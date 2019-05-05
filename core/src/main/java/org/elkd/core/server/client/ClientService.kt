@@ -20,6 +20,9 @@ class ClientService : ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
    * TODO: We can make this a configuration problem, configured within this ClientService interface.
    */
   override fun topicPublishingStream(responseObserver: StreamObserver<RpcTopicPublishingNotification>?): StreamObserver<RpcKV> {
+    // - authentication
+    // - throttling
+    // - metric logging
     return super.topicPublishingStream(responseObserver)
   }
 

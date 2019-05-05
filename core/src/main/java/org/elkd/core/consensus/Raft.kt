@@ -54,7 +54,7 @@ internal constructor(val config: Config,
           }
 
         override val transitionPostHook: (request: Request) -> Unit
-          get() = { } /* no op */
+          get() = { /* no op */ }
       }
   ))
 

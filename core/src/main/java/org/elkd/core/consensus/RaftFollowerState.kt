@@ -107,8 +107,8 @@ constructor(private val raft: Raft,
   }
 
   private fun resetTimeout() {
-    val newTimeout = randomizeNumberPoint(timeout, 0.2)
-    LOG.info("timeout in " + newTimeout + "ms")
+    val newTimeout = randomizeNumberPoint(timeout, 0.4)
+    LOG.info("timeout in ${newTimeout}ms")
     timeoutAlarm.reset(newTimeout.toLong())
   }
 

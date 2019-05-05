@@ -42,22 +42,24 @@ class ReplicationController(val target: Node,
   }
 
   private suspend fun replicate() {
-    // determine next entries to replicate
+    /* determine next entries to replicate */
     val nextIndex = leaderContext.getNextIndex(target)
     raft.clusterMessenger.dispatch<AppendEntriesResponse>(
         target,
         replicatorStrategy.generateRequest(nextIndex),
-        { response ->
-          if (response.isSuccessful) {
-            with(leaderContext) {
-              updateMatchIndex(target, raft.log.lastIndex)
-              updateNextIndex(target, raft.log.lastIndex + 1)
-            }
-          } else {
-            LOG.info("rolling back nextIndex")
-            leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
-          }
-        })
+        { response -> handleResponse(response, nextIndex) })
+  }
+
+  private fun handleResponse(response: AppendEntriesResponse, nextIndex: Long) {
+    if (response.isSuccessful) {
+      with(leaderContext) {
+        updateMatchIndex(target, raft.log.lastIndex)
+        updateNextIndex(target, raft.log.lastIndex + 1)
+      }
+    } else {
+      LOG.info("rolling back nextIndex")
+      leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
+    }
   }
 
   private suspend fun sendHeartbeat() {
