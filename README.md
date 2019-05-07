@@ -4,14 +4,15 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/mockito/mockito/blob/master/LICENSE)
 
 elkd is a distributed streaming platform built in the modern day, from absolute scratch.  It is robust, lightweight and fast.
-- **Pubsub** - Create a topic, write to a topic, consume from a topic. 
+- **Pubsub** - Define a topic, write to a topic, consume from a topic. 
 - **Process** - Write scalable stream processing logic that process events in realtime.
 - **Distribute** - Write events and distribute them reliably across all cluster consumers.
 
 ### Features
-- Produce and consume from topics
-- Rich Processing API (functional friendly) to process events in realtime, publish result to a new stream.
-- The underlying datastore is an in-memory append-only log; elkd does not store events **(although we may do this is in the future)** it's main priority is fast routing and processing of events in a distributed fashion.
+- Produce / Consume stream API
+- Stream Processing API
+- Topic Partitioning and Consumer Groups
+- The underlying datastore is an in-memory append-only log; elkd does not persist events **(although we may do this is in the future)** it's main priority is fast routing and processing of events in a distributed fashion.
 - Consensus algorithm is built with Raft so it's familiar to developers but incredibly robust.
 
 ### Get Started

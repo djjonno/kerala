@@ -30,7 +30,7 @@ import java.util.concurrent.Executors
  */
 @Mockable
 class RaftDelegator(private val stateFactory: AbstractStateFactory,
-                    private val transitionRequirements: List<TransitionRequirement> = emptyList(),
+                    private val transitionContracts: List<TransitionContract> = emptyList(),
                     @VisibleForTesting private val serialExecutor: ExecutorService = Executors.newSingleThreadExecutor()) : RaftDelegate {
 
   /**
@@ -84,7 +84,7 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
   }
 
   private fun evaluateTransitionRequirements(request: Request, block: () -> Unit) {
-    val req = transitionRequirements.firstOrNull { it.isTransitionRequired(request) }
+    val req = transitionContracts.firstOrNull { it.isTransitionRequired(request) }
 
     if (req != null) {
       transition(req.transitionTo, { req.transitionPreHook(request) }, {

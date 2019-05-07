@@ -6,13 +6,18 @@ option java_package = "org.elkd.core.server.client";
 service ElkdClientService {
     // @EvolvingApi
     //
-    // Blocking Call
+    // Execute a command, e.g `create-topic`
     rpc ClientCommand (RpcClientCommand) returns (RpcClientCommandResponse) {}
 
     // @EvolvingApi
     //
-    // Client can publish KV's to this streaming interface.
-    rpc TopicPublishingStream (stream RpcKV) returns (stream RpcTopicPublishingNotification) {}
+    // Provide a stream for clients to produce to a topic.
+    rpc ProduceTopic (stream ProducerRecord) returns (stream RpcProducerAck) {}
+
+    // @EvolvingApi
+    //
+    // Provide a stream for clients to consume a topic.
+    rpc ConsumeTopic (RpcConsumerRequest) returns (stream ConsumerRecord) {}
 }
 
 // @EvolvingApi
@@ -22,8 +27,8 @@ service ElkdClientService {
 // to add a new client command, we can instead use this flexible model.
 //
 // @property command    - command name to execute
-// @property params - parameter names for args (index of parameter in list has corresponding value in `args`.
-// @property args  - values for each parameter
+// @property params     - parameter names for args (index of parameter in list has corresponding value in `args`.
+// @property args       - values for each parameter
 message RpcClientCommand {
     string command = 1;
     repeated string params = 2;
@@ -34,28 +39,50 @@ message RpcClientCommand {
 //
 // Response returned by invoking ClientCommand.
 //
-// @property response       - command response
+// @property response - command response
 message RpcClientCommandResponse {
     string response = 1;
 }
 
-// @EvolvingApi
+// @Experimental
 //
-// Notification for
-message RpcTopicPublishingNotification {
-    string name = 1;
+// Producer Acknowledgement configurations:
+// 1. fire-and-forget
+// 2. all
+message RpcProducerAck {
+    string notification = 1;
 }
 
 // @EvolvingApi
 //
 // Common stream payload, representing a key and value.
 //
-// @property topic - topic to send Key/Value to.
-// @property key byte string - opaque field, client determines data type
-// @property value byte string - opaque field, client determines data type
-message RpcKV {
+// @property topic  - topic to send Key/Value to.
+message ProducerRecord {
     string topic = 1;
+    RpcKV kv = 2;
+}
+
+// @EvolvingApi
+//
+// @property key byte string    - opaque field, client determines data type.
+// @property value byte string  - opaque field, client determines data type.
+message RpcKV {
     bytes key = 2;
     bytes value = 3;
 }
 
+// @EvolvingApi
+//
+// Client specifies the topic it wishes to consume from.
+message RpcConsumerRequest {
+    string topic = 1;
+    // Likely to have partition related information in future.
+    // e.g ConsumerGroup
+}
+
+message ConsumerRecord {
+    string topic = 1;
+    uint64 offset = 2;
+    RpcKV kv = 3;
+}

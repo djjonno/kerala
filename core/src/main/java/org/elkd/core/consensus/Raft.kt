@@ -22,7 +22,7 @@ import org.elkd.shared.annotations.Mockable
  * @see RaftLeaderState
  */
 @Mockable
-class Raft @VisibleForTesting
+class Raft
 internal constructor(val config: Config,
                      val clusterMessenger: ClusterMessenger,
                      val raftContext: RaftContext,
@@ -38,7 +38,7 @@ internal constructor(val config: Config,
     get() = clusterMessenger.clusterSet
 
   val delegator: RaftDelegator = RaftDelegator(DefaultStateFactory(this), listOf(
-      object: TransitionRequirement {
+      object: TransitionContract {
 
         override fun isTransitionRequired(request: Request): Boolean {
           return request.term > raftContext.currentTerm

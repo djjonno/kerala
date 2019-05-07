@@ -22,7 +22,7 @@ class RaftDelegatorTest {
   @Mock lateinit var leaderState: RaftState
   @Mock lateinit var serialExecutor: ExecutorService
 
-  @Mock lateinit var transitionRequirement: TransitionRequirement
+  @Mock lateinit var transitionContract: TransitionContract
 
   private lateinit var unitUnderTest: RaftDelegator
 
@@ -31,7 +31,7 @@ class RaftDelegatorTest {
     MockitoAnnotations.initMocks(this)
     setupCommonExpectations()
     unitUnderTest = RaftDelegator(stateFactory,
-        transitionRequirements = listOf(transitionRequirement),
+        transitionContracts = listOf(transitionContract),
         serialExecutor = serialExecutor)
   }
 
@@ -53,7 +53,7 @@ class RaftDelegatorTest {
         .execute(any())
 
     doReturn(false)
-        .`when`(transitionRequirement)
+        .`when`(transitionContract)
         .isTransitionRequired(any())
   }
 
@@ -112,7 +112,7 @@ class RaftDelegatorTest {
     unitUnderTest.delegateAppendEntries(appendEntriesRequest, appendEntriesResponseStream)
 
     // Then
-    verify(transitionRequirement).isTransitionRequired(appendEntriesRequest)
+    verify(transitionContract).isTransitionRequired(appendEntriesRequest)
   }
 
   @Test
@@ -123,16 +123,16 @@ class RaftDelegatorTest {
     val postHookRunnable = mock<Runnable>()
     val postHook: (request: Request) -> Unit = { postHookRunnable.run() }
     doReturn(preHook)
-        .`when`(transitionRequirement)
+        .`when`(transitionContract)
         .transitionPreHook
     doReturn(postHook)
-        .`when`(transitionRequirement)
+        .`when`(transitionContract)
         .transitionPostHook
     doReturn(true)
-        .`when`(transitionRequirement)
+        .`when`(transitionContract)
         .isTransitionRequired(any())
     doReturn(State.CANDIDATE)
-        .`when`(transitionRequirement)
+        .`when`(transitionContract)
         .transitionTo
     unitUnderTest.transition(State.FOLLOWER)
 

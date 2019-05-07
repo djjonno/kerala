@@ -32,7 +32,7 @@ public class ClusterConnectionPool {
           .usePlaintext() /* TODO: add cert auth */
           .build();
       mChannelMap.put(node, new Channel(channel));
-      LOG.info("initializing channel to instance " + node + " state " + channel.getState(true));
+      LOG.info("Initializing channel to instance " + node + " state " + channel.getState(true));
     }
   }
 
@@ -48,10 +48,6 @@ public class ClusterConnectionPool {
     private Channel(final ManagedChannel managedChannel) {
       mManagedChannel = managedChannel;
       mStub = ElkdClusterServiceGrpc.newFutureStub(managedChannel);
-    }
-
-    public ManagedChannel getManagedChannel() {
-      return mManagedChannel;
     }
 
     public ListenableFuture<RpcAppendEntriesResponse> appendEntries(final RpcAppendEntriesRequest request) {
