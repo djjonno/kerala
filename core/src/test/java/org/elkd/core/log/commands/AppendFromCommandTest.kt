@@ -15,8 +15,8 @@ class AppendFromCommandTest {
 
   @Mock private lateinit var log: Log<Entry>
 
-  private var entry1: Entry = Entry.builder(0, "event").build()
-  private var entry2: Entry = Entry.builder(0, "event").build()
+  private var entry1: Entry = Entry.builder(0, "topic").build()
+  private var entry2: Entry = Entry.builder(0, "topic").build()
 
   private lateinit var entries: List<Entry>
 

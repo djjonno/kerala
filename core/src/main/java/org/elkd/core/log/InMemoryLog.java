@@ -18,7 +18,7 @@ public class InMemoryLog implements Log<Entry> {
 
     /* Default Log Record - prevents having to provide a log index that
        technically does not exist e.g index = -1 */
-    append(Entry.NULL_ENTRY);
+    append(Entry.Companion.getNULL_ENTRY());
   }
 
   @Override
@@ -118,7 +118,7 @@ public class InMemoryLog implements Log<Entry> {
       if (mLogStore.get(index) != null) {
         mLogStore.remove(index);
       }
-    } catch (final IndexOutOfBoundsException e) { }
+    } catch (final IndexOutOfBoundsException ignored) { }
     mLogStore.add(index, entry);
   }
 }

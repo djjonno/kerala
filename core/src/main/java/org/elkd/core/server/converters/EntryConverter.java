@@ -26,7 +26,7 @@ public class EntryConverter implements Converter {
     if (source instanceof Entry) {
       return (T) convertEntry((Entry) source, registry);
     } else if (source instanceof RpcEntry) {
-      return (T) convertRpcEntry((RpcEntry) source, registry);
+      return (T) convertRpcEntry((RpcEntry) source);
     }
 
     throw new ConverterNotFoundException(source.getClass());
@@ -35,11 +35,11 @@ public class EntryConverter implements Converter {
   private RpcEntry convertEntry(final Entry source, final ConverterRegistry registry) {
     return RpcEntry.newBuilder()
         .setTerm(source.getTerm())
-        .setEvent(source.getEvent())
+        .setEvent(source.getTopic())
         .build();
   }
 
-  private Entry convertRpcEntry(final RpcEntry source, final ConverterRegistry registry) {
+  private Entry convertRpcEntry(final RpcEntry source) {
     final Entry.Builder builder = Entry.builder(source.getTerm(), source.getEvent());
     return builder.build();
   }

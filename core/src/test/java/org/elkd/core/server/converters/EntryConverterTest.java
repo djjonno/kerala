@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class EntryConverterTest {
   private static final int TERM = 1;
-  private static final String EVENT = "event";
+  private static final String EVENT = "topic";
   private static final String KEY = "key";
   private static final String VALUE = "value";
 

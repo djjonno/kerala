@@ -19,7 +19,7 @@ public class AppendEntriesRequestConverterTest {
   private static final int PREV_LOG_INDEX = 3;
   private static final String LEADER_ID = "leaderId";
   private static final int LEADER_COMMIT = 4;
-  private static final String EVENT_NAME = "event";
+  private static final String EVENT_NAME = "topic";
   private static final Entry ENTRY = Entry.builder(TERM, EVENT_NAME)
       .build();
   private static final RpcEntry RPC_ENTRY = RpcEntry.newBuilder()

@@ -15,7 +15,7 @@ public class AppendEntriesRequestTest {
   private static final int PREV_LOG_INDEX = 2;
   private static final String LEADER_ID = "leaderId";
   private static final int LEADER_COMMIT = 3;
-  private static final List<Entry> ENTRIES = ImmutableList.of(Entry.builder(TERM, "event").build());
+  private static final List<Entry> ENTRIES = ImmutableList.of(Entry.builder(TERM, "topic").build());
 
   @Test
   public void should_build_with_properties() {

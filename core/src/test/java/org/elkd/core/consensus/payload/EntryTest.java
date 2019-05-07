@@ -26,7 +26,7 @@ public class EntryTest {
 
     // Then
     assertEquals(TERM, entry.getTerm());
-    assertEquals(EVENT_NAME, entry.getEvent());
+    assertEquals(EVENT_NAME, entry.getTopic());
   }
 
   @Test
@@ -36,7 +36,7 @@ public class EntryTest {
         .build();
 
     // Then
-    assertEquals(EVENT_NAME, entry.getEvent());
+    assertEquals(EVENT_NAME, entry.getTopic());
   }
 
   @Test
