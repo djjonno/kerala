@@ -11,6 +11,7 @@ import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.server.cluster.exceptions.NodeNotFoundException
 import org.elkd.core.server.converters.ConverterRegistry
 import org.elkd.shared.annotations.Mockable
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 @Mockable
@@ -42,8 +43,8 @@ class ClusterMessenger
     val response = coroutineScope {
       try {
         when (message) {
-          is AppendEntriesRequest -> channel.appendEntries(converterRegistry.convert(message)).get()
-          is RequestVoteRequest -> channel.requestVote(converterRegistry.convert(message)).get()
+          is AppendEntriesRequest -> channel.appendEntries(converterRegistry.convert(message)).get(1, TimeUnit.SECONDS)
+          is RequestVoteRequest -> channel.requestVote(converterRegistry.convert(message)).get(1, TimeUnit.SECONDS)
           else -> onFailure(ElkdRuntimeException("Unsupported message type ${message.javaClass}"))
         }
       } catch (e: Exception) {

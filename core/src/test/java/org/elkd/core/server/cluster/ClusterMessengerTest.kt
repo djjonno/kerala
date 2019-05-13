@@ -1,6 +1,7 @@
 package org.elkd.core.server.cluster
 
 import com.google.common.util.concurrent.ListenableFuture
+import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.runBlocking
 import org.elkd.core.ElkdRuntimeException
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -14,7 +15,6 @@ import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import java.util.concurrent.ExecutionException
 
@@ -57,7 +57,7 @@ class ClusterMessengerTest {
   @Throws(ExecutionException::class, InterruptedException::class)
   private fun setupCluster() {
     doReturn(channel)
-        .`when`<ClusterConnectionPool>(clusterConnectionPool)
+        .`when`(clusterConnectionPool)
         .getChannel(node)
 
     /* Append Entries */
@@ -67,8 +67,8 @@ class ClusterMessengerTest {
         .appendEntries(rpcAppendEntriesRequest)
 
     doReturn(rpcAppendEntriesResponse)
-        .`when`<ListenableFuture<RpcAppendEntriesResponse>>(rpcAppendEntriesResponseFuture)
-        .get()
+        .`when`(rpcAppendEntriesResponseFuture)
+        .get(any(), any())
 
     doReturn(appendEntriesResponse)
         .`when`(converterRegistry)
@@ -81,8 +81,8 @@ class ClusterMessengerTest {
         .requestVote(rpcRequestVoteRequest)
 
     doReturn(rpcRequestVoteResponse)
-        .`when`<ListenableFuture<RpcRequestVoteRequest>>(rpcRequestVoteResponseFuture)
-        .get()
+        .`when`(rpcRequestVoteResponseFuture)
+        .get(any(), any())
 
     doReturn(requestVoteResponse)
         .`when`(converterRegistry)
@@ -124,7 +124,7 @@ class ClusterMessengerTest {
   @Test(expected = NodeNotFoundException::class)
   fun `should throw exception for foreign node appendEntries`() = runBlocking<Unit> {
     // Given / When
-    unitUnderTest.dispatch<Any>(mock(Node::class.java), appendEntriesRequest)
+    unitUnderTest.dispatch<Any>(mock(), appendEntriesRequest)
 
     // Then - exception thrown
   }
@@ -132,7 +132,7 @@ class ClusterMessengerTest {
   @Test(expected = NodeNotFoundException::class)
   fun `should throw exception for foreign node requestVote`() = runBlocking<Unit> {
     // Given / When
-    unitUnderTest.dispatch<Any>(mock(Node::class.java), requestVoteRequest)
+    unitUnderTest.dispatch<Any>(mock(), requestVoteRequest)
 
     // Then - exception thrown
   }

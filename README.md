@@ -18,26 +18,30 @@ elkd is a distributed streaming platform built in the modern day, from absolute 
 ### Get Started
 We haven't setup our release pipeline yet so this is how you can run us for the time being.
 
-#### Build a jar
+#### Run build (runs tests) and produce executable jar
 ```bash
 $ gradlew build installDist
 ```
 You will find the `elkd-server` executable here: `core/build/install/elkd-server/bin`
 
-#### Run with Docker
+#### Define a static cluster
+Configuring 3 nodes in this example.
+```bash
+$ bin/elkd-server --cluster-set 0.0.0.0:9191,0.0.0.0:9292,0.0.0.0:9393 --port 9191
+$ bin/elkd-server --cluster-set 0.0.0.0:9191,0.0.0.0:9292,0.0.0.0:9393 --port 9292
+$ bin/elkd-server --cluster-set 0.0.0.0:9191,0.0.0.0:9292,0.0.0.0:9393 --port 9393
+```
+
+#### Run with Docker (recommended)
 To create a elkd cluster with 4 nodes, run the docker-compose configuration:
 ```bash
 $ docker-compose up
 ```
 
-#### Run tests
-```bash
-$ ./gradlew build
-```
----
-
 #### Docs
 - [client docs (wip)](https://github.com/elkd/elkd/wiki/Client-Docs)
 - [server-docs (wip)](https://github.com/elkd/elkd/wiki/Server-Docs)
+
+---
 
 *an open source project by [@djjonno](https://github.com/djjonno)*
