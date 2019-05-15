@@ -36,7 +36,7 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
 
   fun schedule() {
     if (scheduled) return
-    LOG.info("scheduling a new election with $voteRequest")
+    LOG.info("Scheduling a new election with $voteRequest")
 
     scheduled = true
 
@@ -72,11 +72,11 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     if (!finished && electionStrategy.isComplete(electionTally)) {
       when (electionStrategy.isSuccessful(electionTally)) {
         true -> {
-          LOG.info("successful election $electionTally")
+          LOG.info("Successful election $electionTally")
           onSuccess()
         }
         false -> {
-          LOG.info("unsuccessful election $electionTally")
+          LOG.info("Unsuccessful election $electionTally")
           onFailure()
         }
       }

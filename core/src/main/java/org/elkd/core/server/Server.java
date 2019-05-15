@@ -31,7 +31,7 @@ public class Server {
         .build()
         .start();
 
-    LOG.info("started server on " + InetAddress.getLoopbackAddress() + ":" + port);
+    LOG.info("Started server on " + InetAddress.getLoopbackAddress() + ":" + port);
   }
 
   public void shutdown() {

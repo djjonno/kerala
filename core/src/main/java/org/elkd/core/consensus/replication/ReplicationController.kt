@@ -26,7 +26,7 @@ class ReplicationController(val target: Node,
   private val broadcastInterval: Long
 
   init {
-    LOG.info("replication target: $target")
+    LOG.info("Replication target $target")
     broadcastInterval = raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS)
   }
 
@@ -57,7 +57,7 @@ class ReplicationController(val target: Node,
         updateNextIndex(target, raft.log.lastIndex + 1)
       }
     } else {
-      LOG.info("rolling back nextIndex")
+      LOG.info("Rolling back nextIndex")
       leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
     }
   }

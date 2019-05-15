@@ -9,6 +9,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
     }
 }
+
 subprojects {
     apply plugin: "idea"
     apply plugin: "java"

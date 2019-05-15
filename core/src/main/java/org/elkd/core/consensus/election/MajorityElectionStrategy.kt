@@ -1,5 +1,7 @@
 package org.elkd.core.consensus.election
 
+import kotlin.math.round
+
 /**
  * MajorityElectionStrategy requires a majority vote to be considered
  * a successful election.

@@ -1,11 +1,10 @@
 package org.elkd.core.consensus.replication
 
-import org.apache.log4j.Logger
 import org.elkd.core.consensus.Raft
-import org.elkd.core.consensus.RaftContext
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.Log
+import kotlin.math.max
 
 
 /**
@@ -29,11 +28,12 @@ class ReplicatorStrategy(private val raft: Raft) {
    * Build AppendEntriesRequest with given entry list.
    */
   private fun generateRequest(entries: List<Entry>): AppendEntriesRequest {
-    val prevLogIndex = log.lastIndex - entries.size
-    val prevLogTerm = log.read(prevLogIndex)?.term
+    val prevLogIndex = max(0, log.lastIndex - entries.size)
+    val prevLogTerm = log.read(prevLogIndex)?.term!!
+
     return AppendEntriesRequest.builder(
         raft.raftContext.currentTerm,
-        prevLogTerm!!,
+        prevLogTerm,
         prevLogIndex,
         raft.clusterSet.localNode.id,
         log.commitIndex
@@ -44,9 +44,5 @@ class ReplicatorStrategy(private val raft: Raft) {
 
   private fun hasNewEntries(nextIndex: Long): Boolean {
     return log.lastIndex >= nextIndex
-  }
-
-  companion object {
-    private val LOG = Logger.getLogger(ReplicatorStrategy::class.java)
   }
 }

@@ -31,7 +31,7 @@ public class ConverterRegistry {
   @VisibleForTesting
   ConverterRegistry(final List<Converter> converters) {
     Preconditions.checkNotNull(converters, "converters");
-    LOG.info("registering converters");
+    LOG.info("Registering converters");
 
     final ImmutableMap.Builder<Class, Converter> mapBuilder = ImmutableMap.builder();
     for (final Converter converter : converters) {

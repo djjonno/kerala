@@ -24,7 +24,7 @@ public class ClusterService extends ElkdClusterServiceGrpc.ElkdClusterServiceImp
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
     mConverterRegistry = Preconditions.checkNotNull(converterRegistry, "converterRegistry");
 
-    LOG.info("service ready to accept target connections");
+    LOG.info("Service ready to accept target connections");
   }
 
   /* Cluster I/O */

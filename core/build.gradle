@@ -59,7 +59,7 @@ sourceSets {
     }
 }
 
-mainClassName = "org.elkd.core.Elkd"
+mainClassName = "org.elkd.core.BootKt"
 
 task copyLicense {
     outputs.file new File("$buildDir/LICENSE")

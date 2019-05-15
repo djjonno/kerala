@@ -38,7 +38,6 @@ class ClusterMessenger
                            message: Any,
                            onSuccess: (result: T) -> Unit = {},
                            onFailure: (e: ElkdRuntimeException) -> Unit = {}): T? {
-    LOG.info("dispatching message to $node")
     val channel = getChannel(node)
     val response = coroutineScope {
       try {
@@ -48,7 +47,7 @@ class ClusterMessenger
           else -> onFailure(ElkdRuntimeException("Unsupported message type ${message.javaClass}"))
         }
       } catch (e: Exception) {
-        LOG.info("message not delivered. $node is probably offline")
+        LOG.info("Message not delivered, $node is probably offline")
         onFailure(ElkdRuntimeException(e))
         return@coroutineScope Unit
       }

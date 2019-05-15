@@ -23,7 +23,7 @@ class Replicator @JvmOverloads constructor (
     get() = job + Dispatchers.IO
 
   fun start() {
-    LOG.info("initiating replication across ${raft.clusterSet}")
+    LOG.info("Initiating replication across ${raft.clusterSet}")
 
     /* launch replication workers to own replication for each specific target */
     raft.clusterSet.nodes.forEach {
