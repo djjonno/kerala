@@ -5,6 +5,7 @@ import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.*
 import org.elkd.core.consensus.replication.Replicator
 import org.elkd.core.log.LogChangeReason
+import org.elkd.core.log.LogEntry
 import org.elkd.core.log.commands.AppendCommand
 
 class RaftLeaderState(private val raft: Raft) : RaftState {

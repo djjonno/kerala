@@ -2,8 +2,9 @@ package org.elkd.core.log.commands
 
 import org.elkd.core.log.Log
 import org.elkd.core.log.LogChangeReason
+import org.elkd.core.log.LogEntry
 
-class CommitCommand<E> constructor(
+class CommitCommand<E : LogEntry> constructor(
     private val index: Long,
     override val reason: LogChangeReason
 ) : LogCommand<E> {
@@ -13,6 +14,6 @@ class CommitCommand<E> constructor(
   }
 
   companion object {
-    @JvmStatic fun <E> build(index: Long, reason: LogChangeReason): CommitCommand<E> = CommitCommand(index, reason)
+    @JvmStatic fun <E : LogEntry> build(index: Long, reason: LogChangeReason): CommitCommand<E> = CommitCommand(index, reason)
   }
 }

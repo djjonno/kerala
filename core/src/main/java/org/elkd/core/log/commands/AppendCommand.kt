@@ -2,8 +2,9 @@ package org.elkd.core.log.commands
 
 import org.elkd.core.log.Log
 import org.elkd.core.log.LogChangeReason
+import org.elkd.core.log.LogEntry
 
-class AppendCommand<E> constructor(
+class AppendCommand<E : LogEntry> constructor(
     private val entries: List<E>,
     override val reason: LogChangeReason) : LogCommand<E> {
 
@@ -12,7 +13,7 @@ class AppendCommand<E> constructor(
   }
 
   companion object {
-    @JvmStatic fun <E> build(entry: E, reason: LogChangeReason): AppendCommand<E> = build(listOf(entry), reason)
-    @JvmStatic fun <E> build(entries: List<E>, reason: LogChangeReason): AppendCommand<E> = AppendCommand(entries, reason)
+    @JvmStatic fun <E : LogEntry> build(entry: E, reason: LogChangeReason): AppendCommand<E> = build(listOf(entry), reason)
+    @JvmStatic fun <E : LogEntry> build(entries: List<E>, reason: LogChangeReason): AppendCommand<E> = AppendCommand(entries, reason)
   }
 }

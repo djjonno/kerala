@@ -1,11 +1,11 @@
 package org.elkd.core.consensus
 
-import com.google.common.annotations.VisibleForTesting
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.Request
 import org.elkd.core.log.Log
 import org.elkd.core.log.LogCommandExecutor
+import org.elkd.core.log.LogEntry
 import org.elkd.core.log.LogProvider
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.ClusterSet

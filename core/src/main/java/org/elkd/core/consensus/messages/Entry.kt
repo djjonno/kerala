@@ -32,6 +32,7 @@ class Entry private constructor(override val term: Int,
   }
 
   companion object {
+    @JvmStatic
     val NULL_ENTRY = Entry.builder(0, "default").build()
 
     @JvmStatic

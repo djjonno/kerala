@@ -4,7 +4,9 @@ import org.elkd.core.config.Config
 import org.elkd.core.config.ConfigProvider
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.RaftFactory
+import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.InMemoryLog
+import org.elkd.core.log.LogInvoker
 import org.elkd.core.log.LogProvider
 import org.elkd.core.server.Server
 import org.elkd.core.server.cluster.ClusterConnectionPool
@@ -72,7 +74,7 @@ fun main(args: Array<String>) {
    *
    * For development purposes we are using an in-memory log. Production release will include a file persisted log.
    */
-  val logProvider = LogProvider(InMemoryLog())
+  val logProvider = LogProvider(LogInvoker<Entry>(InMemoryLog()))
 
   /*
    * Configure consensus module `Raft`.

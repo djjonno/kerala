@@ -5,7 +5,7 @@ import org.elkd.core.log.commands.LogCommand
 import org.elkd.shared.annotations.Mockable
 
 @Mockable
-class LogCommandExecutor<E> constructor(private val log: Log<E>) {
+class LogCommandExecutor<E : LogEntry> constructor(private val log: Log<E>) {
   private val LOG = Logger.getLogger(LogCommandExecutor::class.java)
 
   fun execute(command: LogCommand<E>) {

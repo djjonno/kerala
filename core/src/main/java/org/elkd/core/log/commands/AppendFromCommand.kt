@@ -2,6 +2,7 @@ package org.elkd.core.log.commands
 
 import org.elkd.core.log.Log
 import org.elkd.core.log.LogChangeReason
+import org.elkd.core.log.LogEntry
 import org.elkd.core.log.exceptions.NonSequentialAppendException
 
 /**
@@ -13,7 +14,7 @@ import org.elkd.core.log.exceptions.NonSequentialAppendException
  *
  * @see LogChangeReason
  */
-class AppendFromCommand<E> constructor(
+class AppendFromCommand<E : LogEntry> constructor(
     private val from: Long,
     private val entries: List<E>,
     override val reason: LogChangeReason) : LogCommand<E> {
@@ -30,7 +31,7 @@ class AppendFromCommand<E> constructor(
   }
 
   companion object {
-    @JvmStatic fun <E> build(from: Long, entries: List<E>, reason: LogChangeReason): AppendFromCommand<E>
+    @JvmStatic fun <E : LogEntry> build(from: Long, entries: List<E>, reason: LogChangeReason): AppendFromCommand<E>
         = AppendFromCommand(from, entries, reason)
   }
 }

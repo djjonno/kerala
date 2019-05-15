@@ -1,6 +1,6 @@
 package org.elkd.core.log
 
-interface Log<E> {
+interface Log<E : LogEntry> {
   val commitIndex: Long
   val lastIndex: Long
   val lastEntry: E
