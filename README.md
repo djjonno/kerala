@@ -1,6 +1,6 @@
 # elkd 🦌
 
-[![Build Status](https://img.shields.io/travis/com/elkd/elkd/master.svg)](https://travis-ci.com/elkd/elkd)
+[![Build Status](https://img.shields.io/travis/com/djjonno/elkd/master.svg)](https://travis-ci.com/djjonno/elkd)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/mockito/mockito/blob/master/LICENSE)
 
 elkd is a distributed streaming platform built in the modern day, from absolute scratch.  It is robust, lightweight and fast.
