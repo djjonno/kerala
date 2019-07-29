@@ -18,14 +18,8 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
 
   override fun append(entry: E): Long {
     val index = log.append(entry)
-    onAppend(entry)
+    onAppend(index, entry)
     return index
-  }
-
-  override fun append(index: Long, entry: E): Long {
-    val append = log.append(index, entry)
-    onAppend(entry)
-    return append
   }
 
   override fun read(index: Long): E? {
@@ -36,9 +30,15 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
     return log.read(from, to)
   }
 
+  override fun append(index: Long, entry: E): Long {
+    val append = log.append(index, entry)
+    onAppend(append, entry)
+    return append
+  }
+
   override fun commit(index: Long): CommitResult<E> {
     val result = log.commit(index)
-    result.committed.forEach { onCommit(it) }
+    result.committed.forEachIndexed { i, e -> onCommit(result.commitIndex - result.committed.size + i, e) }
     return result
   }
 
@@ -54,11 +54,11 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
     listeners.remove(listener)
   }
 
-  private fun onCommit(entry: E) {
-    listeners.forEach { it.onCommit(entry) }
+  private fun onCommit(index: Long, entry: E) {
+    listeners.forEach { it.onCommit(index, entry) }
   }
 
-  private fun onAppend(entry: E) {
-    listeners.forEach { it.onAppend(entry) }
+  private fun onAppend(index: Long, entry: E) {
+    listeners.forEach { it.onAppend(index, entry) }
   }
 }

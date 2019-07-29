@@ -1,6 +1,6 @@
 package org.elkd.core.log
 
-enum class LogChangeEvents {
+enum class LogChangeEvent {
   APPEND,
   COMMIT
 }

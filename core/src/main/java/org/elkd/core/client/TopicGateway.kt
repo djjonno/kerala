@@ -4,7 +4,7 @@ import org.elkd.core.client.consumer.Consumer
 import org.elkd.core.client.producer.Producer
 
 
-interface TopicRegistry {
+interface TopicGateway {
 
   fun consumersFor(topic: Topic): List<Consumer>
 

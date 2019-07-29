@@ -5,14 +5,13 @@ import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.Request
 import org.elkd.core.log.Log
 import org.elkd.core.log.LogCommandExecutor
-import org.elkd.core.log.LogEntry
-import org.elkd.core.log.LogProvider
+import org.elkd.core.log.LogComponentProvider
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.ClusterSet
 import org.elkd.shared.annotations.Mockable
 
 /**
- * Raft module performs consensus of the logProvider over the cluster, using the [ClusterMessenger]
+ * Raft module performs consensus of the logComponentProvider over the cluster, using the [ClusterMessenger]
  * as a means of communication. This module registers as a delegate to the [org.elkd.core.server.cluster.ClusterService]
  * and acts as a state machine between the various consensus states.
  *
@@ -26,13 +25,13 @@ class Raft
 internal constructor(val config: Config,
                      val clusterMessenger: ClusterMessenger,
                      val raftContext: RaftContext,
-                     val logProvider: LogProvider<Entry>) {
+                     val logComponentProvider: LogComponentProvider<Entry>) {
 
   val log: Log<Entry>
-    get() = logProvider.log
+    get() = logComponentProvider.log
 
   val logCommandExecutor: LogCommandExecutor<Entry>
-    get() = logProvider.logCommandExecutor
+    get() = logComponentProvider.logCommandExecutor
 
   val clusterSet: ClusterSet
     get() = clusterMessenger.clusterSet

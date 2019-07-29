@@ -1,5 +1,5 @@
 buildscript {
-    def kotlinVersion = "1.3.+"
+    def kotlinVersion = "1.3.50"
     repositories {
         mavenCentral()
     }
@@ -57,7 +57,7 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion = "8.13"
+        toolVersion = "8.21"
     }
 
     test {

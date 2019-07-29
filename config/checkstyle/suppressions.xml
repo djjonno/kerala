@@ -4,8 +4,6 @@
         "-//Puppy Crawl//DTD Suppressions 1.1//EN"
         "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
-<!-- Any Suppresion that Team Tahoe wants to include goes here -->
-
 <suppressions>
     <suppress files="[\\/]build[\\/]" checks="[a-zA-Z0-9]*"/>
     <suppress files=".*Test(s|Case)?\.java" checks="MethodName"/>

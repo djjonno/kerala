@@ -19,14 +19,14 @@ class BootTest {
   @Mock internal lateinit var raft: Raft
   @Mock internal lateinit var server: Server
 
-  private lateinit var mUnitUnderTest: Boot
+  private lateinit var unitUnderTest: Boot
 
   @Before
   @Throws(Exception::class)
   fun setup() {
     MockitoAnnotations.initMocks(this)
 
-    mUnitUnderTest = Boot(config, raft, server)
+    unitUnderTest = Boot(config, raft, server)
   }
 
   @Test
@@ -38,7 +38,7 @@ class BootTest {
         .getAsInteger(Config.KEY_PORT)
 
     // When
-    mUnitUnderTest.start()
+    unitUnderTest.start()
 
     // Then
     verify<Server>(server).start(PORT)
@@ -47,7 +47,7 @@ class BootTest {
   @Test
   fun should_shutdown_server() {
     // Given / When
-    mUnitUnderTest.shutdown()
+    unitUnderTest.shutdown()
 
     // Then
     verify<Server>(server).shutdown()
@@ -57,7 +57,7 @@ class BootTest {
   @Throws(InterruptedException::class)
   fun should_awaitTermination_on_awaitTermination() {
     // Given / When
-    mUnitUnderTest.awaitTermination()
+    unitUnderTest.awaitTermination()
 
     // Then
     verify<Server>(server).awaitTermination()

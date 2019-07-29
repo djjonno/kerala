@@ -2,12 +2,12 @@ package org.elkd.core.consensus.messages
 
 import org.elkd.core.log.LogEntry
 import org.elkd.shared.annotations.Mockable
+import java.security.MessageDigest
 import java.util.*
 
 @Mockable
 class Entry private constructor(override val term: Int,
                                 override val topic: String) : LogEntry {
-
   class Builder internal constructor(private val term: Int, val topic: String) {
     fun build() = Entry(term, topic)
   }
@@ -28,7 +28,7 @@ class Entry private constructor(override val term: Int,
   }
 
   override fun toString(): String {
-    return "Entry(term=$term, topic=$topic)"
+    return "Entry(id=$id, term=$term, topic=$topic)"
   }
 
   companion object {

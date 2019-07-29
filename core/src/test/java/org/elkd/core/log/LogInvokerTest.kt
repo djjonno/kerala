@@ -91,7 +91,7 @@ class LogInvokerTest {
     unitUnderTest.append(0, entry1)
 
     // Then
-    verify<LogChangeListener<Entry>>(listener1).onAppend(entry1)
+    verify<LogChangeListener<Entry>>(listener1).onAppend(0, entry1)
   }
 
   @Test
@@ -166,7 +166,7 @@ class LogInvokerTest {
     unitUnderTest.append(entry1)
 
     // Then
-    verify<LogChangeListener<Entry>>(listener1, never()).onAppend(entry1)
+    verify<LogChangeListener<Entry>>(listener1, never()).onAppend(0, entry1)
   }
 
   @Test
@@ -180,15 +180,14 @@ class LogInvokerTest {
     unitUnderTest.append(entry2)
 
     // Then
-    verify<LogChangeListener<Entry>>(listener1).onAppend(entry1)
-    verify<LogChangeListener<Entry>>(listener2).onAppend(entry2)
+    verify<LogChangeListener<Entry>>(listener1).onAppend(0, entry1)
+    verify<LogChangeListener<Entry>>(listener2).onAppend(0, entry2)
   }
 
   @Test
   fun should_notify_listeners_on_commit() {
     // Given
-    val entries = entries
-    val index = entries.size - 1
+    val index = entries.size
     doReturn(CommitResult(entries, index.toLong()))
         .`when`<Log<Entry>>(log)
         .commit(index.toLong())
@@ -199,8 +198,8 @@ class LogInvokerTest {
     unitUnderTest.commit(index.toLong())
 
     // Then
-    entries.forEach { entry -> verify<LogChangeListener<Entry>>(listener1).onCommit(entry) }
-    entries.forEach { entry -> verify<LogChangeListener<Entry>>(listener2).onCommit(entry) }
+    entries.forEachIndexed { i, entry -> verify<LogChangeListener<Entry>>(listener1).onCommit(i.toLong(), entry) }
+    entries.forEachIndexed { i, entry -> verify<LogChangeListener<Entry>>(listener2).onCommit(i.toLong(), entry) }
   }
 
   @Test
