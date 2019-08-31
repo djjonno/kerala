@@ -39,8 +39,8 @@ $ docker-compose up
 ```
 
 #### Docs
-- [client docs (wip)](https://github.com/elkd/elkd/wiki/Client-Docs)
-- [server-docs (wip)](https://github.com/elkd/elkd/wiki/Server-Docs)
+- [client docs (wip)](https://github.com/djjonno/elkd/wiki/Client-Docs)
+- [server-docs (wip)](https://github.com/djjonno/elkd/wiki/Server-Docs)
 
 ---
 
