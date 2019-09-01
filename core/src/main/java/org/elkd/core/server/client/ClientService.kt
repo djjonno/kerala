@@ -1,6 +1,5 @@
 package org.elkd.core.server.client
 
-import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 
 class ClientService : ElkdClientServiceGrpc.ElkdClientServiceImplBase() {

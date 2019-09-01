@@ -185,6 +185,19 @@ public class InMemoryLogTest {
   }
 
   @Test
+  public void should_return_empty_result_when_index_committed_multiple_times() {
+    // Given / When
+    final long t = mUnitUnderTest.append(mEntry1);
+
+    final CommitResult<Entry> first = mUnitUnderTest.commit(t);
+    final CommitResult<Entry> second = mUnitUnderTest.commit(t);
+
+    // Then
+    assertFalse(first.getCommitted().isEmpty());
+    assertTrue(second.getCommitted().isEmpty());
+  }
+
+  @Test
   public void should_return_in_order_commit_result() {
     // Given
     final List<Entry> entries = ImmutableList.of(

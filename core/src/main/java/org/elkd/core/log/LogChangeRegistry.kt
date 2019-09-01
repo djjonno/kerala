@@ -20,7 +20,7 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
     }
   }
 
-  fun cancelRegistrations() {
+  fun clear() {
     onCommitRegistrations.clear()
     onAppendRegistrations.clear()
   }

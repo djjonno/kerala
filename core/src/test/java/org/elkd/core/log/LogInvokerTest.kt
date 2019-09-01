@@ -187,15 +187,15 @@ class LogInvokerTest {
   @Test
   fun should_notify_listeners_on_commit() {
     // Given
-    val index = entries.size
-    doReturn(CommitResult(entries, index.toLong()))
+    val index = (entries.size - 1).toLong()
+    doReturn(CommitResult(entries, index))
         .`when`<Log<Entry>>(log)
-        .commit(index.toLong())
+        .commit(index)
     unitUnderTest.registerListener(listener1)
     unitUnderTest.registerListener(listener2)
 
     // When
-    unitUnderTest.commit(index.toLong())
+    unitUnderTest.commit(index)
 
     // Then
     entries.forEachIndexed { i, entry -> verify<LogChangeListener<Entry>>(listener1).onCommit(i.toLong(), entry) }

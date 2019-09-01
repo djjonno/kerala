@@ -71,6 +71,7 @@ fun main(args: Array<String>) {
   val clusterMessenger = ClusterMessenger(clusterConnectionPool)
 
   val logProvider = LogComponentProvider(LogInvoker<Entry>(InMemoryLog()))
+//  logProvider.logChangeRegistry.register()
   logProvider.log.registerListener(object : LogChangeListener<Entry> {
     override fun onCommit(index: Long, entry: Entry) {
 

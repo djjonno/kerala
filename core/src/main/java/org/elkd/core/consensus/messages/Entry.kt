@@ -33,7 +33,7 @@ class Entry private constructor(override val term: Int,
 
   companion object {
     @JvmStatic
-    val NULL_ENTRY = Entry.builder(0, "default").build()
+    val NULL_ENTRY = builder(0, "default").build()
 
     @JvmStatic
     fun builder(term: Int, topic: String): Builder {

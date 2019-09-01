@@ -38,7 +38,7 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
 
   override fun commit(index: Long): CommitResult<E> {
     val result = log.commit(index)
-    result.committed.forEachIndexed { i, e -> onCommit(result.commitIndex - result.committed.size + i, e) }
+    result.committed.forEachIndexed { i, e -> onCommit((result.commitIndex - (result.committed.size - 1)) + i, e) }
     return result
   }
 
@@ -60,5 +60,9 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
 
   private fun onAppend(index: Long, entry: E) {
     listeners.forEach { it.onAppend(index, entry) }
+  }
+
+  override fun toString(): String {
+    return "LogInvoker(log=$log)"
   }
 }

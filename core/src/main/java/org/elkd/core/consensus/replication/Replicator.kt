@@ -2,9 +2,13 @@ package org.elkd.core.consensus.replication
 
 import kotlinx.coroutines.*
 import org.apache.log4j.Logger
+import org.elkd.core.config.Config
 import org.elkd.core.consensus.LeaderContext
 import org.elkd.core.consensus.Raft
+import org.elkd.shared.util.findMajority
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.max
+import kotlin.system.measureTimeMillis
 
 /**
  * Replicator schedules replication of the raft context over the cluster.
@@ -34,10 +38,35 @@ class Replicator @JvmOverloads constructor (
         worker.start()
       }
     }
+
+    launch {
+      updateReplicationProgress()
+    }
+  }
+
+  private suspend fun updateReplicationProgress() {
+    while (true) {
+      delay(max(raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS) - measureTimeMillis {
+        LOG.info("running replication progress checks")
+        commitCheck()
+      }, 0))
+    }
+  }
+
+  private fun commitCheck() {
+    val majority = findMajority(raft.clusterSet.nodes.map {
+      leaderContext.getMatchIndex(it)
+    }.toList())?.toLong()
+    majority?.apply {
+      if (this > raft.log.commitIndex &&
+          raft.log.read(this)?.term == raft.raftContext.currentTerm) {
+        LOG.info("majority @ index:$this w/ matching term –> committing to $this")
+        raft.log.commit(this)
+      }
+    }
   }
 
   fun stop() {
-    /* will cancel all coroutines in the scope */
     job.cancel()
   }
 
