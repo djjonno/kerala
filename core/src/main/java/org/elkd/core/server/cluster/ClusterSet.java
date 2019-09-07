@@ -11,7 +11,7 @@ public interface ClusterSet {
   /**
    * Reserved for dynamic cluster configuration.
    *
-   * @param node add the given target to the cluster.
+   * @param node addKV the given target to the cluster.
    */
   void addNode(Node node);
 

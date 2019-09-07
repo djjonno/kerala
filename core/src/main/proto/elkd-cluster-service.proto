@@ -3,6 +3,8 @@ syntax = "proto3";
 option java_multiple_files = true;
 option java_package = "org.elkd.core.server.cluster";
 
+import "elkd-client-service.proto";
+
 service ElkdClusterService {
     rpc AppendEntries (RpcAppendEntriesRequest) returns (RpcAppendEntriesResponse) {}
     rpc RequestVote (RpcRequestVoteRequest) returns (RpcRequestVoteResponse) {}
@@ -24,7 +26,8 @@ message RpcAppendEntriesResponse {
 
 message RpcEntry {
     uint32 term = 1;
-    string event = 2;
+    string topic = 2;
+    repeated RpcKV kv = 3;
 }
 
 message RpcRequestVoteRequest {

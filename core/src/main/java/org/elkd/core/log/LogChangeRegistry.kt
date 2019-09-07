@@ -13,10 +13,10 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
     log.registerListener(listener)
   }
 
-  fun register(e: LogEntry, event: LogChangeEvent, block: () -> Unit) {
+  fun register(e: LogEntry, event: LogChangeEvent, onComplete: () -> Unit) {
     when (event) {
-      COMMIT -> register(onCommitRegistrations, e.id, Runnable(block))
-      APPEND -> register(onAppendRegistrations, e.id, Runnable(block))
+      COMMIT -> register(onCommitRegistrations, e.uuid, Runnable(onComplete))
+      APPEND -> register(onAppendRegistrations, e.uuid, Runnable(onComplete))
     }
   }
 
@@ -30,15 +30,20 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
       map[key] = mutableListOf()
     }
     map[key]?.add(value)
+    log.info("registered $map")
   }
 
   private inner class Listener<E : LogEntry> : LogChangeListener<E> {
     override fun onCommit(index: Long, entry: E) {
       log.info("committed: $entry @ $index")
+      onCommitRegistrations[entry.uuid]?.forEach { it.run() }
+      onCommitRegistrations.remove(entry.uuid)
     }
 
     override fun onAppend(index: Long, entry: E) {
       log.info("appended: $entry @ $index")
+      onAppendRegistrations[entry.uuid]?.forEach { it.run() }
+      onAppendRegistrations.remove(entry.uuid)
     }
   }
 

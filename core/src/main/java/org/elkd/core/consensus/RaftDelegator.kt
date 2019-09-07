@@ -2,14 +2,15 @@ package org.elkd.core.consensus
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
+import org.elkd.core.client.model.ClientOpType
 import org.elkd.core.consensus.messages.*
 import org.elkd.shared.annotations.Mockable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 /**
- * RaftDelegator delegates messages to the correct internal raft state [follower, candidate, leader]
- * It also provides a transition mechanism to such states in order move between states at their
+ * RaftDelegator delegates model to the correct internal raft state [follower, candidate, leader]
+ * It also provides a transition mechanism to such states in order to move between states at their
  * own discretion.
  *
  *
@@ -52,6 +53,9 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
       postHook()
     }
   }
+
+  override val supportedOperations: List<ClientOpType>
+    get() = delegate?.supportedOperations ?: emptyList()
 
   /* ---- Message Delegation ---- */
 

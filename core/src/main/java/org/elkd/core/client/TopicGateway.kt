@@ -3,7 +3,6 @@ package org.elkd.core.client
 import org.elkd.core.client.consumer.Consumer
 import org.elkd.core.client.producer.Producer
 
-
 interface TopicGateway {
 
   fun consumersFor(topic: Topic): List<Consumer>

@@ -2,14 +2,24 @@ package org.elkd.core.consensus.messages
 
 import org.elkd.core.log.LogEntry
 import org.elkd.shared.annotations.Mockable
-import java.security.MessageDigest
 import java.util.*
 
 @Mockable
 class Entry private constructor(override val term: Int,
-                                override val topic: String) : LogEntry {
+                                override val topic: String,
+                                override val uuid: String,
+                                val kvs: List<KV>) : LogEntry {
   class Builder internal constructor(private val term: Int, val topic: String) {
-    fun build() = Entry(term, topic)
+    val kvs = mutableListOf<KV>()
+    fun addKV(kv: KV): Builder {
+      kvs.add(kv)
+      return this
+    }
+    fun addAllKV(kvs: List<KV>): Builder {
+      this.kvs.addAll(kvs)
+      return this
+    }
+    fun build() = Entry(term, topic, UUID.randomUUID().toString(), kvs)
   }
 
   override fun equals(other: Any?): Boolean {
@@ -28,7 +38,7 @@ class Entry private constructor(override val term: Int,
   }
 
   override fun toString(): String {
-    return "Entry(id=$id, term=$term, topic=$topic)"
+    return "Entry(uuid=$uuid, term=$term, topic=$topic, kvs=$kvs)"
   }
 
   companion object {

@@ -1,14 +1,8 @@
 package org.elkd.core.log
 
-import java.util.*
-
 interface LogEntry {
+  /* Globally unique uuid for each entry. */
+  val uuid: String
   val term: Int
   val topic: String
-
-  /**
-   * Globally unique id for each entry.
-   */
-  val id: String
-    get() = UUID.randomUUID().toString()
 }

@@ -29,7 +29,7 @@ public class ClusterConnectionPool {
     for (final Node node : mClusterSet.getNodes()) {
       final ManagedChannel channel = ManagedChannelBuilder
           .forTarget(node.getHost() + ":" + node.getPort())
-          .usePlaintext() /* TODO: add cert auth */
+          .usePlaintext() /* TODO: addKV cert auth */
           .build();
       mChannelMap.put(node, new Channel(channel));
       LOG.info("Initializing channel to instance " + node + " state " + channel.getState(true));

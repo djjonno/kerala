@@ -1,8 +1,8 @@
 package org.elkd.core.log
 
-import com.google.common.base.Preconditions
+import com.google.common.base.Preconditions.checkNotNull
+import com.google.common.base.Preconditions.checkState
 import com.google.common.collect.ImmutableList
-import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
 import java.util.*
 
@@ -26,7 +26,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   override fun append(entry: E): Long {
-    Preconditions.checkNotNull(entry, "entry")
+    checkNotNull(entry, "entry")
 
     insertOrReplace(index.toInt(), entry)
 
@@ -34,7 +34,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   override fun append(index: Long, entry: E): Long {
-    Preconditions.checkState(index in 0..this.index, "index")
+    checkState(index in 0..this.index, "index")
 
     insertOrReplace(index.toInt(), entry)
     return index
@@ -42,7 +42,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
 
   override fun read(index: Long): E? {
     try {
-      Preconditions.checkState(index in START_INDEX..this.index)
+      checkState(index in START_INDEX..this.index)
       return logStore[index.toInt()]
     } catch (e: Exception) {
       return null
@@ -50,7 +50,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   override fun read(from: Long, to: Long): List<E> {
-    Preconditions.checkState(from in START_INDEX..to)
+    checkState(from in START_INDEX..to)
 
     val subList = ArrayList<E>()
     for (i in from.toInt()..to) {
@@ -64,7 +64,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   override fun commit(index: Long): CommitResult<E> {
-    Preconditions.checkState(index in START_INDEX until this.index)
+    checkState(index in START_INDEX until this.index)
 
     if (commitIndex == index) {
       return CommitResult(emptyList(), commitIndex)
@@ -78,7 +78,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   override fun revert(index: Long) {
-    Preconditions.checkState(commitIndex < index)
+    checkState(commitIndex < index)
     /* delete up to index */
     if (index <= this.index) {
       while (index < this.index) {
@@ -101,7 +101,6 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   companion object {
-    private val LOG = Logger.getLogger(InMemoryLog::class.java)
     private const val START_INDEX = 0
   }
 }

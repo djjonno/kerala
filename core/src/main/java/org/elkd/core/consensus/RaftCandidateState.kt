@@ -2,6 +2,7 @@ package org.elkd.core.consensus
 
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
+import org.elkd.core.client.model.ClientOpType
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.election.ElectionScheduler
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -34,9 +35,11 @@ class RaftCandidateState(private val raft: Raft,
     stopElection()
   }
 
+  override val supportedOperations = emptyList<ClientOpType>()
+
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
-    /* If term > currentTerm, Raft will always transition to Follower state. messages received
+    /* If term > currentTerm, Raft will always transition to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
     stream.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
@@ -45,7 +48,7 @@ class RaftCandidateState(private val raft: Raft,
 
   override fun delegateRequestVote(request: RequestVoteRequest,
                                    stream: StreamObserver<RequestVoteResponse>) {
-    /* If term > currentTerm, Raft will always transition to Follower state. messages received
+    /* If term > currentTerm, Raft will always transition to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
     stream.onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())

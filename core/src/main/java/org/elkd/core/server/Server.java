@@ -3,6 +3,7 @@ package org.elkd.core.server;
 import com.google.common.base.Preconditions;
 import io.grpc.ServerBuilder;
 import org.apache.log4j.Logger;
+import org.elkd.core.client.command.ClientCommandRequestHandler;
 import org.elkd.core.consensus.RaftDelegate;
 import org.elkd.core.server.client.ClientService;
 import org.elkd.core.server.cluster.ClusterService;
@@ -18,16 +19,19 @@ public class Server {
   private io.grpc.Server mRpcClusterServer;
 
   private final RaftDelegate mRaftDelegate;
+  private final ClientCommandRequestHandler mClientCommandRequestHandler;
   private final ConverterRegistry mConverterRegistry = ConverterRegistry.getInstance();
 
-  public Server(@Nonnull final RaftDelegate raftDelegate) {
+  public Server(@Nonnull final RaftDelegate raftDelegate,
+                @Nonnull final ClientCommandRequestHandler clientCommandRequestHandler) {
     mRaftDelegate = Preconditions.checkNotNull(raftDelegate, "raftDelegate");
+    mClientCommandRequestHandler = Preconditions.checkNotNull(clientCommandRequestHandler, "clientCommandRequestHandler");
   }
 
   public void start(final int port) throws IOException {
     mRpcClusterServer = ServerBuilder.forPort(port)
         .addService(new ClusterService(mRaftDelegate, mConverterRegistry))
-        .addService(new ClientService())
+        .addService(new ClientService(mRaftDelegate, mClientCommandRequestHandler))
         .build()
         .start();
 

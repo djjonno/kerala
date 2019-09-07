@@ -1,9 +1,20 @@
 package org.elkd.core.client
 
-interface TopicRegistry {
+class TopicRegistry {
 
-  fun register(topic: Topic)
+  companion object {
+    const val SYSTEM_TOPIC = "@system"
+  }
 
-  fun find(name: String): Topic?
+  fun register(topic: Topic) {
 
+  }
+
+  fun hasTopic(name: String): Boolean {
+    return false
+  }
+
+  fun toList(): List<Topic> {
+    return emptyList()
+  }
 }

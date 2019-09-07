@@ -29,7 +29,7 @@ public class RaftContextTest {
   public void should_set_votedFor() {
     // Given
     final RaftContext raftContext = new RaftContext();
-    final String votedFor = "target-id";
+    final String votedFor = "target-uuid";
 
     // When
     raftContext.setVotedFor(votedFor);

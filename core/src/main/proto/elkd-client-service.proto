@@ -7,7 +7,7 @@ service ElkdClientService {
     // @EvolvingApi
     //
     // Execute a command, e.g `create-topic`
-    rpc ClientCommand (RpcClientCommand) returns (RpcClientCommandResponse) {}
+    rpc ClientCommand (RpcClientCommandRequest) returns (RpcClientCommandResponse) {}
 
     // @EvolvingApi
     //
@@ -24,20 +24,19 @@ service ElkdClientService {
 //
 // RpcClientCommand contains the command parameters at its most basic level.
 // To prevent having to change the RPC service definition each time we wish
-// to add a new client command, we can instead use this flexible model.
+// to addKV a new client command, we can instead use this flexible model.
 //
 // @property command    - command name to execute
 // @property params     - parameter names for args (index of parameter in list has corresponding value in `args`.
 // @property args       - values for each parameter
-message RpcClientCommand {
+message RpcClientCommandRequest {
     string command = 1;
-    repeated string params = 2;
     repeated string args = 3;
 }
 
 // @EvolvingApi
 //
-// Response returned by invoking ClientCommand.
+// Response returned by invoking ClientCommandRequest.
 //
 // @property response - command response
 message RpcClientCommandResponse {
@@ -68,8 +67,8 @@ message ProducerRecord {
 // @property key byte string    - opaque field, client determines data type.
 // @property value byte string  - opaque field, client determines data type.
 message RpcKV {
-    bytes key = 2;
-    bytes value = 3;
+    string key = 1;
+    string value = 2;
 }
 
 // @EvolvingApi

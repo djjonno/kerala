@@ -6,5 +6,4 @@ enum class State {
   LEADER
 }
 
-/* This is a composite for  */
 interface RaftState : RaftDelegate, TransitiveState
