@@ -34,13 +34,12 @@ constructor(private val raft: Raft,
     timeoutAlarm.stop()
   }
 
-  override val supportedOperations = listOf(ClientOpType.CONSUME)
+  override val supportedOperations = setOf(ClientOpType.CONSUME)
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
     resetTimeout()
     try {
-      LOG.info(raft.log)
       with (request) {
         validateAppendEntriesRequest(this)
         if (entries.size > 0) {
@@ -49,6 +48,7 @@ constructor(private val raft: Raft,
       }
       commitIfNecessary(request)
       replyAppendEntries(raft.raftContext, true, stream)
+      LOG.info(raft.log)
 
     } catch (e: Exception) {
       LOG.error(e)
@@ -111,7 +111,6 @@ constructor(private val raft: Raft,
 
   private fun resetTimeout() {
     val newTimeout = randomizeNumberPoint(timeout, 0.4)
-    LOG.info("timeout in ${newTimeout}ms")
     timeoutAlarm.reset(newTimeout.toLong())
   }
 

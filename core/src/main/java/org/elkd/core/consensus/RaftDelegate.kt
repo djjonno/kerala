@@ -11,5 +11,5 @@ interface RaftDelegate {
   fun delegateAppendEntries(request: AppendEntriesRequest, stream: StreamObserver<AppendEntriesResponse>)
   fun delegateRequestVote(request: RequestVoteRequest, stream: StreamObserver<RequestVoteResponse>)
 
-  val supportedOperations: List<ClientOpType>
+  val supportedOperations: Set<ClientOpType>
 }

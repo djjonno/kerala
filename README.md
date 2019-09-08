@@ -45,3 +45,9 @@ $ docker-compose up
 ---
 
 *an open source project by [@djjonno](https://github.com/djjonno)*
+
+[] add timeout to client request controller
+[] add cluster state change notification to clientrequestcontroller
+[] reject commands to non leader nodes
+[] add @system log listeners
+[] add support for batched appendEntries

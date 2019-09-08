@@ -35,7 +35,7 @@ class RaftCandidateState(private val raft: Raft,
     stopElection()
   }
 
-  override val supportedOperations = emptyList<ClientOpType>()
+  override val supportedOperations = emptySet<ClientOpType>()
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {

@@ -31,7 +31,7 @@ public class Server {
   public void start(final int port) throws IOException {
     mRpcClusterServer = ServerBuilder.forPort(port)
         .addService(new ClusterService(mRaftDelegate, mConverterRegistry))
-        .addService(new ClientService(mRaftDelegate, mClientCommandRequestHandler))
+        .addService(new ClientService(mClientCommandRequestHandler))
         .build()
         .start();
 

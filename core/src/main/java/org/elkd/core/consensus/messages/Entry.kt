@@ -9,7 +9,7 @@ class Entry private constructor(override val term: Int,
                                 override val topic: String,
                                 override val uuid: String,
                                 val kvs: List<KV>) : LogEntry {
-  class Builder internal constructor(private val term: Int, val topic: String) {
+  class Builder internal constructor(val term: Int, val topic: String, val uuid: String = UUID.randomUUID().toString()) {
     val kvs = mutableListOf<KV>()
     fun addKV(kv: KV): Builder {
       kvs.add(kv)
@@ -19,7 +19,7 @@ class Entry private constructor(override val term: Int,
       this.kvs.addAll(kvs)
       return this
     }
-    fun build() = Entry(term, topic, UUID.randomUUID().toString(), kvs)
+    fun build() = Entry(term, topic, uuid, kvs)
   }
 
   override fun equals(other: Any?): Boolean {
@@ -43,11 +43,16 @@ class Entry private constructor(override val term: Int,
 
   companion object {
     @JvmStatic
-    val NULL_ENTRY = builder(0, "default").build()
+    val NULL_ENTRY = builder(0, "default", "null").build()
 
     @JvmStatic
     fun builder(term: Int, topic: String): Builder {
       return Builder(term, topic)
+    }
+
+    @JvmStatic
+    fun builder(term: Int, topic: String, uuid: String): Builder {
+      return Builder(term, topic, uuid)
     }
   }
 }

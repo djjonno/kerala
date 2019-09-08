@@ -38,6 +38,7 @@ public class EntryConverter implements Converter {
 
   private RpcEntry convertEntry(final Entry source, final ConverterRegistry registry) {
     return RpcEntry.newBuilder()
+        .setUuid(source.getUuid())
         .setTerm(source.getTerm())
         .setTopic(source.getTopic())
         .addAllKv(source.getKvs().stream().map((Function<KV, RpcKV>) registry::convert)
@@ -46,7 +47,7 @@ public class EntryConverter implements Converter {
   }
 
   private Entry convertRpcEntry(final RpcEntry source, final ConverterRegistry registry) {
-    return Entry.builder(source.getTerm(), source.getTopic())
+    return Entry.builder(source.getTerm(), source.getTopic(), source.getUuid())
         .addAllKV(source.getKvList().stream().map((Function<RpcKV, KV>) registry::convert)
             .collect(Collectors.toList()))
         .build();

@@ -37,7 +37,7 @@ internal constructor(val config: Config,
   val clusterSet: ClusterSet
     get() = clusterMessenger.clusterSet
 
-  val supportedOperations: List<ClientOpType>
+  val supportedOperations: Set<ClientOpType>
     get() = delegator.supportedOperations
 
   val delegator: RaftDelegator = RaftDelegator(DefaultStateFactory(this), listOf(

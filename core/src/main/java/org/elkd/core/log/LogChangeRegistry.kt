@@ -1,7 +1,8 @@
 package org.elkd.core.log
 
 import org.apache.log4j.Logger
-import org.elkd.core.log.LogChangeEvent.*
+import org.elkd.core.log.LogChangeEvent.APPEND
+import org.elkd.core.log.LogChangeEvent.COMMIT
 
 class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
   private val listener: Listener<E> = Listener()
@@ -20,9 +21,9 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
     }
   }
 
-  fun clear() {
-    onCommitRegistrations.clear()
-    onAppendRegistrations.clear()
+  fun deregister(e: LogEntry) {
+    onCommitRegistrations.remove(e.uuid)
+    onAppendRegistrations.remove(e.uuid)
   }
 
   private fun register(map: MutableMap<String, MutableList<Runnable>>, key: String, value: Runnable) {
@@ -30,7 +31,6 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
       map[key] = mutableListOf()
     }
     map[key]?.add(value)
-    log.info("registered $map")
   }
 
   private inner class Listener<E : LogEntry> : LogChangeListener<E> {

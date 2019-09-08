@@ -31,7 +31,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
     replicator?.stop()
   }
 
-  override val supportedOperations = listOf(ClientOpType.PRODUCE, ClientOpType.COMMAND, ClientOpType.CONSUME)
+  override val supportedOperations = setOf(ClientOpType.PRODUCE, ClientOpType.COMMAND, ClientOpType.CONSUME)
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {

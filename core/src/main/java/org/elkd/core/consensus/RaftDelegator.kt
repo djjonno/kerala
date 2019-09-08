@@ -2,8 +2,10 @@ package org.elkd.core.consensus
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
+import org.apache.log4j.Logger
 import org.elkd.core.client.model.ClientOpType
 import org.elkd.core.consensus.messages.*
+import org.elkd.core.system.NotificationCenter
 import org.elkd.shared.annotations.Mockable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -46,16 +48,22 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
                  preHook: () -> Unit = {},
                  postHook: () -> Unit = {}) {
     serialOperation {
-      delegate?.off()
-      preHook()
-      delegate = stateFactory.getState(state)
-      delegate?.on()
-      postHook()
+      val newDelegate = stateFactory.getState(state)
+
+      if (delegate != newDelegate) {
+        delegate?.off()
+        preHook()
+        delegate = newDelegate
+        delegate?.on()
+        postHook()
+        log.info("state activated: $delegate")
+        NotificationCenter.pub(NotificationCenter.Channel.RAFT_STATE_CHANGE)
+      }
     }
   }
 
-  override val supportedOperations: List<ClientOpType>
-    get() = delegate?.supportedOperations ?: emptyList()
+  override val supportedOperations: Set<ClientOpType>
+    get() = delegate?.supportedOperations ?: emptySet()
 
   /* ---- Message Delegation ---- */
 
@@ -98,5 +106,9 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
     } else {
       block()
     }
+  }
+
+  private companion object {
+    var log = Logger.getLogger(RaftDelegator::class.java)
   }
 }
