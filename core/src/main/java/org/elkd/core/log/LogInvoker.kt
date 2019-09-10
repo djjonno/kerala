@@ -46,11 +46,11 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
     log.revert(index)
   }
 
-  fun registerListener(listener: LogChangeListener<E>) {
+  internal fun registerListener(listener: LogChangeListener<E>) {
     listeners.add(listener)
   }
 
-  fun deregisterListener(listener: LogChangeListener<E>) {
+  internal fun deregisterListener(listener: LogChangeListener<E>) {
     listeners.remove(listener)
   }
 

@@ -1,13 +1,15 @@
 package org.elkd.core.consensus
 
 import io.grpc.stub.StreamObserver
-import org.apache.log4j.Logger
-import org.elkd.core.client.TopicRegistry
 import org.elkd.core.client.model.ClientOpType
-import org.elkd.core.consensus.messages.*
+import org.elkd.core.consensus.messages.AppendEntriesRequest
+import org.elkd.core.consensus.messages.AppendEntriesResponse
+import org.elkd.core.consensus.messages.RequestVoteRequest
+import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.consensus.replication.Replicator
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
+import org.elkd.core.system.SystemCommand
 import org.elkd.core.system.SystemCommands
 
 class RaftLeaderState(private val raft: Raft) : RaftState {
@@ -15,14 +17,8 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   override fun on() {
     /* for test sake, append a new entry to the log here so we have something to replicate */
-    val leaderContext = LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex)
-    val command = AppendCommand.build(
-        Entry.builder(raft.raftContext.currentTerm, TopicRegistry.SYSTEM_TOPIC)
-            .addKV(KV(SystemCommands.LEADER_CHANGE.id, raft.clusterSet.localNode.id))
-            .build(), LogChangeReason.REPLICATION)
-    raft.logCommandExecutor.execute(command)
-
-    replicator = Replicator(raft, leaderContext)
+    notifyLog()
+    replicator = Replicator(raft, LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex))
     replicator?.start()
   }
 
@@ -48,7 +44,12 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
     stream.onCompleted()
   }
 
-  companion object {
-    private val LOG = Logger.getLogger(RaftLeaderState::class.java)
+  private fun notifyLog() {
+    raft.logCommandExecutor.execute(AppendCommand.build(
+        SystemCommand.builder(SystemCommands.LEADER_CHANGE) {
+          arg("node", raft.clusterSet.localNode.id)
+        }.asEntry(raft.raftContext.currentTerm),
+        LogChangeReason.REPLICATION
+    ))
   }
 }

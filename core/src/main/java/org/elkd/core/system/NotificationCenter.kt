@@ -19,18 +19,18 @@ object NotificationCenter {
 
   private val subscriptions: MutableMap<Channel, MutableList<Pair<Executor, Runnable>>> = mutableMapOf()
 
+  fun pub(channel: Channel) {
+    log.info("pub:${channel.id}")
+    subscriptions[channel]?.forEach {
+      it.first.execute(it.second)
+    }
+  }
+
   fun sub(channel: Channel, executor: Executor, block: (channel: Channel) -> Unit) {
     if (!subscriptions.containsKey(channel)) {
       subscriptions[channel] = mutableListOf()
     }
 
     subscriptions[channel]?.add(Pair(executor, Runnable { block(channel) }))
-  }
-
-  fun pub(channel: Channel) {
-    log.info("pub:${channel.id}")
-    subscriptions[channel]?.forEach {
-      it.first.execute(it.second)
-    }
   }
 }

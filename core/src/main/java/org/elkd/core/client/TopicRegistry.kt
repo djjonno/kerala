@@ -1,11 +1,6 @@
 package org.elkd.core.client
 
 class TopicRegistry {
-
-  companion object {
-    const val SYSTEM_TOPIC = "@system"
-  }
-
   fun register(topic: Topic) {
 
   }
@@ -16,5 +11,9 @@ class TopicRegistry {
 
   fun toList(): List<Topic> {
     return emptyList()
+  }
+
+  companion object {
+    const val SYSTEM_TOPIC_NAME = "@system"
   }
 }

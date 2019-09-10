@@ -51,7 +51,7 @@ class ClientRequestController(private val raft: Raft,
       bundle.onError("${bundle.command} already exists")
 
     } else {
-      val entry = Entry.builder(raft.raftContext.currentTerm, TopicRegistry.SYSTEM_TOPIC)
+      val entry = Entry.builder(raft.raftContext.currentTerm, TopicRegistry.SYSTEM_TOPIC_NAME)
           .addKV(KV("cmd", bundle.command))
           .addKV(KV("args", bundle.args.joinToString("&")))
           .build()

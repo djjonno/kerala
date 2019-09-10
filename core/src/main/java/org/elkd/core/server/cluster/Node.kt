@@ -8,16 +8,16 @@ import java.util.Objects
 
 @Mockable
 class Node(uri: URI) {
-  val URI: URI = Preconditions.checkNotNull(uri, "URI")
+  val uri: URI = Preconditions.checkNotNull(uri, "uri")
 
   val id: String
-    get() = "node($URI)"
+    get() = uri.toString()
 
   val host: String
-    get() = URI.host
+    get() = uri.host
 
   val port: Int
-    get() = URI.port
+    get() = uri.port
 
   override fun equals(other: Any?): Boolean {
     if (this === other) {
@@ -27,11 +27,11 @@ class Node(uri: URI) {
       return false
     }
     val node = other as Node?
-    return URI == node!!.URI
+    return uri == node!!.uri
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(URI)
+    return Objects.hash(uri)
   }
 
   override fun toString(): String {

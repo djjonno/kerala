@@ -12,12 +12,12 @@ import java.util.concurrent.Future
 
 fun main() {
   val stub = ElkdClientServiceGrpc.newFutureStub(
-      ManagedChannelBuilder.forAddress("localhost", 9292).usePlaintext().build()
+      ManagedChannelBuilder.forAddress("localhost", 9001).usePlaintext().build()
   )
 
   val future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
       .setCommand("create-topic")
-      .addAllArgs(listOf("name=stock", "partition=1"))
+      .addAllArgs(listOf("name=jonathon"))
       .build())
   println(future.get())
 

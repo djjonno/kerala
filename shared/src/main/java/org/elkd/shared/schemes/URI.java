@@ -23,7 +23,8 @@ public class URI {
   /**
    * Loopback default.
    */
-  public static final String LOOPBACK_HOST = InetAddress.getLoopbackAddress()
+  public static final String LOOPBACK_HOST = InetAddress
+      .getLoopbackAddress()
       .getHostName();
 
   private final String mHost;
@@ -47,7 +48,7 @@ public class URI {
 
   @Override
   public String toString() {
-    return SCHEME + mHost + ":" + mPort;
+    return mHost + ":" + mPort;
   }
 
   @Override
