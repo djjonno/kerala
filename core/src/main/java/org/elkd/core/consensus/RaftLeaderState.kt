@@ -1,7 +1,7 @@
 package org.elkd.core.consensus
 
 import io.grpc.stub.StreamObserver
-import org.elkd.core.client.model.ClientOpType
+import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
@@ -17,7 +17,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   override fun on() {
     /* for test sake, append a new entry to the log here so we have something to replicate */
-    notifyLog()
+    broadcastLeaderChange()
     replicator = Replicator(raft, LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex))
     replicator?.start()
   }
@@ -27,7 +27,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
     replicator?.stop()
   }
 
-  override val supportedOperations = setOf(ClientOpType.PRODUCE, ClientOpType.COMMAND, ClientOpType.CONSUME)
+  override val supportedOperations = setOf(OperationCategory.PRODUCE, OperationCategory.COMMAND, OperationCategory.CONSUME)
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
@@ -44,7 +44,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
     stream.onCompleted()
   }
 
-  private fun notifyLog() {
+  private fun broadcastLeaderChange() {
     raft.logCommandExecutor.execute(AppendCommand.build(
         SystemCommand.builder(SystemCommands.LEADER_CHANGE) {
           arg("node", raft.clusterSet.localNode.id)

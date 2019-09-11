@@ -6,7 +6,7 @@ option java_package = "org.elkd.core.server.client";
 service ElkdClientService {
     // @EvolvingApi
     //
-    // Execute a command, e.g `create-topic`
+    // Execute a handlers, e.g `create-topic`
     rpc ClientCommand (RpcClientCommandRequest) returns (RpcClientCommandResponse) {}
 
     // @EvolvingApi
@@ -22,23 +22,28 @@ service ElkdClientService {
 
 // @EvolvingApi
 //
-// RpcClientCommand contains the command parameters at its most basic level.
+// RpcClientCommand contains the handlers parameters at its most basic level.
 // To prevent having to change the RPC service definition each time we wish
-// to addKV a new client command, we can instead use this flexible model.
+// to addKV a new client handlers, we can instead use this flexible model.
 //
-// @property command    - command name to execute
+// @property handlers    - handlers namespace to execute
 // @property params     - parameter names for args (index of parameter in list has corresponding value in `args`.
 // @property args       - values for each parameter
 message RpcClientCommandRequest {
     string command = 1;
-    repeated string args = 3;
+    repeated RpcArgPair args = 3;
+}
+
+message RpcArgPair {
+    string arg = 1;
+    string param = 2;
 }
 
 // @EvolvingApi
 //
 // Response returned by invoking ClientCommandRequest.
 //
-// @property response - command response
+// @property response - handlers response
 message RpcClientCommandResponse {
     string response = 1;
 }

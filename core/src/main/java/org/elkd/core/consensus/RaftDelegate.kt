@@ -1,7 +1,7 @@
 package org.elkd.core.consensus
 
 import io.grpc.stub.StreamObserver
-import org.elkd.core.client.model.ClientOpType
+import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
@@ -11,5 +11,5 @@ interface RaftDelegate {
   fun delegateAppendEntries(request: AppendEntriesRequest, stream: StreamObserver<AppendEntriesResponse>)
   fun delegateRequestVote(request: RequestVoteRequest, stream: StreamObserver<RequestVoteResponse>)
 
-  val supportedOperations: Set<ClientOpType>
+  val supportedOperations: Set<OperationCategory>
 }

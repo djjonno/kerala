@@ -3,7 +3,7 @@ package org.elkd.core.consensus
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.client.model.ClientOpType
+import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.consensus.messages.*
 import org.elkd.core.system.NotificationCenter
 import org.elkd.shared.annotations.Mockable
@@ -62,7 +62,7 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
     }
   }
 
-  override val supportedOperations: Set<ClientOpType>
+  override val supportedOperations: Set<OperationCategory>
     get() = delegate?.supportedOperations ?: emptySet()
 
   /* ---- Message Delegation ---- */

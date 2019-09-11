@@ -1,22 +1,23 @@
 package org.elkd.core.system
 
-import org.elkd.core.client.TopicRegistry
+import org.elkd.core.client.Topic
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.KV
 
-class SystemCommand(val command: SystemCommands, val args: String) {
+class SystemCommand(val command: SystemCommands,
+                         val args: List<Pair<String, String>>) {
+
   fun asEntry(term: Int): Entry {
-    return Entry.builder(term, TopicRegistry.SYSTEM_TOPIC_NAME)
-        .addAllKV(listOf(
-            KV(KEY_COMMAND, command.id),
-            KV(KEY_ARGS, args)
-        ))
-        .build()
+    val builder = Entry.builder(term, Topic.SYSTEM_TOPIC_NAMESPACE)
+        .addKV(KV(KEY_COMMAND, command.id));
+    args.forEach { pair ->
+      builder.addKV(KV(pair.first, pair.second))
+    }
+    return builder.build()
   }
 
   companion object {
     private const val KEY_COMMAND = "cmd"
-    private const val KEY_ARGS = "args"
 
     inline fun builder(command: SystemCommands, commandBuilder: Builder.() -> Unit): SystemCommand {
       val builder = Builder(command)
@@ -32,10 +33,8 @@ class SystemCommand(val command: SystemCommands, val args: String) {
       args.add(Pair(key, `val`))
     }
 
-    fun build() : SystemCommand {
-      return SystemCommand(command, args.joinToString("&") {
-        "${it.first}=${it.second}"
-      })
+    fun build(): SystemCommand {
+      return SystemCommand(command, args)
     }
   }
 }

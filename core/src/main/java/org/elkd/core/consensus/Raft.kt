@@ -1,6 +1,6 @@
 package org.elkd.core.consensus
 
-import org.elkd.core.client.model.ClientOpType
+import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.Request
@@ -37,7 +37,7 @@ internal constructor(val config: Config,
   val clusterSet: ClusterSet
     get() = clusterMessenger.clusterSet
 
-  val supportedOperations: Set<ClientOpType>
+  val supportedOperations: Set<OperationCategory>
     get() = delegator.supportedOperations
 
   val delegator: RaftDelegator = RaftDelegator(DefaultStateFactory(this), listOf(

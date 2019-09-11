@@ -2,6 +2,7 @@ package org.elkd.core.client
 
 import io.grpc.ManagedChannelBuilder
 import org.elkd.core.server.client.ElkdClientServiceGrpc
+import org.elkd.core.server.client.RpcArgPair
 import org.elkd.core.server.client.RpcClientCommandRequest
 import org.elkd.core.server.client.RpcClientCommandResponse
 import java.util.concurrent.Future
@@ -12,12 +13,15 @@ import java.util.concurrent.Future
 
 fun main() {
   val stub = ElkdClientServiceGrpc.newFutureStub(
-      ManagedChannelBuilder.forAddress("localhost", 9001).usePlaintext().build()
+      ManagedChannelBuilder.forAddress("localhost", 9191).usePlaintext().build()
   )
 
   val future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
       .setCommand("create-topic")
-      .addAllArgs(listOf("name=jonathon"))
+      .addAllArgs(listOf(RpcArgPair.newBuilder()
+          .setArg("namespace")
+          .setParam("stocks")
+          .build()))
       .build())
   println(future.get())
 
@@ -26,7 +30,7 @@ fun main() {
 //  do {
 //    future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
 //        .setCommand("create-topic")
-//        .addAllArgs(listOf("name=stock+${count++}"))
+//        .addAllArgs(listOf("namespace=stock+${count++}"))
 //        .build())
 //    Thread.sleep(1)
 //  } while (count < 1000)

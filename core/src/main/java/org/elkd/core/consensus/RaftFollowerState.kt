@@ -3,7 +3,7 @@ package org.elkd.core.consensus
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.client.model.ClientOpType
+import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.messages.*
 import org.elkd.core.log.LogChangeReason
@@ -34,7 +34,7 @@ constructor(private val raft: Raft,
     timeoutAlarm.stop()
   }
 
-  override val supportedOperations = setOf(ClientOpType.CONSUME)
+  override val supportedOperations = setOf(OperationCategory.CONSUME)
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {

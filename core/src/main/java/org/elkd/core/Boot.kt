@@ -1,8 +1,8 @@
 package org.elkd.core
 
-import org.elkd.core.client.command.ClientCommandRequestHandler
 import org.elkd.core.client.ClientModule
 import org.elkd.core.client.TopicRegistry
+import org.elkd.core.client.handlers.CommandRequestHandler
 import org.elkd.core.config.Config
 import org.elkd.core.config.ConfigProvider
 import org.elkd.core.consensus.ClientRequestController
@@ -85,7 +85,7 @@ fun main(args: Array<String>) {
    */
   val clientModule = ClientModule(TopicRegistry())
 
-  val boot = Boot(config, raft, Server(raft.delegator, ClientCommandRequestHandler(ClientRequestController(raft, clientModule))))
+  val boot = Boot(config, raft, Server(raft.delegator, CommandRequestHandler(ClientRequestController(raft))))
 
   try {
     Runtime.getRuntime().addShutdownHook(Thread(Runnable { boot.shutdown() }))
