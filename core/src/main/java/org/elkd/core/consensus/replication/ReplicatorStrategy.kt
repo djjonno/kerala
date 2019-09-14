@@ -4,8 +4,8 @@ import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.Log
-import org.elkd.core.log.LogEntry
 import kotlin.math.max
+import kotlin.math.min
 
 
 /**
@@ -19,19 +19,19 @@ class ReplicatorStrategy(private val raft: Raft) {
   private val log: Log<Entry> = raft.log
 
   fun generateRequest(nextIndex: Long): AppendEntriesRequest {
-    return when(hasNewEntries(nextIndex)) {
-      true -> generateRequest(log.read(nextIndex, log.lastIndex))
-      false -> generateRequest(emptyList())
+    return if (hasNewEntries(nextIndex)) {
+      generateRequest(nextIndex, log.read(nextIndex, min(nextIndex + MAX_APPEND_ENTRIES - 1, log.lastIndex)))
+    } else {
+      generateRequest(nextIndex, emptyList())
     }
   }
 
   /*
    * Build AppendEntriesRequest with given entry list.
    */
-  private fun generateRequest(entries: List<Entry>): AppendEntriesRequest {
-    val prevLogIndex = max(0, log.lastIndex - entries.size)
+  private fun generateRequest(nextIndex: Long, entries: List<Entry>): AppendEntriesRequest {
+    val prevLogIndex = max(0, nextIndex - 1)
     val prevLogTerm = log.read(prevLogIndex)?.term!!
-
     return AppendEntriesRequest.builder(
         raft.raftContext.currentTerm,
         prevLogTerm,
@@ -45,5 +45,9 @@ class ReplicatorStrategy(private val raft: Raft) {
 
   private fun hasNewEntries(nextIndex: Long): Boolean {
     return log.lastIndex >= nextIndex
+  }
+
+  companion object {
+    private const val MAX_APPEND_ENTRIES = 10000
   }
 }

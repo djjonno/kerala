@@ -26,7 +26,7 @@ class ReplicationController(val target: Node,
   private val broadcastInterval: Long
 
   init {
-    LOG.info("Replication target $target")
+    log.info("Replication target $target")
     broadcastInterval = raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS)
   }
 
@@ -44,20 +44,20 @@ class ReplicationController(val target: Node,
   private suspend fun replicate() {
     /* determine next entries to replicate */
     val nextIndex = leaderContext.getNextIndex(target)
+    val request = replicatorStrategy.generateRequest(nextIndex)
     raft.clusterMessenger.dispatch<AppendEntriesResponse>(
         target,
-        replicatorStrategy.generateRequest(nextIndex),
-        { response -> handleResponse(response, nextIndex) })
+        request,
+        { response -> handleResponse(request, response, nextIndex) })
   }
 
-  private fun handleResponse(response: AppendEntriesResponse, nextIndex: Long) {
+  private fun handleResponse(request: AppendEntriesRequest, response: AppendEntriesResponse, nextIndex: Long) {
     if (response.isSuccessful) {
       with(leaderContext) {
-        updateMatchIndex(target, raft.log.lastIndex)
-        updateNextIndex(target, raft.log.lastIndex + 1)
+        updateMatchIndex(target, request.prevLogIndex + request.entries.size)
+        updateNextIndex(target, request.prevLogIndex + request.entries.size + 1)
       }
     } else {
-      LOG.info("Rolling back nextIndex")
       leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
     }
   }
@@ -74,6 +74,6 @@ class ReplicationController(val target: Node,
   }
 
   companion object {
-    private val LOG = Logger.getLogger(ReplicationController::class.java)
+    private val log = Logger.getLogger(ReplicationController::class.java)
   }
 }

@@ -23,14 +23,15 @@ class Replicator @JvmOverloads constructor (
   private val job = Job()
 
   /**
-   * There are a number of co-routines created in this module. To prevent leakage when the Replicator is no longer
-   * needed, the consumer can simply cancel the parent job/context.
+   * There are a number of co-routines created in this module. To prevent leakage
+   * when the Replicator is no longer needed, the consumer can simply cancel the
+   * parent job/context.
    */
   override val coroutineContext: CoroutineContext
     get() = job + Pools.replicationThreadPool
 
   fun start() {
-    LOG.info("Initiating replication across ${raft.clusterSet}")
+    logger.info("Initiating replication across ${raft.clusterSet}")
 
     /* launch replication workers to own replication for each specific target */
     raft.clusterSet.nodes.forEach {
@@ -56,12 +57,15 @@ class Replicator @JvmOverloads constructor (
   private fun commitCheck() {
     val list = raft.clusterSet.nodes.map {
       leaderContext.getMatchIndex(it)
-    }.toList() + raft.log.lastIndex /* this node should be included */
+    }.toList() + raft.log.lastIndex
+
+    logger.info("cluster status($list)")
+
     val majority = findMajority(list)?.toLong()
     majority?.apply {
       if (this > raft.log.commitIndex &&
           raft.log.read(this)?.term == raft.raftContext.currentTerm) {
-        LOG.info("majority @ index:$this w/ matching term –> committing to $this")
+        logger.info("majority @ index:$this w/ matching term –> committing to $this")
         raft.logCommandExecutor.execute(CommitCommand.build(this, LogChangeReason.REPLICATION))
       }
     }
@@ -72,6 +76,6 @@ class Replicator @JvmOverloads constructor (
   }
 
   companion object {
-    private val LOG = Logger.getLogger(Replicator::class.java)
+    private val logger = Logger.getLogger(Replicator::class.java)
   }
 }

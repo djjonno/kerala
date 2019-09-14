@@ -2,6 +2,7 @@ package org.elkd.core.concurrency
 
 import kotlinx.coroutines.Dispatchers
 import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 object Pools {
@@ -18,7 +19,7 @@ object Pools {
   /**
    * Pool for log command execution
    */
-  val logCommandThreadPool: Executor = Executors.newFixedThreadPool(
+  val logCommandThreadPool: ExecutorService = Executors.newFixedThreadPool(
       LOG_COMMAND_THREAD_POOL_SIZE, ThreadFactoryProvider.create("log-cmd"))
 
   /**

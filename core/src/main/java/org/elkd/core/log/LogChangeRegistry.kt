@@ -35,13 +35,11 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
 
   private inner class Listener<E : LogEntry> : LogChangeListener<E> {
     override fun onCommit(index: Long, entry: E) {
-      log.info("committed: $entry @ $index")
       onCommitRegistrations[entry.uuid]?.forEach { it.run() }
       onCommitRegistrations.remove(entry.uuid)
     }
 
     override fun onAppend(index: Long, entry: E) {
-      log.info("appended: $entry @ $index")
       onAppendRegistrations[entry.uuid]?.forEach { it.run() }
       onAppendRegistrations.remove(entry.uuid)
     }

@@ -51,3 +51,4 @@ $ docker-compose up
 [x] reject commands to non leader nodes
 [] add @system log listeners
 [] add support for batched appendEntries
+[] bug: commitIndex is higher than lastIndex of replicated node.

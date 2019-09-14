@@ -3,6 +3,7 @@ package org.elkd.core.log
 import com.google.common.base.Preconditions.checkNotNull
 import com.google.common.base.Preconditions.checkState
 import com.google.common.collect.ImmutableList
+import org.apache.commons.codec.digest.DigestUtils
 import org.elkd.core.consensus.messages.Entry
 import java.util.*
 

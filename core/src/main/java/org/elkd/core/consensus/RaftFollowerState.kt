@@ -22,6 +22,7 @@ constructor(private val raft: Raft,
   constructor(raft: Raft) : this(
       raft,
       TimeoutAlarm {
+        logger.info("follower timeout reached.")
         raft.delegator.transition(State.CANDIDATE)
       }
   )
@@ -31,7 +32,7 @@ constructor(private val raft: Raft,
   }
 
   override fun off() {
-    timeoutAlarm.stop()
+    stopTimeout()
   }
 
   override val supportedOperations = setOf(OperationCategory.CONSUME)
@@ -43,15 +44,24 @@ constructor(private val raft: Raft,
       with (request) {
         validateAppendEntriesRequest(this)
         if (entries.size > 0) {
+          logger.info("appending ${entries.size} entries")
+
+          /**
+           * Timeout Alarm is 'paused' here whilst the entries are appended to the logger,
+           * as there could be many, we don't want to respond to the sender node until
+           * the logs have been appended.  While performing this lengthy operation, it
+           * it does not attribute to a leader node being absent.
+           */
+          stopTimeout()
           raft.logCommandExecutor.execute(AppendFromCommand.build(prevLogIndex + 1, entries, LogChangeReason.REPLICATION))
+          resetTimeout()
         }
       }
       commitIfNecessary(request)
       replyAppendEntries(raft.raftContext, true, stream)
-      LOG.info(raft.log)
 
     } catch (e: Exception) {
-      LOG.error(e)
+      logger.error(e)
       replyAppendEntries(raft.raftContext, false, stream)
     }
   }
@@ -97,16 +107,20 @@ constructor(private val raft: Raft,
     }
 
     /*
-     * If no log at previous index, we are missing an entry and this is invalid.
+     * If no logger at previous index, we are missing an entry and this is invalid.
      */
     val prevEntry = raft.log.read(request.prevLogIndex) ?: throw InvalidRequestException("No Entry at prevLogIndex: ${request.prevLogIndex}")
 
     /*
-     * If previous entry of request term does not match this log previous log entry term, invalid.
+     * If previous entry of request term does not match this logger previous logger entry term, invalid.
      */
     if (request.prevLogTerm != prevEntry.term) {
       throw InvalidRequestException("Entry.term mismatch. Validation Failed: prevLogIndex: ${request.prevLogIndex}, request: ${request.prevLogTerm}, prevEntry: ${prevEntry.term}")
     }
+  }
+
+  private fun stopTimeout() {
+    timeoutAlarm.stop()
   }
 
   private fun resetTimeout() {
@@ -115,6 +129,6 @@ constructor(private val raft: Raft,
   }
 
   companion object {
-    private val LOG = Logger.getLogger(RaftFollowerState::class.java.name)
+    private val logger = Logger.getLogger(RaftFollowerState::class.java.name)
   }
 }

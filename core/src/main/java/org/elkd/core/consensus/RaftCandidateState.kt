@@ -20,7 +20,7 @@ class RaftCandidateState(private val raft: Raft,
   constructor(raft: Raft) : this(
       raft,
       TimeoutAlarm {
-        LOG.info("election timeout reached. restarting election.")
+        log.info("election timeout reached. restarting election.")
         raft.delegator.transition(State.CANDIDATE)
       }
   )
@@ -82,6 +82,6 @@ class RaftCandidateState(private val raft: Raft,
   }
 
   companion object {
-    private val LOG = Logger.getLogger(RaftCandidateState::class.java.name)
+    private val log = Logger.getLogger(RaftCandidateState::class.java.name)
   }
 }

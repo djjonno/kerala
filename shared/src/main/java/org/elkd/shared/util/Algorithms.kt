@@ -6,16 +6,14 @@ fun findMajority(arr: List<Number>): Number? {
   var maxCount = 0
   var index = -1 // sentinels
 
-  arr.forEachIndexed { i, iVal ->
+  arr.forEachIndexed { i, _ ->
     var count = 0
-    arr.forEachIndexed { _, jVal ->
-      if (iVal === jVal) {
-        count++
+    for (j in 0 until n) {
+      if (arr[i] == arr[j]) count++
+      if (count > maxCount) {
+        maxCount = count
+        index = i
       }
-    }
-    if (count > maxCount) {
-      maxCount = count
-      index = i
     }
   }
 

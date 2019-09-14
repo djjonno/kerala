@@ -10,30 +10,21 @@ import java.util.concurrent.Future
 /**
  * Client which executes calls against server
  */
-
 fun main() {
   val stub = ElkdClientServiceGrpc.newFutureStub(
       ManagedChannelBuilder.forAddress("localhost", 9191).usePlaintext().build()
   )
 
-  val future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
-      .setCommand("create-topic")
-      .addAllArgs(listOf(RpcArgPair.newBuilder()
-          .setArg("namespace")
-          .setParam("stocks")
-          .build()))
-      .build())
-  println(future.get())
-
-//  var count = 0
-//  var future: Future<RpcClientCommandResponse>? = null
-//  do {
-//    future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
-//        .setCommand("create-topic")
-//        .addAllArgs(listOf("namespace=stock+${count++}"))
-//        .build())
-//    Thread.sleep(1)
-//  } while (count < 1000)
-//
-//  future?.get()
+  var count = 0
+  var future: Future<RpcClientCommandResponse>?
+  do {
+    future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
+        .setCommand("create-topic")
+        .addAllArgs(listOf(RpcArgPair.newBuilder()
+            .setArg("namespace")
+            .setParam("dummy")
+            .build()))
+        .build())
+  } while (++count < 400000)
+  println(future?.get())
 }

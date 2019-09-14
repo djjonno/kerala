@@ -50,7 +50,7 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
     serialOperation {
       val newDelegate = stateFactory.getState(state)
 
-      if (delegate != newDelegate) {
+      if (delegate?.javaClass != newDelegate.javaClass) {
         delegate?.off()
         preHook()
         delegate = newDelegate
