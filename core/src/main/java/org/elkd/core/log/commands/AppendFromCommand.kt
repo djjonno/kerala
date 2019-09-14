@@ -8,9 +8,9 @@ import org.elkd.core.log.exceptions.NonSequentialAppendException
 /**
  * Append from the given index.
  *
- * @param from append at this log index and onwards. Will revert current index if not yet committed.
+ * @param from append at this logger index and onwards. Will revert current index if not yet committed.
  * @param entries List<E> to append
- * @param reason instigator of log change
+ * @param reason instigator of logger change
  *
  * @see LogChangeReason
  */

@@ -13,14 +13,14 @@ class DefaultRaftDelegateFactoryTest {
 
   @Mock internal lateinit var raft: Raft
 
-  private var unitUnderTest: DefaultStateFactory? = null
+  private var unitUnderTest: RaftStateFactory? = null
 
   @Before
   @Throws(Exception::class)
   fun setup() {
     MockitoAnnotations.initMocks(this)
 
-    unitUnderTest = DefaultStateFactory(raft)
+    unitUnderTest = RaftStateFactory(raft)
 
     doReturn(ConfigProvider.compileConfig(arrayOf()))
         .`when`(raft)

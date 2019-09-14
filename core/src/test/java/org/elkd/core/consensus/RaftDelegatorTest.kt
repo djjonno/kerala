@@ -16,7 +16,7 @@ class RaftDelegatorTest {
   @Mock lateinit var appendEntriesResponseStream: StreamObserver<AppendEntriesResponse>
   @Mock lateinit var requestVoteResponseStream: StreamObserver<RequestVoteResponse>
 
-  @Mock lateinit var stateFactory: AbstractStateFactory
+  @Mock lateinit var stateFactory: RaftStateFactory
   @Mock lateinit var followerState: RaftState
   @Mock lateinit var candidateState: RaftState
   @Mock lateinit var leaderState: RaftState

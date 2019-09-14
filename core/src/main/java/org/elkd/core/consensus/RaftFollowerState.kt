@@ -3,7 +3,6 @@ package org.elkd.core.consensus
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.messages.*
 import org.elkd.core.log.LogChangeReason
@@ -35,12 +34,13 @@ constructor(private val raft: Raft,
     stopTimeout()
   }
 
-  override val supportedOperations = setOf(OperationCategory.CONSUME)
+  override val supportedOps = setOf(OpCategory.CONSUME)
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
     resetTimeout()
     try {
+      logger.info("lastIndex: ${raft.log.lastIndex}, commitIndex: ${raft.log.commitIndex}")
       with (request) {
         validateAppendEntriesRequest(this)
         if (entries.size > 0) {
@@ -53,7 +53,8 @@ constructor(private val raft: Raft,
            * it does not attribute to a leader node being absent.
            */
           stopTimeout()
-          raft.logCommandExecutor.execute(AppendFromCommand.build(prevLogIndex + 1, entries, LogChangeReason.REPLICATION))
+          raft.logCommandExecutor.execute(AppendFromCommand
+              .build(prevLogIndex + 1, entries, LogChangeReason.REPLICATION))
           resetTimeout()
         }
       }
@@ -82,6 +83,7 @@ constructor(private val raft: Raft,
         raft.raftContext.votedFor !in listOf(null, request.candidateId) ||
         !isRequestLogLatest(request)) {
       replyRequestVote(raft.raftContext, false, stream)
+      logger.info("no vote to ${request.candidateId}")
       return
     }
 
@@ -90,6 +92,7 @@ constructor(private val raft: Raft,
       currentTerm = request.term
     }
     replyRequestVote(raft.raftContext, true, stream)
+    logger.info("yes vote to ${request.candidateId}")
   }
 
   private fun isRequestLogLatest(request: RequestVoteRequest): Boolean {

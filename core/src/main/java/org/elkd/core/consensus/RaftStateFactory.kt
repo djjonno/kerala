@@ -1,7 +1,7 @@
 package org.elkd.core.consensus
 
-class DefaultStateFactory(private val raft: Raft) : AbstractStateFactory {
-  override fun getState(state: State): RaftState {
+class RaftStateFactory(private val raft: Raft) {
+  fun getState(state: State): RaftState {
     return when(state) {
       State.FOLLOWER -> RaftFollowerState(raft)
       State.CANDIDATE -> RaftCandidateState(raft)

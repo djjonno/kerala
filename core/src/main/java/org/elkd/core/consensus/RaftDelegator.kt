@@ -3,7 +3,6 @@ package org.elkd.core.consensus
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.consensus.messages.*
 import org.elkd.core.system.NotificationCenter
 import org.elkd.shared.annotations.Mockable
@@ -32,7 +31,7 @@ import java.util.concurrent.Executors
  * @see serialDispatcher
  */
 @Mockable
-class RaftDelegator(private val stateFactory: AbstractStateFactory,
+class RaftDelegator(private val stateFactory: RaftStateFactory,
                     private val transitionContracts: List<TransitionContract> = emptyList(),
                     @VisibleForTesting private val serialExecutor: ExecutorService = Executors.newSingleThreadExecutor()) : RaftDelegate {
 
@@ -62,8 +61,8 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
     }
   }
 
-  override val supportedOperations: Set<OperationCategory>
-    get() = delegate?.supportedOperations ?: emptySet()
+  override val supportedOps: Set<OpCategory>
+    get() = delegate?.supportedOps ?: emptySet()
 
   /* ---- Message Delegation ---- */
 
@@ -92,7 +91,7 @@ class RaftDelegator(private val stateFactory: AbstractStateFactory,
   }
 
   private fun serialOperation(block: () -> Unit) {
-    serialExecutor.execute(block)
+    serialExecutor.submit(block)
   }
 
   private fun evaluateTransitionRequirements(request: Request, block: () -> Unit) {

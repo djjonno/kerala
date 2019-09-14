@@ -1,8 +1,8 @@
-package org.elkd.core.client.model
+package org.elkd.core.consensus
 
-enum class OperationCategory {
+enum class OpCategory {
   /**
-   * Denotes an operation that produces entries to the log.
+   * Denotes an operation that produces entries to the logger.
    *
    * @note execution allowed only on leader nodes..
    */

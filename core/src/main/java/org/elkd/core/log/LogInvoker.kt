@@ -63,6 +63,6 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
   }
 
   override fun toString(): String {
-    return "LogInvoker(log=$log)"
+    return "LogInvoker(logger=$log)"
   }
 }

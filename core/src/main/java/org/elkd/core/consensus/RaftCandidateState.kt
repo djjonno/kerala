@@ -2,7 +2,6 @@ package org.elkd.core.consensus
 
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.election.ElectionScheduler
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -35,7 +34,7 @@ class RaftCandidateState(private val raft: Raft,
     stopElection()
   }
 
-  override val supportedOperations = emptySet<OperationCategory>()
+  override val supportedOps = emptySet<OpCategory>()
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {

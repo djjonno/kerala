@@ -17,10 +17,10 @@ object Pools {
       CLIENT_COMMAND_THREAD_POOL_SIZE, ThreadFactoryProvider.create("client-cmd"))
 
   /**
-   * Pool for log command execution
+   * Pool for logger command execution
    */
   val logCommandThreadPool: ExecutorService = Executors.newFixedThreadPool(
-      LOG_COMMAND_THREAD_POOL_SIZE, ThreadFactoryProvider.create("log-cmd"))
+      LOG_COMMAND_THREAD_POOL_SIZE, ThreadFactoryProvider.create("logger-cmd"))
 
   /**
    * Pool for replication

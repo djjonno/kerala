@@ -3,9 +3,7 @@ package org.elkd.core.log
 import com.google.common.base.Preconditions.checkNotNull
 import com.google.common.base.Preconditions.checkState
 import com.google.common.collect.ImmutableList
-import org.apache.commons.codec.digest.DigestUtils
 import org.elkd.core.consensus.messages.Entry
-import java.util.*
 
 class InMemoryLog<E : LogEntry> : Log<E> {
   private val logStore: MutableList<E>
@@ -21,7 +19,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   init {
     logStore = ArrayList()
 
-    /* Default Log Record - prevents having to provide a log index that
+    /* Default Log Record - prevents having to provide a logger index that
        technically does not exist e.g index = -1 */
     append(Entry.NULL_ENTRY as E)
   }

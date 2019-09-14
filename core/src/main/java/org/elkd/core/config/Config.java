@@ -35,7 +35,7 @@ public class Config {
   /**
    * Time for a follower to wait before transitioning to candidate state.
    */
-  @Key(defaultValue = "1000") public static final String KEY_RAFT_FOLLOWER_TIMEOUT_MS = "consensus.follower.timeout";
+  @Key(defaultValue = "2000") public static final String KEY_RAFT_FOLLOWER_TIMEOUT_MS = "consensus.follower.timeout";
 
   /**
    * Time for a candidate to wait before transitioning to follower state.

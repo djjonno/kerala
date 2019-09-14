@@ -2,11 +2,11 @@ package org.elkd.core
 
 import org.elkd.core.client.ClientModule
 import org.elkd.core.client.TopicRegistry
-import org.elkd.core.client.handlers.CommandRequestHandler
+import org.elkd.core.client.handlers.CommandRouter
 import org.elkd.core.config.Config
 import org.elkd.core.config.ConfigProvider
-import org.elkd.core.consensus.ClientRequestController
-import org.elkd.core.consensus.Raft
+import org.elkd.core.client.handlers.CommandReceiver
+import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.RaftFactory
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.InMemoryLog
@@ -24,13 +24,13 @@ import org.elkd.core.server.cluster.StaticClusterSet
  * Bootstrapping module - configure all system dependencies.
  */
 internal class Boot(private val config: Config,
-                    private val raft: Raft,
+                    private val consensusFacade: ConsensusFacade,
                     private val server: Server) {
 
   fun start() {
     val port = config.getAsInteger(Config.KEY_PORT)
     server.start(port)
-    raft.initialize()
+    consensusFacade.initialize()
   }
 
   /**
@@ -78,14 +78,14 @@ fun main(args: Array<String>) {
   /*
    * Configure consensus module `Raft`.
    */
-  val raft = RaftFactory.create(config, logProvider, clusterMessenger)
+  val consensusModule = ConsensusFacade(RaftFactory.create(config, logProvider, clusterMessenger))
 
   /*
    * Configure client module.
    */
   val clientModule = ClientModule(TopicRegistry())
 
-  val boot = Boot(config, raft, Server(raft.delegator, CommandRequestHandler(ClientRequestController(raft))))
+  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandReceiver(consensusModule))))
 
   try {
     Runtime.getRuntime().addShutdownHook(Thread(Runnable { boot.shutdown() }))

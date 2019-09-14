@@ -18,13 +18,17 @@ fun main() {
   var count = 0
   var future: Future<RpcClientCommandResponse>?
   do {
-    future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
-        .setCommand("create-topic")
-        .addAllArgs(listOf(RpcArgPair.newBuilder()
-            .setArg("namespace")
-            .setParam("dummy")
-            .build()))
-        .build())
-  } while (++count < 400000)
-  println(future?.get())
+    var count2 = 0
+    val futures = mutableListOf<Future<RpcClientCommandResponse>>()
+    do {
+      futures.add(stub.clientCommand(RpcClientCommandRequest.newBuilder()
+          .setCommand("create-topic")
+          .addAllArgs(listOf(RpcArgPair.newBuilder()
+              .setArg("namespace")
+              .setParam("dummy")
+              .build()))
+          .build()))
+    } while (++count < 100)
+    futures.forEach { println(it.get()) }
+  } while (++count < 10)
 }

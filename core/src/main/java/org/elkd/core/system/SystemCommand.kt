@@ -5,7 +5,11 @@ import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.KV
 
 class SystemCommand(val command: SystemCommands,
-                         val args: List<Pair<String, String>>) {
+                    val args: List<Pair<String, String>>) {
+
+  val kvs by lazy {
+    args.map { KV(it.first, it.second) }.toList()
+  }
 
   fun asEntry(term: Int): Entry {
     val builder = Entry.builder(term, Topic.SYSTEM_TOPIC_NAMESPACE)

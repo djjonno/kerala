@@ -1,6 +1,5 @@
 package org.elkd.core.consensus
 
-import org.elkd.core.client.model.OperationCategory
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.Request
@@ -37,10 +36,10 @@ internal constructor(val config: Config,
   val clusterSet: ClusterSet
     get() = clusterMessenger.clusterSet
 
-  val supportedOperations: Set<OperationCategory>
-    get() = delegator.supportedOperations
+  val supportedOps: Set<OpCategory>
+    get() = delegator.supportedOps
 
-  val delegator: RaftDelegator = RaftDelegator(DefaultStateFactory(this), listOf(
+  val delegator: RaftDelegator = RaftDelegator(RaftStateFactory(this), listOf(
       object: TransitionContract {
 
         override fun isTransitionRequired(request: Request): Boolean {
