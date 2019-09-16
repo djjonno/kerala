@@ -1,15 +1,15 @@
 package org.elkd.core
 
-import org.elkd.core.client.ClientModule
-import org.elkd.core.client.command.CommandRouter
+import org.elkd.core.runtime.client.ClientModule
+import org.elkd.core.runtime.client.command.CommandRouter
 import org.elkd.core.config.Config
 import org.elkd.core.config.ConfigProvider
-import org.elkd.core.client.command.CommandExecutor
+import org.elkd.core.runtime.client.command.CommandExecutor
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.RaftFactory
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.InMemoryLog
-import org.elkd.core.log.LogModule
+import org.elkd.core.log.LogFacade
 import org.elkd.core.log.LogInvoker
 import org.elkd.core.server.Server
 import org.elkd.core.server.cluster.ClusterConnectionPool
@@ -72,7 +72,7 @@ fun main(args: Array<String>) {
    */
   val clusterMessenger = ClusterMessenger(clusterConnectionPool)
 
-  val logModule = LogModule(LogInvoker<Entry>(InMemoryLog()))
+  val logModule = LogFacade(LogInvoker<Entry>(InMemoryLog()))
 
   /*
    * Configure consensus module `Raft`.

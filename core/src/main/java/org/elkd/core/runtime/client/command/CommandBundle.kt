@@ -1,4 +1,4 @@
-package org.elkd.core.client.command
+package org.elkd.core.runtime.client.command
 
 import org.elkd.core.consensus.OpCategory
 import org.elkd.core.runtime.SystemCommand

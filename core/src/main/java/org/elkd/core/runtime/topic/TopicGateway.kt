@@ -1,7 +1,7 @@
 package org.elkd.core.runtime.topic
 
-import org.elkd.core.client.consumer.Consumer
-import org.elkd.core.client.producer.Producer
+import org.elkd.core.runtime.client.consumer.Consumer
+import org.elkd.core.runtime.client.producer.Producer
 
 interface TopicGateway {
 

@@ -3,7 +3,11 @@ package org.elkd.core.consensus
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.consensus.messages.*
+import org.elkd.core.consensus.messages.AppendEntriesRequest
+import org.elkd.core.consensus.messages.AppendEntriesResponse
+import org.elkd.core.consensus.messages.Request
+import org.elkd.core.consensus.messages.RequestVoteRequest
+import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.runtime.NotificationCenter
 import org.elkd.shared.annotations.Mockable
 import java.util.concurrent.ExecutorService
@@ -49,15 +53,13 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
     serialOperation {
       val newDelegate = stateFactory.getState(state)
 
-      if (delegate?.javaClass != newDelegate.javaClass) {
-        delegate?.off()
-        preHook()
-        delegate = newDelegate
-        delegate?.on()
-        postHook()
-        log.info("state activated: $delegate")
-        NotificationCenter.pub(NotificationCenter.Channel.RAFT_STATE_CHANGE)
-      }
+      delegate?.off()
+      preHook()
+      delegate = newDelegate
+      delegate?.on()
+      postHook()
+      log.info("state activated: $delegate")
+      NotificationCenter.pub(NotificationCenter.Channel.RAFT_STATE_CHANGE)
     }
   }
 

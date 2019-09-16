@@ -1,4 +1,4 @@
-package org.elkd.core.client.command
+package org.elkd.core.runtime.client.command
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
