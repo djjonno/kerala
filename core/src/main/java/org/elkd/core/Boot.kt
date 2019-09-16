@@ -11,6 +11,9 @@ import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.InMemoryLog
 import org.elkd.core.log.LogFacade
 import org.elkd.core.log.LogInvoker
+import org.elkd.core.runtime.FireHoseStream
+import org.elkd.core.runtime.topic.TopicGateway
+import org.elkd.core.runtime.topic.TopicRegistry
 import org.elkd.core.server.Server
 import org.elkd.core.server.cluster.ClusterConnectionPool
 import org.elkd.core.server.cluster.ClusterMessenger
@@ -82,7 +85,10 @@ fun main(args: Array<String>) {
   /*
    * Configure client module.
    */
-  val clientModule = ClientModule()
+  val clientModule = ClientModule(TopicRegistry(), TopicGateway())
+
+  val masterStream = FireHoseStream(clientModule)
+  logModule.log.registerListener(masterStream.Listener())
 
   val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule))))
 

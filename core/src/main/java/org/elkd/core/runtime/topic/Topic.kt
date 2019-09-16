@@ -9,7 +9,7 @@ data class Topic(
 ) {
   companion object {
     /* Reserved topic namespace for runtime */
-    const val SYSTEM_TOPIC_NAMESPACE = "@runtime"
+    const val SYSTEM_TOPIC_NAMESPACE = "@system"
 
     inline fun builder(topicName: String,
                        topicBuilder: Builder.() -> Unit): Topic {
