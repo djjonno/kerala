@@ -8,8 +8,8 @@ import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.consensus.replication.Replicator
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
-import org.elkd.core.system.SystemCommand
-import org.elkd.core.system.SystemCommands
+import org.elkd.core.runtime.SystemCommand
+import org.elkd.core.runtime.SystemCommandType
 
 class RaftLeaderState(private val raft: Raft) : RaftState {
   private var replicator: Replicator? = null
@@ -45,7 +45,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   private fun broadcastLeaderChange() {
     raft.logCommandExecutor.execute(AppendCommand.build(
-        SystemCommand.builder(SystemCommands.LEADER_CHANGE) {
+        SystemCommand.builder(SystemCommandType.LEADER_CHANGE) {
           arg("node", raft.clusterSet.localNode.id)
         }.asEntry(raft.raftContext.currentTerm),
         LogChangeReason.REPLICATION

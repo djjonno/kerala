@@ -4,7 +4,7 @@ import com.nhaarman.mockitokotlin2.mock
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.LogCommandExecutor
 import org.elkd.core.log.LogInvoker
-import org.elkd.core.log.LogComponentProvider
+import org.elkd.core.log.LogModule
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.junit.Assert.assertSame
 import org.junit.Before
@@ -17,7 +17,7 @@ class RaftFactoryTest {
 
   @Mock lateinit var clusterMessenger: ClusterMessenger
   @Mock lateinit var log: LogInvoker<Entry>
-  @Mock lateinit var logComponentProvider: LogComponentProvider<Entry>
+  @Mock lateinit var logModule: LogModule<Entry>
   @Mock lateinit var logCommandExecutor: LogCommandExecutor<Entry>
 
   @Before
@@ -25,17 +25,17 @@ class RaftFactoryTest {
   fun setup() {
     MockitoAnnotations.initMocks(this)
     doReturn(log)
-        .`when`(logComponentProvider)
+        .`when`(logModule)
         .log
     doReturn(logCommandExecutor)
-        .`when`(logComponentProvider)
+        .`when`(logModule)
         .logCommandExecutor
   }
 
   @Test
   fun should_return_raft_with_properties() {
     // Given / When
-    val raft = RaftFactory.create(mock(), logComponentProvider, clusterMessenger)
+    val raft = RaftFactory.create(mock(), logModule, clusterMessenger)
 
     // Then
     assertSame(clusterMessenger, raft.clusterMessenger)

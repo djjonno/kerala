@@ -47,7 +47,7 @@ class ClusterMessenger
           else -> onFailure(ElkdRuntimeException("Unsupported message type ${message.javaClass}"))
         }
       } catch (e: Exception) {
-        LOG.info("Message not delivered, $node is probably offline")
+        logger.info("Message not delivered, $node is probably offline")
         onFailure(ElkdRuntimeException(e))
         return@coroutineScope Unit
       }
@@ -67,6 +67,6 @@ class ClusterMessenger
   }
 
   companion object {
-    private val LOG = Logger.getLogger(ClusterMessenger::class.java)
+    private val logger = Logger.getLogger(ClusterMessenger::class.java)
   }
 }

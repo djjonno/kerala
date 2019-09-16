@@ -1,19 +1,18 @@
-package org.elkd.core.client.handlers
+package org.elkd.core.client.command
 
 import io.grpc.stub.StreamObserver
-import org.elkd.core.client.model.CommandBundle
 import org.elkd.core.server.client.RpcClientCommandRequest
 import org.elkd.core.server.client.RpcClientCommandResponse
-import org.elkd.core.system.SystemCommand
-import org.elkd.core.system.SystemCommands
+import org.elkd.core.runtime.SystemCommand
+import org.elkd.core.runtime.SystemCommandType
 
 /**
  * Executes client commands received from client connections
  */
-class CommandRouter(private val commandReceiver: CommandReceiver) {
+class CommandRouter(private val commandExecutor: CommandExecutor) {
 
   fun handle(request: RpcClientCommandRequest, response: StreamObserver<RpcClientCommandResponse>) {
-    val command = SystemCommand.builder(SystemCommands.fromString(request.command)) {
+    val command = SystemCommand.builder(SystemCommandType.fromString(request.command)) {
       request.argsList.forEach { pair ->
         arg(pair.arg, pair.param)
       }
@@ -33,6 +32,6 @@ class CommandRouter(private val commandReceiver: CommandReceiver) {
         }
     )
 
-    commandReceiver.receive(cmdBundle)
+    commandExecutor.receive(cmdBundle)
   }
 }

@@ -1,4 +1,4 @@
-package org.elkd.core.client.handlers
+package org.elkd.core.client.command
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -6,15 +6,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
-import org.elkd.core.client.Topic
-import org.elkd.core.client.model.CommandBundle
+import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.OpCategory
-import org.elkd.core.system.NotificationCenter
+import org.elkd.core.runtime.NotificationCenter
 import kotlin.coroutines.CoroutineContext
 
-class CommandReceiver(private val consensusFacade: ConsensusFacade) : CoroutineScope {
+class CommandExecutor(private val consensusFacade: ConsensusFacade) : CoroutineScope {
   override val coroutineContext: CoroutineContext
     get() = Job() + Dispatchers.Default
 
@@ -31,12 +30,12 @@ class CommandReceiver(private val consensusFacade: ConsensusFacade) : CoroutineS
         NotificationCenter.Channel.RAFT_STATE_CHANGE,
         Pools.clientCommandThreadPool
     ) {
-      checkUnsupportedBundles(consensusFacade.supportedOps)
+      checkUnsupportedBundles(consensusFacade.supportedOperations)
     }
   }
 
   fun receive(bundle: CommandBundle) {
-    if (bundle.opCategory !in consensusFacade.supportedOps) {
+    if (bundle.opCategory !in consensusFacade.supportedOperations) {
       handleBundleUnsupported(bundle)
       return
     }
@@ -61,7 +60,7 @@ class CommandReceiver(private val consensusFacade: ConsensusFacade) : CoroutineS
         bundleRegistry
             .filter { entry -> entry.value <= now }
             .map { it.key }
-            .forEach(this@CommandReceiver::handleBundleTimeout)
+            .forEach(this@CommandExecutor::handleBundleTimeout)
         delay(500)
       } while (true)
     }
@@ -86,6 +85,6 @@ class CommandReceiver(private val consensusFacade: ConsensusFacade) : CoroutineS
   }
 
   companion object {
-    val logger = Logger.getLogger(CommandReceiver::class.java)
+    val logger = Logger.getLogger(CommandExecutor::class.java)
   }
 }

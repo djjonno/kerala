@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClusterConnectionPool {
-  private static final Logger LOG = Logger.getLogger(ClusterConnectionPool.class);
+  private static final Logger logger = Logger.getLogger(ClusterConnectionPool.class);
 
   private final Map<Node, Channel> mChannelMap = new HashMap<>();
   private final ClusterSet mClusterSet;
@@ -32,7 +32,7 @@ public class ClusterConnectionPool {
           .usePlaintext() /* TODO: addKV cert auth */
           .build();
       mChannelMap.put(node, new Channel(channel));
-      LOG.info("Initializing channel to instance " + node + " state " + channel.getState(true));
+      logger.info("Initializing channel to instance " + node + " state " + channel.getState(true));
     }
   }
 

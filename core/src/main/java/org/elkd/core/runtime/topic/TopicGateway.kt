@@ -1,4 +1,4 @@
-package org.elkd.core.client
+package org.elkd.core.runtime.topic
 
 import org.elkd.core.client.consumer.Consumer
 import org.elkd.core.client.producer.Producer

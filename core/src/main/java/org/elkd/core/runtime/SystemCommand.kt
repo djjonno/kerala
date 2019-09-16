@@ -1,11 +1,11 @@
-package org.elkd.core.system
+package org.elkd.core.runtime
 
-import org.elkd.core.client.Topic
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.KV
+import org.elkd.core.runtime.topic.Topic
 
-class SystemCommand(val command: SystemCommands,
-                    val args: List<Pair<String, String>>) {
+class SystemCommand(val command: SystemCommandType,
+                    private val args: List<Pair<String, String>>) {
 
   val kvs by lazy {
     args.map { KV(it.first, it.second) }.toList()
@@ -23,14 +23,14 @@ class SystemCommand(val command: SystemCommands,
   companion object {
     private const val KEY_COMMAND = "cmd"
 
-    inline fun builder(command: SystemCommands, commandBuilder: Builder.() -> Unit): SystemCommand {
+    inline fun builder(command: SystemCommandType, commandBuilder: Builder.() -> Unit): SystemCommand {
       val builder = Builder(command)
       builder.commandBuilder()
       return builder.build()
     }
   }
 
-  class Builder(private val command: SystemCommands) {
+  class Builder(private val command: SystemCommandType) {
     private val args: MutableList<Pair<String, String>> = mutableListOf()
 
     fun arg(key: String, `val`: String) {

@@ -1,7 +1,7 @@
-package org.elkd.core.client.model
+package org.elkd.core.client.command
 
 import org.elkd.core.consensus.OpCategory
-import org.elkd.core.system.SystemCommand
+import org.elkd.core.runtime.SystemCommand
 import java.util.*
 
 data class CommandBundle(val requestId: String = UUID.randomUUID().toString(),

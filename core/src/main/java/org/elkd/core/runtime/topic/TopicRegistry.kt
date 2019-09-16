@@ -1,4 +1,4 @@
-package org.elkd.core.client
+package org.elkd.core.runtime.topic
 
 import org.apache.log4j.Logger
 
@@ -7,24 +7,24 @@ class TopicRegistry {
 
   fun add(topic: Topic) {
     if (hasTopic(topic)) {
-      log.warn("$topic already exists, ignoring op.")
+      logger.warn("$topic already exists, ignoring op.")
       return
     }
     registry[topic.namespace] = topic
-    log.info("new topic registered: $topic")
+    logger.info("new topic registered: $topic")
   }
 
   fun remove(topic: Topic) {
     if (!hasTopic(topic)) {
-      log.warn("$topic does not exist, ignoring op.")
+      logger.warn("$topic does not exist, ignoring op.")
       return
     }
     registry.remove(topic.namespace)
-    log.info("topic removed: $topic")
+    logger.info("topic removed: $topic")
   }
 
   fun hasTopic(name: String) = registry.containsKey(name)
-  private fun hasTopic(topic: Topic) = hasTopic(topic.namespace)
+  fun hasTopic(topic: Topic) = hasTopic(topic.namespace)
 
   fun toList(): List<Topic> {
     return registry.entries.map { it.value }
@@ -35,6 +35,6 @@ class TopicRegistry {
   }
 
   companion object {
-    private var log = Logger.getLogger(TopicRegistry::class.java)
+    private var logger = Logger.getLogger(TopicRegistry::class.java)
   }
 }

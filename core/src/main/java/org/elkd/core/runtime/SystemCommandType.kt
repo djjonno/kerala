@@ -1,6 +1,6 @@
-package org.elkd.core.system
+package org.elkd.core.runtime
 
-enum class SystemCommands(val id: String) {
+enum class SystemCommandType(val id: String) {
 
   /**
    * This does not change the leader, this handlers exists when a leader is changed,
@@ -25,7 +25,7 @@ enum class SystemCommands(val id: String) {
      * Commands are received from clients in string form, this helper method maps
      * a string to its enum counterpart.
      */
-    fun fromString(string: String): SystemCommands {
+    fun fromString(string: String): SystemCommandType {
       return values().first { it.id == string }
     }
   }

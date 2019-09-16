@@ -1,4 +1,4 @@
-package org.elkd.core.client
+package org.elkd.core.runtime.topic
 
 /**
  * A topic represents a unique object which acts as the conduit between
@@ -8,8 +8,8 @@ data class Topic(
     val namespace: String
 ) {
   companion object {
-    /* Reserved topic namespace for system */
-    const val SYSTEM_TOPIC_NAMESPACE = "@system"
+    /* Reserved topic namespace for runtime */
+    const val SYSTEM_TOPIC_NAMESPACE = "@runtime"
 
     inline fun builder(topicName: String,
                        topicBuilder: Builder.() -> Unit): Topic {

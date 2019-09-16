@@ -4,7 +4,7 @@ import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.*
-import org.elkd.core.system.NotificationCenter
+import org.elkd.core.runtime.NotificationCenter
 import org.elkd.shared.annotations.Mockable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

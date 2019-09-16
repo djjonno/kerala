@@ -1,16 +1,15 @@
 package org.elkd.core
 
 import org.elkd.core.client.ClientModule
-import org.elkd.core.client.TopicRegistry
-import org.elkd.core.client.handlers.CommandRouter
+import org.elkd.core.client.command.CommandRouter
 import org.elkd.core.config.Config
 import org.elkd.core.config.ConfigProvider
-import org.elkd.core.client.handlers.CommandReceiver
+import org.elkd.core.client.command.CommandExecutor
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.RaftFactory
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.InMemoryLog
-import org.elkd.core.log.LogComponentProvider
+import org.elkd.core.log.LogModule
 import org.elkd.core.log.LogInvoker
 import org.elkd.core.server.Server
 import org.elkd.core.server.cluster.ClusterConnectionPool
@@ -21,7 +20,7 @@ import org.elkd.core.server.cluster.StaticClusterSet
 /**
  * Platform Boot
  *
- * Bootstrapping module - configure all system dependencies.
+ * Bootstrapping module - configure all runtime dependencies.
  */
 internal class Boot(private val config: Config,
                     private val consensusFacade: ConsensusFacade,
@@ -34,7 +33,7 @@ internal class Boot(private val config: Config,
   }
 
   /**
-   * Free-up system resources prior to shutdown.
+   * Free-up runtime resources prior to shutdown.
    */
   fun shutdown() {
     server.shutdown()
@@ -42,7 +41,7 @@ internal class Boot(private val config: Config,
   }
 
   /**
-   * A blocking call, awaiting system resource deallocation.  Call this prior to shutdown.
+   * A blocking call, awaiting runtime resource deallocation.  Call this prior to shutdown.
    */
   fun awaitTermination() {
     server.awaitTermination()
@@ -73,19 +72,19 @@ fun main(args: Array<String>) {
    */
   val clusterMessenger = ClusterMessenger(clusterConnectionPool)
 
-  val logProvider = LogComponentProvider(LogInvoker<Entry>(InMemoryLog()))
+  val logModule = LogModule(LogInvoker<Entry>(InMemoryLog()))
 
   /*
    * Configure consensus module `Raft`.
    */
-  val consensusModule = ConsensusFacade(RaftFactory.create(config, logProvider, clusterMessenger))
+  val consensusModule = ConsensusFacade(RaftFactory.create(config, logModule, clusterMessenger))
 
   /*
    * Configure client module.
    */
-  val clientModule = ClientModule(TopicRegistry())
+  val clientModule = ClientModule()
 
-  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandReceiver(consensusModule))))
+  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule))))
 
   try {
     Runtime.getRuntime().addShutdownHook(Thread(Runnable { boot.shutdown() }))

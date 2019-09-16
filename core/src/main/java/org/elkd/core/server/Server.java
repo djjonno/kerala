@@ -3,7 +3,7 @@ package org.elkd.core.server;
 import com.google.common.base.Preconditions;
 import io.grpc.ServerBuilder;
 import org.apache.log4j.Logger;
-import org.elkd.core.client.handlers.CommandRouter;
+import org.elkd.core.client.command.CommandRouter;
 import org.elkd.core.consensus.RaftDelegate;
 import org.elkd.core.server.client.ClientService;
 import org.elkd.core.server.cluster.ClusterService;

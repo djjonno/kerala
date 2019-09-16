@@ -1,12 +1,17 @@
 package org.elkd.core.log
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
 import org.elkd.core.log.LogChangeEvent.APPEND
 import org.elkd.core.log.LogChangeEvent.COMMIT
+import kotlin.coroutines.CoroutineContext
 
-class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
+class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>): CoroutineScope {
   private val listener: Listener<E> = Listener()
-
+  override val coroutineContext: CoroutineContext
+    get() = Dispatchers.Unconfined
   private val onCommitRegistrations: MutableMap<String, MutableList<Runnable>> = mutableMapOf()
   private val onAppendRegistrations: MutableMap<String, MutableList<Runnable>> = mutableMapOf()
 
@@ -37,6 +42,9 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
     override fun onCommit(index: Long, entry: E) {
       onCommitRegistrations[entry.uuid]?.forEach { it.run() }
       onCommitRegistrations.remove(entry.uuid)
+      launch {
+        logger.info("committing ${entry.uuid} @ $index")
+      }
     }
 
     override fun onAppend(index: Long, entry: E) {
@@ -46,6 +54,6 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
   }
 
   private companion object {
-    private val log = Logger.getLogger(LogChangeRegistry::class.java)
+    private val logger = Logger.getLogger(LogChangeRegistry::class.java)
   }
 }

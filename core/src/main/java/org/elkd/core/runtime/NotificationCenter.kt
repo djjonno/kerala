@@ -1,10 +1,10 @@
-package org.elkd.core.system
+package org.elkd.core.runtime
 
 import org.apache.log4j.Logger
 import java.util.concurrent.Executor
 
 /**
- * PubSub singleton for system events.
+ * PubSub singleton for runtime events.
  */
 object NotificationCenter {
 
@@ -31,6 +31,7 @@ object NotificationCenter {
       subscriptions[channel] = mutableListOf()
     }
 
+    log.info("sub:${channel.id}")
     subscriptions[channel]?.add(Pair(executor, Runnable { block(channel) }))
   }
 }
