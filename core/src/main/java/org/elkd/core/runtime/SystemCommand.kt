@@ -38,6 +38,7 @@ class SystemCommand(val command: SystemCommandType,
     }
 
     fun build(): SystemCommand {
+      args.add(Pair(KEY_COMMAND, command.id))
       return SystemCommand(command, args)
     }
   }

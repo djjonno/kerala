@@ -12,6 +12,8 @@ import org.elkd.core.log.InMemoryLog
 import org.elkd.core.log.LogFacade
 import org.elkd.core.log.LogInvoker
 import org.elkd.core.runtime.FireHoseStream
+import org.elkd.core.runtime.SystemConsumer
+import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicRegistry
 import org.elkd.core.server.Server
@@ -85,8 +87,12 @@ fun main(args: Array<String>) {
   /*
    * Configure client module.
    */
-  val clientModule = ClientModule(TopicRegistry(), TopicGateway())
-
+  val topicRegistry = TopicRegistry().apply {
+    add(Topic.SYSTEM_TOPIC)
+  }
+  val topicGateway = TopicGateway()
+  val clientModule = ClientModule(topicRegistry, topicGateway)
+  topicGateway.registerConsumer(Topic.SYSTEM_TOPIC, SystemConsumer(clientModule))
   val masterStream = FireHoseStream(clientModule)
   logModule.log.registerListener(masterStream.Listener())
 

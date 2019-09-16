@@ -6,7 +6,7 @@ class TopicRegistry {
   private val registry: MutableMap<String, Topic> = mutableMapOf()
 
   fun add(topic: Topic) {
-    if (hasTopic(topic)) {
+    if (get(topic) != null) {
       logger.warn("$topic already exists, ignoring op.")
       return
     }
@@ -15,16 +15,14 @@ class TopicRegistry {
   }
 
   fun remove(topic: Topic) {
-    if (!hasTopic(topic)) {
-      logger.warn("$topic does not exist, ignoring op.")
-      return
+    get(topic)?.apply {
+      registry.remove(this.namespace)
+      logger.info("topic removed: $topic")
     }
-    registry.remove(topic.namespace)
-    logger.info("topic removed: $topic")
   }
 
-  fun hasTopic(name: String) = registry.containsKey(name)
-  fun hasTopic(topic: Topic) = hasTopic(topic.namespace)
+  fun get(name: String): Topic? = registry.get(name)
+  fun get(topic: Topic): Topic? = get(topic.namespace)
 
   fun toList(): List<Topic> {
     return registry.entries.map { it.value }

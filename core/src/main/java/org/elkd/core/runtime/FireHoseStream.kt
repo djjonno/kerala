@@ -4,13 +4,22 @@ import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.LogChangeListener
 import org.elkd.core.runtime.client.ClientModule
+import org.elkd.core.runtime.topic.Topic
 
 /**
  * FireHoseStream routes all committed entries to their respective {@link Topic}s.
  */
-class FireHoseStream(clientModule: ClientModule) {
+class FireHoseStream(val clientModule: ClientModule) {
   fun forward(entry: Entry) {
-    logger.info("forwarding $entry")
+    /* TODO: schedule on appropriate thread */
+    when (entry.topic) {
+      /* Routes to SystemConsumer */
+      Topic.SYSTEM_TOPIC.namespace -> {
+        clientModule.topicGateway.consumersFor(Topic.SYSTEM_TOPIC).forEach {
+          it.consume(entry)
+        }
+      }
+    }
   }
 
   /**
@@ -19,10 +28,6 @@ class FireHoseStream(clientModule: ClientModule) {
   inner class Listener : LogChangeListener<Entry> {
     override fun onCommit(index: Long, entry: Entry) {
       forward(entry)
-    }
-
-    override fun onAppend(index: Long, entry: Entry) {
-      /* NoOp - we're not interested in append entries, only committed. */
     }
   }
 

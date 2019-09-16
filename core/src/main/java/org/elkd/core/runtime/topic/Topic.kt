@@ -8,11 +8,16 @@ data class Topic(
     val namespace: String
 ) {
   companion object {
-    /* Reserved topic namespace for runtime */
+
+    /* --------------------- Reserved Topic NameSpaces --------------------- */
+
     const val SYSTEM_TOPIC_NAMESPACE = "@system"
+    val SYSTEM_TOPIC = builder(SYSTEM_TOPIC_NAMESPACE)
+
+    /* --------------------------------------------------------------------- */
 
     inline fun builder(topicName: String,
-                       topicBuilder: Builder.() -> Unit): Topic {
+                       topicBuilder: Builder.() -> Unit = {}): Topic {
       val builder = Builder(topicName)
       builder.topicBuilder()
       return builder.build()

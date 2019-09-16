@@ -5,11 +5,20 @@ import org.elkd.core.runtime.client.producer.Producer
 
 class TopicGateway {
 
-  fun consumersFor(topic: Topic): List<Consumer> { return emptyList() }
+  private val consumerRegistry: MutableMap<Topic, MutableSet<Consumer>> = mutableMapOf()
+  private val producerRegistry: MutableMap<Topic, Producer> = mutableMapOf()
 
-  fun producersFor(topic: Topic): List<Producer> { return emptyList() }
+  fun consumersFor(topic: Topic): List<Consumer> = consumerRegistry[topic]?.toList() ?: emptyList()
 
-  fun registerConsumer(topic: Topic, consumer: Consumer) { }
+  fun producerFor(topic: Topic): Producer? { return null }
+
+  fun registerConsumer(topic: Topic, consumer: Consumer) {
+    if (!consumerRegistry.containsKey(topic)) {
+      consumerRegistry[topic] = mutableSetOf()
+    }
+
+    consumerRegistry[topic]?.add(consumer)
+  }
 
   fun deregisterConsumer(topic: Topic, consumer: Consumer) { }
 
