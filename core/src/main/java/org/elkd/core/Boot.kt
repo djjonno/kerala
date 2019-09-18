@@ -1,10 +1,8 @@
 package org.elkd.core
 
-import org.elkd.core.runtime.client.ClientModule
-import org.elkd.core.runtime.client.command.CommandRouter
+import org.apache.log4j.Logger
 import org.elkd.core.config.Config
 import org.elkd.core.config.ConfigProvider
-import org.elkd.core.runtime.client.command.CommandExecutor
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.RaftFactory
 import org.elkd.core.consensus.messages.Entry
@@ -12,7 +10,10 @@ import org.elkd.core.log.InMemoryLog
 import org.elkd.core.log.LogFacade
 import org.elkd.core.log.LogInvoker
 import org.elkd.core.runtime.FireHoseStream
-import org.elkd.core.runtime.SystemConsumer
+import org.elkd.core.runtime.client.ClientModule
+import org.elkd.core.runtime.client.command.CommandExecutor
+import org.elkd.core.runtime.client.command.CommandRouter
+import org.elkd.core.runtime.client.consumer.SystemConsumer
 import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicRegistry
@@ -57,6 +58,7 @@ internal class Boot(private val config: Config,
  * Elkd Bootstrapping
  */
 fun main(args: Array<String>) {
+  val logger = Logger.getLogger(Boot::class.java)
   val config = getConfig(args) ?: return
 
   /*
@@ -77,24 +79,26 @@ fun main(args: Array<String>) {
    */
   val clusterMessenger = ClusterMessenger(clusterConnectionPool)
 
-  val logModule = LogFacade(LogInvoker<Entry>(InMemoryLog()))
+  val logFacade = LogFacade(LogInvoker<Entry>(InMemoryLog()))
 
   /*
    * Configure consensus module `Raft`.
    */
-  val consensusModule = ConsensusFacade(RaftFactory.create(config, logModule, clusterMessenger))
+  val consensusModule = ConsensusFacade(RaftFactory.create(config, logFacade, clusterMessenger))
 
   /*
    * Configure client module.
+   *
+   * - bootstrap @system topic.
    */
   val topicRegistry = TopicRegistry().apply {
-    add(Topic.SYSTEM_TOPIC)
+    add(Topic.Reserved.SYSTEM_TOPIC)
   }
   val topicGateway = TopicGateway()
   val clientModule = ClientModule(topicRegistry, topicGateway)
-  topicGateway.registerConsumer(Topic.SYSTEM_TOPIC, SystemConsumer(clientModule))
-  val masterStream = FireHoseStream(clientModule)
-  logModule.log.registerListener(masterStream.Listener())
+  val fireHose = FireHoseStream(clientModule)
+  logFacade.registerListener(fireHose.Listener())
+  topicGateway.registerConsumer(Topic.Reserved.SYSTEM_TOPIC, SystemConsumer(clientModule))
 
   val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule))))
 
@@ -103,7 +107,7 @@ fun main(args: Array<String>) {
     boot.start()
     boot.awaitTermination()
   } catch (e: Exception) {
-    e.printStackTrace()
+    logger.error(e)
   }
 }
 

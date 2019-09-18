@@ -10,7 +10,7 @@ class TopicGateway {
 
   fun consumersFor(topic: Topic): List<Consumer> = consumerRegistry[topic]?.toList() ?: emptyList()
 
-  fun producerFor(topic: Topic): Producer? { return null }
+  fun producersFor(topic: Topic): List<Producer> = emptyList()
 
   fun registerConsumer(topic: Topic, consumer: Consumer) {
     if (!consumerRegistry.containsKey(topic)) {

@@ -11,7 +11,7 @@ import java.util.concurrent.Future
  */
 fun main() {
   val stub = ElkdClientServiceGrpc.newFutureStub(
-      ManagedChannelBuilder.forAddress("localhost", 9191).usePlaintext().build()
+      ManagedChannelBuilder.forAddress("localhost", 9004).usePlaintext().build()
   )
 
   var count = 0
@@ -21,7 +21,7 @@ fun main() {
         .setCommand("create-topic")
         .addAllArgs(listOf(RpcArgPair.newBuilder()
             .setArg("namespace")
-            .setParam("birds")
+            .setParam("stocks")
             .build()))
         .build())
   } while (++count < 0)

@@ -7,20 +7,13 @@ package org.elkd.core.runtime.topic
 data class Topic(
     val namespace: String
 ) {
-  companion object {
 
-    /* --------------------- Reserved Topic NameSpaces --------------------- */
-
-    const val SYSTEM_TOPIC_NAMESPACE = "@system"
-    val SYSTEM_TOPIC = builder(SYSTEM_TOPIC_NAMESPACE)
-
-    /* --------------------------------------------------------------------- */
-
-    inline fun builder(topicName: String,
-                       topicBuilder: Builder.() -> Unit = {}): Topic {
-      val builder = Builder(topicName)
-      builder.topicBuilder()
-      return builder.build()
+  /**
+   * Reserved Topic Namespaces
+   */
+  class Reserved {
+    companion object {
+      val SYSTEM_TOPIC = Builder("@system").build()
     }
   }
 

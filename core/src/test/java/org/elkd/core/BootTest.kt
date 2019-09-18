@@ -1,7 +1,7 @@
 package org.elkd.core
 
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.Raft
+import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.server.Server
 import org.junit.Before
 import org.junit.Test
@@ -16,7 +16,7 @@ import org.mockito.Mockito.verify
 class BootTest {
 
   @Mock internal lateinit var config: Config
-  @Mock internal lateinit var raft: Raft
+  @Mock internal lateinit var consensusFacade: ConsensusFacade
   @Mock internal lateinit var server: Server
 
   private lateinit var unitUnderTest: Boot
@@ -26,7 +26,7 @@ class BootTest {
   fun setup() {
     MockitoAnnotations.initMocks(this)
 
-    unitUnderTest = Boot(config, raft, server)
+    unitUnderTest = Boot(config, consensusFacade, server)
   }
 
   @Test

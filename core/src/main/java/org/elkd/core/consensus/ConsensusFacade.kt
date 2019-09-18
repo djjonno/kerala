@@ -5,7 +5,9 @@ import org.elkd.core.consensus.messages.KV
 import org.elkd.core.log.LogChangeEvent
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
+import org.elkd.shared.annotations.Mockable
 
+@Mockable
 class ConsensusFacade(private val raft: Raft) {
   val delegator: RaftDelegator
     get() = raft.delegator

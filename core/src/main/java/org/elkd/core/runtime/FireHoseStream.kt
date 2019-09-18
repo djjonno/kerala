@@ -10,13 +10,13 @@ import org.elkd.core.runtime.topic.Topic
  * FireHoseStream routes all committed entries to their respective {@link Topic}s.
  */
 class FireHoseStream(val clientModule: ClientModule) {
-  fun forward(entry: Entry) {
+  fun forward(index: Long, entry: Entry) {
     /* TODO: schedule on appropriate thread */
     when (entry.topic) {
       /* Routes to SystemConsumer */
-      Topic.SYSTEM_TOPIC.namespace -> {
-        clientModule.topicGateway.consumersFor(Topic.SYSTEM_TOPIC).forEach {
-          it.consume(entry)
+      Topic.Reserved.SYSTEM_TOPIC.namespace -> {
+        clientModule.topicGateway.consumersFor(Topic.Reserved.SYSTEM_TOPIC).forEach {
+          it.consume(index, entry)
         }
       }
     }
@@ -27,7 +27,7 @@ class FireHoseStream(val clientModule: ClientModule) {
    */
   inner class Listener : LogChangeListener<Entry> {
     override fun onCommit(index: Long, entry: Entry) {
-      forward(entry)
+      forward(index, entry)
     }
   }
 
