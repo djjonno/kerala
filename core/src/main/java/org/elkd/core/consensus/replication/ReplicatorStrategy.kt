@@ -48,6 +48,7 @@ class ReplicatorStrategy(private val raft: Raft) {
   }
 
   companion object {
+    // Represents the max number of entries will be included in a AppendEntriesRequest
     private const val MAX_APPEND_ENTRIES = 10000
   }
 }

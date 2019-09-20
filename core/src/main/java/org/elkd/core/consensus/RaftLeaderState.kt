@@ -16,8 +16,9 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
   override fun on() {
     /* for test sake, append a new entry to the logger here so we have something to replicate */
     broadcastLeaderChange()
-    replicator = Replicator(raft, LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex))
-    replicator?.start()
+    replicator = Replicator(raft, LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex)).apply {
+      start()
+    }
   }
 
   override fun off() {

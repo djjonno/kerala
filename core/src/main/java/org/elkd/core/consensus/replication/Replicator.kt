@@ -35,9 +35,10 @@ class Replicator @JvmOverloads constructor (
 
     /* launch replication workers to own replication for each specific target */
     raft.clusterSet.nodes.forEach {
-      val worker = replicationControllerFactory.create(it, leaderContext, raft, coroutineContext)
       launch {
-        worker.start()
+        replicationControllerFactory.create(it, leaderContext, raft, coroutineContext).apply {
+          start()
+        }
       }
     }
 

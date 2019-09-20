@@ -11,7 +11,7 @@ import java.util.concurrent.Future
  */
 fun main() {
   val stub = ElkdClientServiceGrpc.newFutureStub(
-      ManagedChannelBuilder.forAddress("localhost", 9004).usePlaintext().build()
+      ManagedChannelBuilder.forAddress("localhost", 9003).usePlaintext().build()
   )
 
   var count = 0

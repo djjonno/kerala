@@ -38,17 +38,7 @@ To create a elkd cluster with 4 nodes, run the docker-compose configuration:
 $ docker-compose up
 ```
 
-#### Docs
-- [client docs (wip)](https://github.com/djjonno/elkd/wiki/Client-Docs)
-- [server-docs (wip)](https://github.com/djjonno/elkd/wiki/Server-Docs)
-
 ---
 
 *an open source project by [@djjonno](https://github.com/djjonno)*
 
-[x] add timeout to client request controller
-[x] add cluster state change notification to clientrequestcontroller
-[x] reject commands to non leader nodes
-[] add @system log listeners
-[] add support for batched appendEntries
-[] bug: commitIndex is higher than lastIndex of replicated node.

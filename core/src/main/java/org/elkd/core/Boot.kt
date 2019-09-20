@@ -10,7 +10,7 @@ import org.elkd.core.log.InMemoryLog
 import org.elkd.core.log.LogFacade
 import org.elkd.core.log.LogInvoker
 import org.elkd.core.runtime.FireHoseStream
-import org.elkd.core.runtime.client.ClientModule
+import org.elkd.core.runtime.client.RuntimeModule
 import org.elkd.core.runtime.client.command.CommandExecutor
 import org.elkd.core.runtime.client.command.CommandRouter
 import org.elkd.core.runtime.client.consumer.SystemConsumer
@@ -95,19 +95,21 @@ fun main(args: Array<String>) {
     add(Topic.Reserved.SYSTEM_TOPIC)
   }
   val topicGateway = TopicGateway()
-  val clientModule = ClientModule(topicRegistry, topicGateway)
-  val fireHose = FireHoseStream(clientModule)
+  val runtimeModule = RuntimeModule(topicRegistry, topicGateway)
+  val fireHose = FireHoseStream(runtimeModule)
   logFacade.registerListener(fireHose.Listener())
-  topicGateway.registerConsumer(Topic.Reserved.SYSTEM_TOPIC, SystemConsumer(clientModule))
+  topicGateway.registerConsumer(Topic.Reserved.SYSTEM_TOPIC, SystemConsumer(runtimeModule))
 
   val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule))))
 
   try {
-    Runtime.getRuntime().addShutdownHook(Thread(Runnable { boot.shutdown() }))
-    boot.start()
-    boot.awaitTermination()
+    with (boot) {
+      Runtime.getRuntime().addShutdownHook(Thread(Runnable { shutdown() }))
+      start()
+      awaitTermination()
+    }
   } catch (e: Exception) {
-    logger.error(e)
+    logger.error("0_o, shutting down: ${e.message}")
   }
 }
 

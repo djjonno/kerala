@@ -2,7 +2,7 @@ package org.elkd.core.runtime.client.consumer
 
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.runtime.client.ClientModule
+import org.elkd.core.runtime.client.RuntimeModule
 import org.elkd.core.runtime.client.command.Command
 import org.elkd.core.runtime.topic.Topic
 
@@ -23,7 +23,7 @@ import org.elkd.core.runtime.topic.Topic
  * be some kind of systemic error as opposed to an invalid
  * state of some sorts.
  */
-class SystemConsumer(val clientModule: ClientModule) : Consumer {
+class SystemConsumer(val runtimeModule: RuntimeModule) : Consumer {
   override fun consume(index: Long, entry: Entry) {
     logger.info("consuming system entry -> $entry")
 
@@ -38,9 +38,9 @@ class SystemConsumer(val clientModule: ClientModule) : Consumer {
   }
 
   private fun createTopic(kvs: Map<String, String>) {
-    clientModule.topicRegistry.add(Topic(kvs["namespace"]!!))
+    runtimeModule.topicRegistry.add(Topic(kvs["namespace"]!!))
 
-    logger.info(clientModule.topicRegistry)
+    logger.info(runtimeModule.topicRegistry)
   }
 
   companion object {
