@@ -2,7 +2,7 @@ package org.elkd.core.runtime.client.consumer
 
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.runtime.client.RuntimeModule
+import org.elkd.core.runtime.RuntimeModule
 import org.elkd.core.runtime.client.command.Command
 import org.elkd.core.runtime.topic.Topic
 
@@ -38,8 +38,7 @@ class SystemConsumer(val runtimeModule: RuntimeModule) : Consumer {
   }
 
   private fun createTopic(kvs: Map<String, String>) {
-    runtimeModule.topicRegistry.add(Topic(kvs["namespace"]!!))
-
+//    runtimeModule.topicRegistry.add(Topic(kvs["namespace"]!!))
     logger.info(runtimeModule.topicRegistry)
   }
 

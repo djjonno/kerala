@@ -2,6 +2,7 @@ package org.elkd.core.log
 
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.log.commands.LogCommand
+import org.elkd.core.log.ds.Log
 import org.elkd.shared.annotations.Mockable
 
 @Mockable

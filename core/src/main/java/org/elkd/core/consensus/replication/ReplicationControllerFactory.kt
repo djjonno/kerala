@@ -1,6 +1,6 @@
 package org.elkd.core.consensus.replication
 
-import org.elkd.core.consensus.LeaderContext
+import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.server.cluster.Node
 import kotlin.coroutines.CoroutineContext

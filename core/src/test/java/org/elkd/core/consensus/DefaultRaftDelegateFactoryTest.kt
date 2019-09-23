@@ -1,6 +1,11 @@
 package org.elkd.core.consensus
 
 import org.elkd.core.config.ConfigProvider
+import org.elkd.core.consensus.states.candidate.RaftCandidateState
+import org.elkd.core.consensus.states.follower.RaftFollowerState
+import org.elkd.core.consensus.states.leader.RaftLeaderState
+import org.elkd.core.consensus.states.RaftStateFactory
+import org.elkd.core.consensus.states.State
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

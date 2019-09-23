@@ -2,7 +2,6 @@ package org.elkd.core.runtime.client.command
 
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.KV
-import org.elkd.core.runtime.topic.Topic
 
 /**
  * Command
@@ -17,7 +16,7 @@ class Command(val command: Type,
   }
 
   fun asEntry(term: Int): Entry {
-    val builder = Entry.builder(term, Topic.Reserved.SYSTEM_TOPIC.namespace)
+    val builder = Entry.builder(term)
         .addKV(KV(KEY_COMMAND, command.id));
     args.forEach { pair ->
       builder.addKV(KV(pair.first, pair.second))

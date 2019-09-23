@@ -1,6 +1,7 @@
 package org.elkd.core.consensus
 
 import org.elkd.core.consensus.messages.Request
+import org.elkd.core.consensus.states.State
 
 /**
  * Define a check to perform prior to delegation.

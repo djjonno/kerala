@@ -1,11 +1,14 @@
-package org.elkd.core.consensus
+package org.elkd.core.consensus.states.leader
 
 import io.grpc.stub.StreamObserver
+import org.elkd.core.consensus.OpCategory
+import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.consensus.replication.Replicator
+import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
 import org.elkd.core.runtime.client.command.Command

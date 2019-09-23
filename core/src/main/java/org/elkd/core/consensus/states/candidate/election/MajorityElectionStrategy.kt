@@ -1,6 +1,7 @@
-package org.elkd.core.consensus.election
+package org.elkd.core.consensus.states.candidate.election
 
-import kotlin.math.round
+import org.elkd.core.consensus.states.candidate.election.ElectionStrategy
+import org.elkd.core.consensus.states.candidate.election.ElectionTally
 
 /**
  * MajorityElectionStrategy requires a majority vote to be considered

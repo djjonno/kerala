@@ -3,6 +3,9 @@ package org.elkd.core.consensus
 import com.nhaarman.mockitokotlin2.*
 import io.grpc.stub.StreamObserver
 import org.elkd.core.consensus.messages.*
+import org.elkd.core.consensus.states.RaftState
+import org.elkd.core.consensus.states.RaftStateFactory
+import org.elkd.core.consensus.states.State
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

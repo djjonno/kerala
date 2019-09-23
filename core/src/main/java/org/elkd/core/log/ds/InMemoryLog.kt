@@ -1,13 +1,22 @@
-package org.elkd.core.log
+package org.elkd.core.log.ds
 
 import com.google.common.base.Preconditions.checkNotNull
 import com.google.common.base.Preconditions.checkState
 import com.google.common.collect.ImmutableList
 import org.elkd.core.consensus.messages.Entry
+import org.elkd.core.log.CommitResult
+import org.elkd.core.log.LogEntry
+import java.util.UUID
 
 class InMemoryLog<E : LogEntry> : Log<E> {
   private val logStore: MutableList<E>
   private var index: Long = 0
+
+  /**
+   * This is a uuid used for identifying this particular log instance.
+   */
+  override val id: String = UUID.randomUUID().toString()
+
   override var commitIndex: Long = 0
 
   override val lastIndex: Long

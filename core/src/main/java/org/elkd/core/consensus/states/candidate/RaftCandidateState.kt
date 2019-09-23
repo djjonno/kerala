@@ -1,13 +1,18 @@
-package org.elkd.core.consensus
+package org.elkd.core.consensus.states.candidate
 
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.election.ElectionScheduler
+import org.elkd.core.consensus.OpCategory
+import org.elkd.core.consensus.Raft
+import org.elkd.core.consensus.TimeoutAlarm
+import org.elkd.core.consensus.states.candidate.election.ElectionScheduler
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.states.RaftState
+import org.elkd.core.consensus.states.State
 import org.elkd.shared.annotations.Mockable
 
 @Mockable

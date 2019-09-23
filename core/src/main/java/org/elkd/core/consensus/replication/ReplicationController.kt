@@ -3,7 +3,7 @@ package org.elkd.core.consensus.replication
 import kotlinx.coroutines.delay
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.LeaderContext
+import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse

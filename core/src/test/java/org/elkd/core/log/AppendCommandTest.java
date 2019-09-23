@@ -3,6 +3,7 @@ package org.elkd.core.log;
 import com.google.common.collect.ImmutableList;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.log.commands.AppendCommand;
+import org.elkd.core.log.ds.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

@@ -2,7 +2,7 @@ package org.elkd.core.consensus.replication
 
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.runBlocking
-import org.elkd.core.consensus.LeaderContext
+import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.server.cluster.ClusterSet
 import org.elkd.core.server.cluster.Node

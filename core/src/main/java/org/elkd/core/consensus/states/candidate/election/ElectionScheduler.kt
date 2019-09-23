@@ -1,4 +1,4 @@
-package org.elkd.core.consensus.election
+package org.elkd.core.consensus.states.candidate.election
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

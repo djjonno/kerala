@@ -4,7 +4,7 @@ import kotlinx.coroutines.*
 import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.LeaderContext
+import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.CommitCommand

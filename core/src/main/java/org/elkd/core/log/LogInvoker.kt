@@ -1,11 +1,15 @@
 package org.elkd.core.log
 
+import org.elkd.core.log.ds.Log
 import org.elkd.shared.annotations.Mockable
 import java.util.HashSet
 
 @Mockable
 class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
   private val listeners = HashSet<LogChangeListener<E>>()
+
+  override val id: String
+    get() = log.id
 
   override val commitIndex: Long
     get() = log.commitIndex

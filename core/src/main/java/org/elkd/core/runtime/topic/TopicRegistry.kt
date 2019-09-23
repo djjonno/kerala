@@ -16,21 +16,20 @@ class TopicRegistry {
 
   fun remove(topic: Topic) {
     get(topic)?.apply {
-      registry.remove(this.namespace)
+      registry.remove(namespace)
       logger.info("topic removed: $topic")
     }
   }
 
   fun get(name: String): Topic? = registry.get(name)
+
   fun get(topic: Topic): Topic? = get(topic.namespace)
 
-  fun toList(): List<Topic> {
-    return registry.entries.map { it.value }
-  }
+  fun has(name: String): Boolean = registry.containsKey(name)
 
-  override fun toString(): String {
-    return "TopicRegistry($registry)"
-  }
+  fun toList() = registry.entries.map { it.value }
+
+  override fun toString() = "TopicRegistry($registry)"
 
   companion object {
     private var logger = Logger.getLogger(TopicRegistry::class.java)

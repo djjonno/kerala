@@ -3,7 +3,7 @@ package org.elkd.core.consensus.replication
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.log.Log
+import org.elkd.core.log.ds.Log
 import kotlin.math.max
 import kotlin.math.min
 

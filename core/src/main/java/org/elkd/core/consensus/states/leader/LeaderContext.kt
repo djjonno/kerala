@@ -1,4 +1,4 @@
-package org.elkd.core.consensus
+package org.elkd.core.consensus.states.leader
 
 import com.google.common.base.Preconditions
 import org.elkd.core.server.cluster.Node

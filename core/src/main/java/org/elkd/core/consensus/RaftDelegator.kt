@@ -8,6 +8,9 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.Request
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.states.RaftState
+import org.elkd.core.consensus.states.RaftStateFactory
+import org.elkd.core.consensus.states.State
 import org.elkd.core.runtime.NotificationCenter
 import org.elkd.shared.annotations.Mockable
 import java.util.concurrent.ExecutorService

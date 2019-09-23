@@ -1,6 +1,7 @@
 package org.elkd.core.consensus;
 
 import com.google.common.collect.ImmutableSet;
+import org.elkd.core.consensus.states.leader.LeaderContext;
 import org.elkd.core.server.cluster.Node;
 import org.junit.Before;
 import org.junit.Test;

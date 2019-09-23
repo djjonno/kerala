@@ -1,6 +1,10 @@
-package org.elkd.core.log
+package org.elkd.core.log.ds
+
+import org.elkd.core.log.CommitResult
+import org.elkd.core.log.LogEntry
 
 interface Log<E : LogEntry> {
+  val id: String
   val commitIndex: Long
   val lastIndex: Long
   val lastEntry: E

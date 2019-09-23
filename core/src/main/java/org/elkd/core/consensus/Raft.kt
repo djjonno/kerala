@@ -3,7 +3,9 @@ package org.elkd.core.consensus
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.Request
-import org.elkd.core.log.Log
+import org.elkd.core.consensus.states.RaftStateFactory
+import org.elkd.core.consensus.states.State
+import org.elkd.core.log.ds.Log
 import org.elkd.core.log.LogCommandExecutor
 import org.elkd.core.log.LogFacade
 import org.elkd.core.server.cluster.ClusterMessenger
