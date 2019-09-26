@@ -1,5 +1,6 @@
 package org.elkd.core.consensus.states.candidate.election
 
+import org.apache.log4j.Logger
 import org.elkd.shared.annotations.Mockable
 
 /**
@@ -19,12 +20,14 @@ class ElectionTally(val expectedVotes: Int) {
 
   fun recordUpVote(id: String) {
     if (checkAndIncrement(id)) {
+      LOGGER.info("up vote recorded; voter $id")
       upVotes++
     }
   }
 
   fun recordDownVote(id: String) {
     if (checkAndIncrement(id)) {
+      LOGGER.info("down vote recorded; voter $id")
       downVotes++
     }
   }
@@ -37,5 +40,9 @@ class ElectionTally(val expectedVotes: Int) {
 
   override fun toString(): String {
     return "ElectionTally(expectedVotes=$expectedVotes, votes=$votes, upVotes=$upVotes, downVotes=$downVotes)"
+  }
+
+  private companion object {
+    var LOGGER = Logger.getLogger(ElectionTally::class.java)
   }
 }

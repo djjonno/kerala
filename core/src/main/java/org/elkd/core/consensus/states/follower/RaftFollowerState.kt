@@ -4,11 +4,16 @@ import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.RaftException
 import org.elkd.core.consensus.OpCategory
 import org.elkd.core.consensus.Raft
+import org.elkd.core.consensus.RaftException
 import org.elkd.core.consensus.TimeoutAlarm
-import org.elkd.core.consensus.messages.*
+import org.elkd.core.consensus.messages.AppendEntriesRequest
+import org.elkd.core.consensus.messages.AppendEntriesResponse
+import org.elkd.core.consensus.messages.RequestVoteRequest
+import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.messages.replyAppendEntries
+import org.elkd.core.consensus.messages.replyRequestVote
 import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.consensus.states.State
 import org.elkd.core.log.LogChangeReason
@@ -89,7 +94,6 @@ constructor(private val raft: Raft,
         raft.raftContext.votedFor !in listOf(null, request.candidateId) ||
         !isRequestLogLatest(request)) {
       replyRequestVote(raft.raftContext, false, stream)
-      LOGGER.info("no vote to ${request.candidateId}")
       return
     }
 
@@ -98,7 +102,6 @@ constructor(private val raft: Raft,
       currentTerm = request.term
     }
     replyRequestVote(raft.raftContext, true, stream)
-    LOGGER.info("yes vote to ${request.candidateId}")
   }
 
   private fun isRequestLogLatest(request: RequestVoteRequest): Boolean {
@@ -112,19 +115,19 @@ constructor(private val raft: Raft,
      * request term must equal to or greater than raftContext.currentTerm, invalid.
      */
     if (request.term < raft.raftContext.currentTerm) {
-      throw RaftException("Term mismatch. Validation Failed: requestTerm: ${request.term}, currentTerm:${raft.raftContext.currentTerm}")
+      throw RaftException("Term mismatch (requestTerm: ${request.term}, currentTerm:${raft.raftContext.currentTerm})")
     }
 
     /*
      * If no LOGGER at previous index, we are missing an entry and this is invalid.
      */
-    val prevEntry = raft.log.read(request.prevLogIndex) ?: throw RaftException("No Entry at prevLogIndex: ${request.prevLogIndex}")
+    val prevEntry = raft.log.read(request.prevLogIndex) ?: throw RaftException("No entry @ ${request.prevLogIndex}")
 
     /*
      * If previous entry of request term does not match this LOGGER previous LOGGER entry term, invalid.
      */
     if (request.prevLogTerm != prevEntry.term) {
-      throw RaftException("Entry.term mismatch. Validation Failed: prevLogIndex: ${request.prevLogIndex}, request: ${request.prevLogTerm}, prevEntry: ${prevEntry.term}")
+      throw RaftException("Entry.term mismatch (prevLogIndex: ${request.prevLogIndex}, request: ${request.prevLogTerm}, prevEntry: ${prevEntry.term})")
     }
   }
 
