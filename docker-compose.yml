@@ -6,24 +6,48 @@ version: "2"
 services:
   elkd-1:
     build: ./
-    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9001 --host elkd-1
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9001 --host elkd-1
     ports:
       - 9001:9001
 
   elkd-2:
     build: ./
-    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9002 --host elkd-2
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9002 --host elkd-2
     ports:
       - 9002:9002
 
   elkd-3:
     build: ./
-    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9003 --host elkd-3
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9003 --host elkd-3
     ports:
       - 9003:9003
 
   elkd-4:
     build: ./
-    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9004 --host elkd-4
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9004 --host elkd-4
     ports:
       - 9004:9004
+
+  elkd-5:
+    build: ./
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9005 --host elkd-5
+    ports:
+      - 9005:9005
+
+  elkd-6:
+    build: ./
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9006 --host elkd-6
+    ports:
+      - 9006:9006
+
+  elkd-7:
+    build: ./
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9007 --host elkd-7
+    ports:
+      - 9007:9007
+
+  elkd-8:
+    build: ./
+    command: ./bin/elkd-server --cluster-set elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004,elkd-5:9005,elkd-6:9006,elkd-7:9007,elkd-8:9008 --port 9008 --host elkd-8
+    ports:
+      - 9008:9008

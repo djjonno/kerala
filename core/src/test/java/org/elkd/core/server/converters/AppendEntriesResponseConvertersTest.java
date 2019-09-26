@@ -8,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class AppendEntriesResponseConverterTest {
+public class AppendEntriesResponseConvertersTest {
   private static final int TERM = 1;
   private static final boolean SUCCESS = true;
 
@@ -16,11 +16,11 @@ public class AppendEntriesResponseConverterTest {
   private static final RpcAppendEntriesResponse RPC_APPEND_ENTRIES_RESPONSE = RpcAppendEntriesResponse.newBuilder()
       .setTerm(TERM).setSuccess(SUCCESS).build();
 
-  private AppendEntriesResponseConverter mUnitUnderTest;
+  private AppendEntriesResponseConverters mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
-    mUnitUnderTest = new AppendEntriesResponseConverter();
+    mUnitUnderTest = new AppendEntriesResponseConverters();
   }
 
   @Test

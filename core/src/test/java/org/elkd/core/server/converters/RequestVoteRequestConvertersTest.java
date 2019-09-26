@@ -8,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class RequestVoteRequestConverterTest {
+public class RequestVoteRequestConvertersTest {
   private static final int TERM = 1;
   private static final String CANDIDATE_ID = "candidateId";
   private static final int LAST_LOG_INDEX = 2;
@@ -18,11 +18,11 @@ public class RequestVoteRequestConverterTest {
       .builder(TERM, CANDIDATE_ID, LAST_LOG_INDEX, LAST_LOG_TERM).build();
   private static final RpcRequestVoteRequest RPC_REQUEST_VOTE_REQUEST = RpcRequestVoteRequest.newBuilder()
       .setTerm(TERM).setCandidateId(CANDIDATE_ID).setLastLogIndex(LAST_LOG_INDEX).setLastLogTerm(LAST_LOG_TERM).build();
-  private RequestVoteRequestConverter mUnitUnderTest;
+  private RequestVoteRequestConverters mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
-    mUnitUnderTest = new RequestVoteRequestConverter();
+    mUnitUnderTest = new RequestVoteRequestConverters();
   }
 
   @Test

@@ -14,13 +14,13 @@ object NotificationCenter {
    * Channels available for pub/sub.
    */
   enum class Channel(val id: String) {
-    RAFT_STATE_CHANGE("raft-state-change")
+    CONSENSUS_STATE_CHANGE("state-change")
   }
 
   private val subscriptions: MutableMap<Channel, MutableList<Pair<Executor, Runnable>>> = mutableMapOf()
 
   fun pub(channel: Channel) {
-    log.info("pub:${channel.id}")
+    log.info("pub/${channel.id}")
     subscriptions[channel]?.forEach {
       it.first.execute(it.second)
     }
@@ -31,7 +31,7 @@ object NotificationCenter {
       subscriptions[channel] = mutableListOf()
     }
 
-    log.info("sub:${channel.id}")
+    log.info("sub/${channel.id}")
     subscriptions[channel]?.add(Pair(executor, Runnable { block(channel) }))
   }
 }

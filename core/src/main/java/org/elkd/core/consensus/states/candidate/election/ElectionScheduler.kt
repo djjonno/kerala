@@ -53,8 +53,8 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
 
   private suspend fun dispatchVoteRequest() {
     clusterMessenger.clusterSet.nodes.forEach {
-      val response = clusterMessenger.dispatch<RequestVoteResponse>(it, voteRequest)
-      handleVoteResponse(it, response?.isVoteGranted)
+      val response = clusterMessenger.dispatchRequestVote(it, voteRequest)
+      handleVoteResponse(it, response.isVoteGranted)
     }
   }
 

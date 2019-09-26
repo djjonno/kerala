@@ -2,7 +2,6 @@ package org.elkd.core.server.cluster;
 
 import io.grpc.stub.StreamObserver;
 import org.elkd.core.consensus.RaftDelegate;
-import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.RequestVoteRequest;
 import org.elkd.core.consensus.messages.RequestVoteResponse;

@@ -20,7 +20,7 @@ public class Server {
 
   private final RaftDelegate mRaftDelegate;
   private final CommandRouter mCommandRouter;
-  private final ConverterRegistry mConverterRegistry = ConverterRegistry.getInstance();
+  private final ConverterRegistry mConverterRegistry = ConverterRegistry.Companion.getInstance();
 
   public Server(@Nonnull final RaftDelegate raftDelegate,
                 @Nonnull final CommandRouter commandRouter) {

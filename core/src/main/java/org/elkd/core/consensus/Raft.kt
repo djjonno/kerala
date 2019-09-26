@@ -27,13 +27,13 @@ class Raft
 internal constructor(val config: Config,
                      val clusterMessenger: ClusterMessenger,
                      val raftContext: RaftContext,
-                     val logFacade: LogFacade<Entry>) {
+                     val logFacade: LogFacade) {
 
   val log: Log<Entry>
     get() = logFacade.log
 
   val logCommandExecutor: LogCommandExecutor<Entry>
-    get() = logFacade.logCommandExecutor
+    get() = logFacade.commandExecutor
 
   val clusterSet: ClusterSet
     get() = clusterMessenger.clusterSet

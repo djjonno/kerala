@@ -19,8 +19,8 @@ class ConsensusFacade(private val raft: Raft) {
 
   fun append(topic: String, kvs: List<KV>, onCommit: () -> Unit) {
     val entry = Entry.builder(raft.raftContext.currentTerm, topic).addAllKV(kvs).build()
-    raft.logFacade.logChangeRegistry.register(entry, LogChangeEvent.COMMIT, onCommit)
+    raft.logFacade.changeRegistry.register(entry, LogChangeEvent.COMMIT, onCommit)
     val command = AppendCommand.build(entry, LogChangeReason.CLIENT)
-    raft.logFacade.logCommandExecutor.execute(command)
+    raft.logFacade.commandExecutor.execute(command)
   }
 }

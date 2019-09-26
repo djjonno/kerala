@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class RequestVoteResponseTest {
+public class RequestVoteResponseConvertersTest {
   private static final int TERM = 0;
   private static final boolean VOTE_GRANTED = true;
 

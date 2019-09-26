@@ -1,25 +1,20 @@
 package org.elkd.core.log
 
-import org.elkd.core.log.ds.InMemoryLog
+import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.ds.Log
-import org.elkd.shared.annotations.Mockable
 
-@Mockable
-class LogFacade<E : LogEntry> constructor(val log: LogInvoker<E>) {
-  val logCommandExecutor: LogCommandExecutor<E> = LogCommandExecutor(log)
-  val logChangeRegistry: LogChangeRegistry<E> = LogChangeRegistry(log)
+class LogFacade (log: Log<Entry>) {
+  val log
+    get() = invoker
 
-  fun registerListener(listener: LogChangeListener<E>) {
-    log.registerListener(listener)
-  }
+  val commandExecutor by lazy { LogCommandExecutor(invoker) }
 
-  fun deregisterListener(listener: LogChangeListener<E>) {
-    log.deregisterListener(listener)
-  }
+  val changeRegistry by lazy { LogChangeRegistry(invoker) }
 
-  /**
-   * TODO: Remove log provided above since this will be dynamic now.
-   * New API
-   */
-  fun createLog() = LogComponents(LogInvoker(InMemoryLog()))
+  fun registerListener(listener: LogChangeListener<Entry>) = log.registerListener(listener)
+  fun deregisterListener(listener: LogChangeListener<Entry>) = log.deregisterListener(listener)
+
+  private val invoker by lazy { LogInvoker(log) }
+
+  override fun toString() = "Log(id=${log.id}, index=${log.lastIndex}, commit=${log.commitIndex})"
 }

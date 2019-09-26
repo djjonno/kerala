@@ -3,7 +3,6 @@ package org.elkd.core.consensus;
 import com.google.common.collect.ImmutableList;
 import io.grpc.stub.StreamObserver;
 import org.elkd.core.config.Config;
-import org.elkd.core.consensus.messages.AppendEntriesRequest;
 import org.elkd.core.consensus.messages.AppendEntriesResponse;
 import org.elkd.core.consensus.messages.Entry;
 import org.elkd.core.consensus.messages.RequestVoteRequest;

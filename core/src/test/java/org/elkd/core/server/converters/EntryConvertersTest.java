@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-public class EntryConverterTest {
+public class EntryConvertersTest {
   private static final int TERM = 1;
   private static final String EVENT = "topic";
   private static final String KEY = "key";
@@ -22,12 +22,12 @@ public class EntryConverterTest {
 
   @Mock ConverterRegistry mConverterRegistry;
 
-  private EntryConverter mUnitUnderTest;
+  private EntryConverters mUnitUnderTest;
 
   @Before
   public void setup() throws Exception {
     MockitoAnnotations.initMocks(this);
-    mUnitUnderTest = new EntryConverter();
+    mUnitUnderTest = new EntryConverters();
   }
 
   @Test

@@ -1,14 +1,13 @@
 package org.elkd.core.runtime.topic
 
-import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.log.LogFacade
+import org.elkd.core.log.LogFactory
 
-class TopicFactory(private val logFacade: LogFacade<Entry>) {
+class TopicFactory(private val logFactory: LogFactory) {
 
   /**
    * Create a new topic and backing log.
    *
-   * @param Topic topic to provision
+   * @param namespace name of topic to provision
    */
-  fun create(namespace: String) = Topic(namespace, logFacade.createLog())
+  fun create(namespace: String) = Topic(namespace, logFactory.createLog())
 }

@@ -6,7 +6,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
-import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.OpCategory
@@ -27,7 +26,7 @@ class CommandExecutor(private val consensusFacade: ConsensusFacade) : CoroutineS
 
   private fun initListener() {
     NotificationCenter.sub(
-        NotificationCenter.Channel.RAFT_STATE_CHANGE,
+        NotificationCenter.Channel.CONSENSUS_STATE_CHANGE,
         Pools.clientCommandThreadPool
     ) {
       checkUnsupportedBundles(consensusFacade.supportedOperations)

@@ -9,7 +9,6 @@ import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.server.cluster.exceptions.NodeNotFoundException
-import org.elkd.core.server.converters.ConverterRegistry
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
 import org.junit.Before

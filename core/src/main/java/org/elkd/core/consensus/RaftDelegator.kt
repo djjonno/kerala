@@ -62,7 +62,7 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
       delegate?.on()
       postHook()
       log.info("state activated: $delegate")
-      NotificationCenter.pub(NotificationCenter.Channel.RAFT_STATE_CHANGE)
+      NotificationCenter.pub(NotificationCenter.Channel.CONSENSUS_STATE_CHANGE)
     }
   }
 

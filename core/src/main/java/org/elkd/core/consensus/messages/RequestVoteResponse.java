@@ -37,7 +37,7 @@ public class RequestVoteResponse {
 
   @Override
   public String toString() {
-    return "RequestVoteResponse{" +
+    return "RequestVoteResponseConverters{" +
         "mTerm=" + mTerm +
         ", mVoteGranted=" + mVoteGranted +
         '}';

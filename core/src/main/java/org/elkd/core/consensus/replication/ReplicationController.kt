@@ -45,10 +45,8 @@ class ReplicationController(val target: Node,
     /* determine next entries to replicate */
     val nextIndex = leaderContext.getNextIndex(target)
     val request = replicatorStrategy.generateRequest(nextIndex)
-    raft.clusterMessenger.dispatch<AppendEntriesResponse>(
-        target,
-        request,
-        { response -> handleResponse(request, response, nextIndex) })
+    val response = raft.clusterMessenger.dispatchAppendEntries(target, request)
+    handleResponse(request, response, nextIndex)
   }
 
   private fun handleResponse(request: AppendEntriesRequest, response: AppendEntriesResponse, nextIndex: Long) {
@@ -64,12 +62,12 @@ class ReplicationController(val target: Node,
 
   private suspend fun sendHeartbeat() {
     with(raft) {
-      clusterMessenger.dispatch<AppendEntriesResponse>(target, AppendEntriesRequest.builder(
-          raftContext.currentTerm,
-          log.lastEntry.term,
-          log.lastIndex,
-          clusterSet.localNode.id,
-          log.commitIndex).build())
+      clusterMessenger.dispatchAppendEntries(target, AppendEntriesRequest(
+          term = raftContext.currentTerm,
+          prevLogTerm = log.lastEntry.term,
+          prevLogIndex = log.lastIndex,
+          leaderId = clusterSet.localNode.id,
+          leaderCommit = log.commitIndex))
     }
   }
 

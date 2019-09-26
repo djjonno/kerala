@@ -32,15 +32,14 @@ class ReplicatorStrategy(private val raft: Raft) {
   private fun generateRequest(nextIndex: Long, entries: List<Entry>): AppendEntriesRequest {
     val prevLogIndex = max(0, nextIndex - 1)
     val prevLogTerm = log.read(prevLogIndex)?.term!!
-    return AppendEntriesRequest.builder(
-        raft.raftContext.currentTerm,
-        prevLogTerm,
-        prevLogIndex,
-        raft.clusterSet.localNode.id,
-        log.commitIndex
+    return AppendEntriesRequest(
+        term = raft.raftContext.currentTerm,
+        prevLogTerm = prevLogTerm,
+        prevLogIndex = prevLogIndex,
+        leaderId = raft.clusterSet.localNode.id,
+        leaderCommit = log.commitIndex,
+        entries = entries
     )
-        .withEntries(entries)
-        .build()
   }
 
   private fun hasNewEntries(nextIndex: Long): Boolean {
