@@ -3,10 +3,10 @@ package org.elkd.core.consensus.replication
 import kotlinx.coroutines.delay
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
+import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.server.cluster.Node
 import org.elkd.shared.annotations.Mockable
 import kotlin.math.max
@@ -26,7 +26,7 @@ class ReplicationController(val target: Node,
   private val broadcastInterval: Long
 
   init {
-    log.info("Replication target $target")
+    LOGGER.info("Replication target $target")
     broadcastInterval = raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS)
   }
 
@@ -45,8 +45,9 @@ class ReplicationController(val target: Node,
     /* determine next entries to replicate */
     val nextIndex = leaderContext.getNextIndex(target)
     val request = replicatorStrategy.generateRequest(nextIndex)
-    val response = raft.clusterMessenger.dispatchAppendEntries(target, request)
-    handleResponse(request, response, nextIndex)
+    raft.clusterMessenger.dispatchAppendEntries(target, request, onSuccess = { response ->
+      handleResponse(request, response, nextIndex)
+    })
   }
 
   private fun handleResponse(request: AppendEntriesRequest, response: AppendEntriesResponse, nextIndex: Long) {
@@ -62,16 +63,17 @@ class ReplicationController(val target: Node,
 
   private suspend fun sendHeartbeat() {
     with(raft) {
-      clusterMessenger.dispatchAppendEntries(target, AppendEntriesRequest(
+      val message = AppendEntriesRequest(
           term = raftContext.currentTerm,
           prevLogTerm = log.lastEntry.term,
           prevLogIndex = log.lastIndex,
           leaderId = clusterSet.localNode.id,
-          leaderCommit = log.commitIndex))
+          leaderCommit = log.commitIndex)
+      clusterMessenger.dispatchAppendEntries(target, message)
     }
   }
 
   companion object {
-    private val log = Logger.getLogger(ReplicationController::class.java)
+    private val LOGGER = Logger.getLogger(ReplicationController::class.java)
   }
 }

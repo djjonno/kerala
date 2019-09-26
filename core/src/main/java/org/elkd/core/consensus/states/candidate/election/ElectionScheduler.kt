@@ -6,7 +6,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.RequestVoteRequest
-import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.Node
 import kotlin.coroutines.CoroutineContext
@@ -36,7 +35,7 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
 
   fun schedule() {
     if (scheduled) return
-    LOG.info("Scheduling a new election with $voteRequest")
+    LOGGER.info("Scheduling a new election with $voteRequest")
 
     scheduled = true
 
@@ -53,8 +52,9 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
 
   private suspend fun dispatchVoteRequest() {
     clusterMessenger.clusterSet.nodes.forEach {
-      val response = clusterMessenger.dispatchRequestVote(it, voteRequest)
-      handleVoteResponse(it, response.isVoteGranted)
+      clusterMessenger.dispatchRequestVote(it, voteRequest, onSuccess = { response ->
+        handleVoteResponse(it, response.isVoteGranted)
+      })
     }
   }
 
@@ -72,11 +72,11 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
     if (!finished && electionStrategy.isComplete(electionTally)) {
       when (electionStrategy.isSuccessful(electionTally)) {
         true -> {
-          LOG.info("Successful election $electionTally")
+          LOGGER.info("Successful election $electionTally")
           onSuccess()
         }
         false -> {
-          LOG.info("Unsuccessful election $electionTally")
+          LOGGER.info("Unsuccessful election $electionTally")
           onFailure()
         }
       }
@@ -85,7 +85,7 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
   }
 
   companion object {
-    private val LOG = Logger.getLogger(ElectionScheduler::class.java.name)
+    private val LOGGER = Logger.getLogger(ElectionScheduler::class.java.name)
     @JvmStatic fun create(voteRequest: RequestVoteRequest,
                           onSuccess: () -> Unit,
                           onFailure: () -> Unit,

@@ -17,6 +17,7 @@ import org.elkd.core.server.converters.Converter
 import org.elkd.core.server.converters.ConverterRegistry
 import org.elkd.core.server.converters.RequestVoteConverters
 import org.elkd.shared.annotations.Mockable
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
@@ -29,27 +30,49 @@ class ClusterMessenger (private val clusterConnectionPool: ClusterConnectionPool
   override val coroutineContext: CoroutineContext
     get() = Job() + Dispatchers.IO
 
-  suspend fun dispatchAppendEntries(node: Node, message: AppendEntriesRequest): AppendEntriesResponse {
+  suspend fun dispatchAppendEntries(node: Node,
+                                    message: AppendEntriesRequest,
+                                    onSuccess: (response: AppendEntriesResponse) -> Unit = {},
+                                    onFailure: (e: Exception) -> Unit = {}) {
     val channel = getChannel(node)
 
-    val listenableFuture = channel.appendEntries(converterRegistry.getConverter<AppendEntriesConverters.ToRpcRequest>().convert(message))
-    return coroutineScope {
-      val response = listenableFuture.get(1, TimeUnit.SECONDS)
-      converterRegistry.getConverter<AppendEntriesConverters.FromRpcResponse>().convert(response)
+    try {
+      coroutineScope {
+        val listenableFuture = channel.appendEntries(converterRegistry.getConverter<AppendEntriesConverters.ToRpcRequest>().convert(message))
+        val response = listenableFuture.get(1, TimeUnit.SECONDS)
+        onSuccess(converterRegistry.getConverter<AppendEntriesConverters.FromRpcResponse>().convert(response))
+      }
+    } catch (e: Exception) {
+      /* cluster messaging is best effort */
+      LOGGER.info("node unreachable: $node")
+      onFailure(e)
     }
   }
 
-  suspend fun dispatchRequestVote(node: Node, message: RequestVoteRequest): RequestVoteResponse {
+  suspend fun dispatchRequestVote(node: Node,
+                                  message: RequestVoteRequest,
+                                  onSuccess: (response: RequestVoteResponse) -> Unit = {},
+                                  onFailure: (e: Exception) -> Unit = {}) {
     val channel = getChannel(node)
 
-    val listenableFuture = channel.requestVote(converterRegistry.getConverter<RequestVoteConverters.ToRpcRequest>().convert(message))
-    return coroutineScope {
-      val response = listenableFuture.get(1, TimeUnit.SECONDS)
-      converterRegistry.getConverter<RequestVoteConverters.FromRpcResponse>().convert(response)
+    try {
+      coroutineScope {
+        val listenableFuture = channel.requestVote(converterRegistry.getConverter<RequestVoteConverters.ToRpcRequest>().convert(message))
+        val response = listenableFuture.get(1, TimeUnit.SECONDS)
+        onSuccess(converterRegistry.getConverter<RequestVoteConverters.FromRpcResponse>().convert(response))
+      }
+    } catch (e: Exception) {
+      /* cluster messaging is best effort */
+      LOGGER.info("node unreachable: $node")
+      onFailure(e)
     }
   }
 
   private fun getChannel(node: Node): ClusterConnectionPool.Channel {
     return (clusterConnectionPool.getChannel(node) ?: throw NodeNotFoundException())
+  }
+
+  private companion object {
+    var LOGGER = Logger.getLogger(ClusterMessenger::class.java)
   }
 }

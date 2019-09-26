@@ -33,8 +33,10 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
-    stream.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
-    stream.onCompleted()
+    with(stream) {
+      onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
+      onCompleted()
+    }
   }
 
   override fun delegateRequestVote(request: RequestVoteRequest,
@@ -42,8 +44,10 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
     /* If term > currentTerm, Raft will always transition to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
-    stream.onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())
-    stream.onCompleted()
+    with(stream) {
+      onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())
+      onCompleted()
+    }
   }
 
   private fun broadcastLeaderChange() {

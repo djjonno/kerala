@@ -28,7 +28,7 @@ class Replicator @JvmOverloads constructor (
    * parent job/context.
    */
   override val coroutineContext: CoroutineContext
-    get() = job + Pools.replicationThreadPool
+    get() = job + Pools.replicationThreadPool.asCoroutineDispatcher()
 
   fun start() {
     logger.info("Initiating replication across ${raft.clusterSet}")

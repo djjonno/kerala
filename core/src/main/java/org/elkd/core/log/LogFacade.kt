@@ -8,7 +8,6 @@ class LogFacade (log: Log<Entry>) {
     get() = invoker
 
   val commandExecutor by lazy { LogCommandExecutor(invoker) }
-
   val changeRegistry by lazy { LogChangeRegistry(invoker) }
 
   fun registerListener(listener: LogChangeListener<Entry>) = log.registerListener(listener)
