@@ -250,7 +250,7 @@ public class RaftFollowerStateTest {
     final Entry entry = mock(Entry.class);
     final long lastLogIndex = 1;
     final int lastLogTerm = 1;
-    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.builder(term, candidateId, lastLogIndex + 1, lastLogTerm).build();
+    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.Companion.builder(term, candidateId, lastLogIndex + 1, lastLogTerm).build();
     doReturn(term - 1)
         .when(mRaftContext)
         .getCurrentTerm();
@@ -284,7 +284,7 @@ public class RaftFollowerStateTest {
     final Entry entry = mock(Entry.class);
     final long lastLogIndex = 1;
     final int lastLogTerm = 1;
-    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.builder(term, candidateId, lastLogIndex + 1, lastLogTerm).build();
+    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.Companion.builder(term, candidateId, lastLogIndex + 1, lastLogTerm).build();
     doReturn(term - 1)
         .when(mRaftContext)
         .getCurrentTerm();
@@ -319,7 +319,7 @@ public class RaftFollowerStateTest {
     final Entry entry = mock(Entry.class);
     final long lastLogIndex = 1;
     final int lastLogTerm = 1;
-    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.builder(term, otherCandidateId, lastLogIndex + 1, lastLogTerm).build();
+    final RequestVoteRequest requestVoteRequest = RequestVoteRequest.Companion.builder(term, otherCandidateId, lastLogIndex + 1, lastLogTerm).build();
     doReturn(term - 1)
         .when(mRaftContext)
         .getCurrentTerm();

@@ -46,7 +46,7 @@ class RaftCandidateState(private val raft: Raft,
     /* If term > currentTerm, Raft will always transition to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
-    stream.onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
+    stream.onNext(AppendEntriesResponse(raft.raftContext.currentTerm, false))
     stream.onCompleted()
   }
 
@@ -55,7 +55,7 @@ class RaftCandidateState(private val raft: Raft,
     /* If term > currentTerm, Raft will always transition to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
-    stream.onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())
+    stream.onNext(RequestVoteResponse(raft.raftContext.currentTerm, false))
     stream.onCompleted()
   }
 
@@ -77,12 +77,12 @@ class RaftCandidateState(private val raft: Raft,
   }
 
   private fun createVoteRequest(): RequestVoteRequest {
-    return RequestVoteRequest.builder(
+    return RequestVoteRequest(
         raft.raftContext.currentTerm,
         raft.clusterSet.localNode.id,
         raft.log.lastIndex,
         raft.log.lastEntry.term
-    ).build()
+    )
   }
 
   companion object {

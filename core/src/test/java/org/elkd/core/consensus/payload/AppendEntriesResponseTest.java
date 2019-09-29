@@ -12,7 +12,7 @@ public class AppendEntriesResponseTest {
   @Test
   public void should_build_with_properties() {
     // Given / When
-    final AppendEntriesResponse response = AppendEntriesResponse.builder(TERM, SUCCESS).build();
+    final AppendEntriesResponse response = AppendEntriesResponse.Companion.builder(TERM, SUCCESS).build();
 
     // Then
     assertEquals(TERM, response.getTerm());

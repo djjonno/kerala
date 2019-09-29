@@ -14,7 +14,7 @@ public class RequestVoteRequestConvertersTest {
   private static final int LAST_LOG_INDEX = 2;
   private static final int LAST_LOG_TERM = 3;
 
-  private static final RequestVoteRequest REQUEST_VOTE_REQUEST = RequestVoteRequest
+  private static final RequestVoteRequest REQUEST_VOTE_REQUEST = RequestVoteRequest.Companion
       .builder(TERM, CANDIDATE_ID, LAST_LOG_INDEX, LAST_LOG_TERM).build();
   private static final RpcRequestVoteRequest RPC_REQUEST_VOTE_REQUEST = RpcRequestVoteRequest.newBuilder()
       .setTerm(TERM).setCandidateId(CANDIDATE_ID).setLastLogIndex(LAST_LOG_INDEX).setLastLogTerm(LAST_LOG_TERM).build();

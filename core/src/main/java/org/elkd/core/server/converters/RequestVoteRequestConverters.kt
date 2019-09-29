@@ -19,12 +19,12 @@ class RequestVoteConverters {
 
   class FromRpcRequest : Converter<RpcRequestVoteRequest, RequestVoteRequest> {
     override fun convert(source: RpcRequestVoteRequest): RequestVoteRequest {
-      return RequestVoteRequest.builder(
+      return RequestVoteRequest(
           source.term,
           source.candidateId,
           source.lastLogIndex,
           source.lastLogTerm
-      ).build()
+      )
     }
   }
 
@@ -39,7 +39,7 @@ class RequestVoteConverters {
 
   class FromRpcResponse : Converter<RpcRequestVoteResponse, RequestVoteResponse> {
     override fun convert(source: RpcRequestVoteResponse): RequestVoteResponse {
-      return RequestVoteResponse.builder(source.term, source.voteGranted).build()
+      return RequestVoteResponse(source.term, source.voteGranted)
     }
   }
 }

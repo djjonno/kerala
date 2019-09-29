@@ -34,7 +34,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
     with(stream) {
-      onNext(AppendEntriesResponse.builder(raft.raftContext.currentTerm, false).build())
+      onNext(AppendEntriesResponse(raft.raftContext.currentTerm, false))
       onCompleted()
     }
   }
@@ -45,7 +45,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
     with(stream) {
-      onNext(RequestVoteResponse.builder(raft.raftContext.currentTerm, false).build())
+      onNext(RequestVoteResponse(raft.raftContext.currentTerm, false))
       onCompleted()
     }
   }

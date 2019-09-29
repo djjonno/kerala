@@ -12,7 +12,7 @@ public class RequestVoteResponseConvertersTest {
   @Test
   public void should_build_with_properties() {
     // Given / When
-    final RequestVoteResponse response = RequestVoteResponse.builder(TERM, VOTE_GRANTED).build();
+    final RequestVoteResponse response = RequestVoteResponse.Companion.builder(TERM, VOTE_GRANTED).build();
 
     // Then
     assertEquals(TERM, response.getTerm());

@@ -12,7 +12,7 @@ public class AppendEntriesResponseConvertersTest {
   private static final int TERM = 1;
   private static final boolean SUCCESS = true;
 
-  private static final AppendEntriesResponse APPEND_ENTRIES_RESPONSE = AppendEntriesResponse.builder(TERM, SUCCESS).build();
+  private static final AppendEntriesResponse APPEND_ENTRIES_RESPONSE = AppendEntriesResponse.Companion.builder(TERM, SUCCESS).build();
   private static final RpcAppendEntriesResponse RPC_APPEND_ENTRIES_RESPONSE = RpcAppendEntriesResponse.newBuilder()
       .setTerm(TERM).setSuccess(SUCCESS).build();
 

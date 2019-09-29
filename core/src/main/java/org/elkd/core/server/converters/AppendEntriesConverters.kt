@@ -49,7 +49,7 @@ class AppendEntriesConverters {
 
   class FromRpcResponse : Converter<RpcAppendEntriesResponse, AppendEntriesResponse> {
     override fun convert(source: RpcAppendEntriesResponse): AppendEntriesResponse {
-        return AppendEntriesResponse.builder(source.term, source.success).build()
+        return AppendEntriesResponse(source.term, source.success)
     }
   }
 }

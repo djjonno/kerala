@@ -14,7 +14,7 @@ public class RequestVoteRequestTest {
   @Test
   public void should_build_with_properties() {
     // Given / When
-    final RequestVoteRequest request = RequestVoteRequest.builder(
+    final RequestVoteRequest request = RequestVoteRequest.Companion.builder(
         TERM,
         CANDIDATE_ID,
         LAST_LOG_INDEX,

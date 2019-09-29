@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 public class RequestVoteResponseRpcRequestVoteResponseConvertersConverterTest {
   private static final int TERM = 1;
   private static final boolean VOTE_GRANTED = true;
-  private static final RequestVoteResponse REQUEST_VOTE_RESPONSE = RequestVoteResponse.builder(TERM, VOTE_GRANTED).build();
+  private static final RequestVoteResponse REQUEST_VOTE_RESPONSE = RequestVoteResponse.Companion.builder(TERM, VOTE_GRANTED).build();
   private static final RpcRequestVoteResponse RPC_REQUEST_VOTE_RESPONSE = RpcRequestVoteResponse
       .newBuilder().setTerm(TERM).setVoteGranted(VOTE_GRANTED).build();
 
