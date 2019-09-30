@@ -6,13 +6,14 @@ import org.elkd.core.config.Config
 import org.elkd.core.consensus.OpCategory
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.TimeoutAlarm
-import org.elkd.core.consensus.states.candidate.election.ElectionScheduler
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
+import org.elkd.core.consensus.messages.TopicTail
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.consensus.states.State
+import org.elkd.core.consensus.states.candidate.election.ElectionScheduler
 import org.elkd.shared.annotations.Mockable
 
 @Mockable
@@ -24,7 +25,7 @@ class RaftCandidateState(private val raft: Raft,
   constructor(raft: Raft) : this(
       raft,
       TimeoutAlarm {
-        log.info("election timeout reached. restarting election.")
+        LOGGER.info("election timeout reached. restarting election.")
         raft.delegator.transition(State.CANDIDATE)
       }
   )
@@ -80,12 +81,17 @@ class RaftCandidateState(private val raft: Raft,
     return RequestVoteRequest(
         raft.raftContext.currentTerm,
         raft.clusterSet.localNode.id,
-        raft.log.lastIndex,
-        raft.log.lastEntry.term
+        topicTails = raft.topicModule.topicRegistry.topics.map {
+          TopicTail(
+              topicId = it.id,
+              lastLogIndex = it.logFacade.log.lastIndex,
+              lastLogTerm = it.logFacade.log.lastEntry.term
+          )
+        }
     )
   }
 
   companion object {
-    private val log = Logger.getLogger(RaftCandidateState::class.java.name)
+    private val LOGGER = Logger.getLogger(RaftCandidateState::class.java.name)
   }
 }

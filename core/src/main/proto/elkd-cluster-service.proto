@@ -12,11 +12,12 @@ service ElkdClusterService {
 
 message RpcAppendEntriesRequest {
     uint32 term = 1;
-    string leaderId = 2;
-    uint64 prevLogIndex = 3;
-    uint32 prevLogTerm = 4;
-    repeated RpcEntry entries = 5;
-    uint64 leaderCommit = 6;
+    string topicId = 2;
+    string leaderId = 3;
+    uint64 prevLogIndex = 4;
+    uint32 prevLogTerm = 5;
+    repeated RpcEntry entries = 6;
+    uint64 leaderCommit = 7;
 }
 
 message RpcAppendEntriesResponse {
@@ -34,8 +35,13 @@ message RpcEntry {
 message RpcRequestVoteRequest {
     uint32 term = 1;
     string candidateId = 2;
-    uint64 lastLogIndex = 3;
-    uint32 lastLogTerm = 4;
+    repeated RpcLogTail logTails = 3;
+}
+
+message RpcLogTail {
+    string topicId = 1;
+    uint64 lastLogIndex = 2;
+    uint32 lastLogTerm = 3;
 }
 
 message RpcRequestVoteResponse {

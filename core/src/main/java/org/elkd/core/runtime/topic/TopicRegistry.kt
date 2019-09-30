@@ -1,37 +1,65 @@
 package org.elkd.core.runtime.topic
 
 import org.apache.log4j.Logger
+import java.util.concurrent.Executor
 
 class TopicRegistry {
   private val registry: MutableMap<String, Topic> = mutableMapOf()
 
+  val listeners = mutableSetOf<Pair<Listener, Executor>>()
+  val topics: List<Topic> get() = registry.entries.map { it.value }
+  val size = topics.size
+
   fun add(topic: Topic) {
     if (get(topic) != null) {
-      logger.warn("$topic already exists, ignoring op.")
+      LOGGER.warn("$topic already exists, ignoring op.")
       return
     }
-    registry[topic.namespace] = topic
-    logger.info("new topic registered: $topic")
+    registry[topic.id] = topic
+    notifyChange(topic, Listener.Event.ADDED)
+    LOGGER.info("new topic registered: $topic")
   }
 
   fun remove(topic: Topic) {
     get(topic)?.apply {
-      registry.remove(namespace)
-      logger.info("topic removed: $topic")
+      registry.remove(id)
+      notifyChange(this, Listener.Event.REMOVED)
+      LOGGER.info("topic removed: $topic")
     }
   }
 
-  fun get(name: String): Topic? = registry.get(name)
+  fun get(id: String): Topic? = registry[id]
+  fun get(topic: Topic): Topic? = get(topic.id)
 
-  fun get(topic: Topic): Topic? = get(topic.namespace)
+  fun registerListener(listener: Listener, executor: Executor, rewind: Boolean = false) {
+    listeners.add(Pair(listener, executor))
 
-  fun has(name: String): Boolean = registry.containsKey(name)
-
-  fun toList() = registry.entries.map { it.value }
+    if (rewind) {
+      topics.forEach { notifyChange(it, Listener.Event.ADDED) }
+    }
+  }
 
   override fun toString() = "TopicRegistry($registry)"
+  operator fun contains(topicId: String): Boolean {
+    return registry.containsKey(topicId)
+  }
+
+  private fun notifyChange(topic: Topic, event: Listener.Event) {
+    listeners.forEach {
+      it.second.execute { it.first.onChange(topic, event) }
+    }
+  }
+
+  interface Listener {
+    enum class Event {
+      ADDED,
+      REMOVED
+    }
+
+    fun onChange(topic: Topic, event: Event)
+  }
 
   companion object {
-    private var logger = Logger.getLogger(TopicRegistry::class.java)
+    private var LOGGER = Logger.getLogger(TopicRegistry::class.java)
   }
 }

@@ -9,7 +9,7 @@ import org.elkd.core.consensus.messages.KV
  * Object that can be executed by the CommandExecutor
  */
 class Command(val command: Type,
-              private val args: List<Pair<String, String>>) {
+              val args: List<Pair<String, String>>) {
 
   val kvs by lazy {
     args.map { KV(it.first, it.second) }.toList()
@@ -17,7 +17,6 @@ class Command(val command: Type,
 
   fun asEntry(term: Int): Entry {
     val builder = Entry.builder(term)
-        .addKV(KV(KEY_COMMAND, command.id));
     args.forEach { pair ->
       builder.addKV(KV(pair.first, pair.second))
     }

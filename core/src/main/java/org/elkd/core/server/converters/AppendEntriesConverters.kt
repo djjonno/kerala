@@ -15,6 +15,7 @@ class AppendEntriesConverters {
       return RpcAppendEntriesRequest.newBuilder()
           .addAllEntries(source.entries.map(converter::convert))
           .setTerm(source.term)
+          .setTopicId(source.topicId)
           .setLeaderId(source.leaderId)
           .setPrevLogTerm(source.prevLogTerm)
           .setPrevLogIndex(source.prevLogIndex)
@@ -30,6 +31,7 @@ class AppendEntriesConverters {
       val converter = converterRegistry.getConverter<EntryConverters.FromRpc>()
       return AppendEntriesRequest(
           source.term,
+          source.topicId,
           source.prevLogTerm,
           source.prevLogIndex,
           source.leaderId,

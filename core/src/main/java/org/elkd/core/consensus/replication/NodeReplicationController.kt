@@ -2,32 +2,31 @@ package org.elkd.core.consensus.replication
 
 import kotlinx.coroutines.delay
 import org.apache.log4j.Logger
-import org.elkd.core.config.Config
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.states.leader.LeaderContext
+import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.server.cluster.Node
 import org.elkd.shared.annotations.Mockable
 import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 /**
- * ReplicationController replicates the given raft state to the target {$link Node}.
+ * NodeReplicationController replicates the given raft state to the target {$link Node}.
  *
  * @see Node
  * @see Replicator
  */
 @Mockable
-class ReplicationController(val target: Node,
-                            val leaderContext: LeaderContext,
-                            val raft: Raft,
-                            private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(raft)) {
-  private val broadcastInterval: Long
-
+class NodeReplicationController(val raft: Raft,
+                                val topic: Topic,
+                                val target: Node,
+                                val leaderContext: LeaderContext,
+                                private val broadcastInterval: Long,
+                                private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(topic, raft)) {
   init {
-    LOGGER.info("Replication target $target")
-    broadcastInterval = raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS)
+    LOGGER.info("Replicating $topic -> $target")
   }
 
   suspend fun start() {
@@ -62,18 +61,19 @@ class ReplicationController(val target: Node,
   }
 
   private suspend fun sendHeartbeat() {
-    with(raft) {
+    with(topic.logFacade) {
       val message = AppendEntriesRequest(
-          term = raftContext.currentTerm,
+          term = raft.raftContext.currentTerm,
+          topicId = topic.id,
           prevLogTerm = log.lastEntry.term,
           prevLogIndex = log.lastIndex,
-          leaderId = clusterSet.localNode.id,
+          leaderId = raft.clusterSet.localNode.id,
           leaderCommit = log.commitIndex)
-      clusterMessenger.dispatchAppendEntries(target, message)
+      raft.clusterMessenger.dispatchAppendEntries(target, message)
     }
   }
 
   companion object {
-    private val LOGGER = Logger.getLogger(ReplicationController::class.java)
+    private val LOGGER = Logger.getLogger(NodeReplicationController::class.java)
   }
 }

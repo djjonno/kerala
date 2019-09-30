@@ -1,7 +1,9 @@
 package org.elkd.core.server.converters
 
+import org.elkd.core.consensus.messages.TopicTail
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.server.cluster.RpcLogTail
 import org.elkd.core.server.cluster.RpcRequestVoteRequest
 import org.elkd.core.server.cluster.RpcRequestVoteResponse
 
@@ -11,8 +13,13 @@ class RequestVoteConverters {
       return RpcRequestVoteRequest.newBuilder()
           .setTerm(source.term)
           .setCandidateId(source.candidateId)
-          .setLastLogIndex(source.lastLogIndex)
-          .setLastLogTerm(source.lastLogTerm)
+          .addAllLogTails(source.topicTails.map {
+            RpcLogTail.newBuilder()
+                .setTopicId(it.topicId)
+                .setLastLogIndex(it.lastLogIndex)
+                .setLastLogTerm(it.lastLogTerm)
+                .build()
+          })
           .build()
     }
   }
@@ -20,10 +27,15 @@ class RequestVoteConverters {
   class FromRpcRequest : Converter<RpcRequestVoteRequest, RequestVoteRequest> {
     override fun convert(source: RpcRequestVoteRequest): RequestVoteRequest {
       return RequestVoteRequest(
-          source.term,
-          source.candidateId,
-          source.lastLogIndex,
-          source.lastLogTerm
+          term = source.term,
+          candidateId = source.candidateId,
+          topicTails = source.logTailsList.map {
+            TopicTail(
+                topicId = it.topicId,
+                lastLogIndex = it.lastLogIndex,
+                lastLogTerm = it.lastLogTerm
+            )
+          }
       )
     }
   }

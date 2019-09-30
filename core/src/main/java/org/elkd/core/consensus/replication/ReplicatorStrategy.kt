@@ -4,6 +4,7 @@ import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.ds.Log
+import org.elkd.core.runtime.topic.Topic
 import kotlin.math.max
 import kotlin.math.min
 
@@ -15,15 +16,15 @@ import kotlin.math.min
  * The component is not a singleton purely for testing purposes (we want
  * to preserve the ability to mock the object and it's behavior).
  */
-class ReplicatorStrategy(private val raft: Raft) {
-  private val log: Log<Entry> = raft.log
+class ReplicatorStrategy(val topic: Topic, val raft: Raft) {
+  private val log: Log<Entry> = topic.logFacade.log
 
   fun generateRequest(nextIndex: Long): AppendEntriesRequest {
-    return if (hasNewEntries(nextIndex)) {
-      generateRequest(nextIndex, log.read(nextIndex, min(nextIndex + MAX_APPEND_ENTRIES - 1, log.lastIndex)))
+    return generateRequest(nextIndex, if (entriesReady(nextIndex)) {
+      log.read(nextIndex, min(nextIndex + MAX_APPEND_ENTRIES - 1, log.lastIndex))
     } else {
-      generateRequest(nextIndex, emptyList())
-    }
+      emptyList()
+    })
   }
 
   /*
@@ -34,6 +35,7 @@ class ReplicatorStrategy(private val raft: Raft) {
     val prevLogTerm = log.read(prevLogIndex)?.term!!
     return AppendEntriesRequest(
         term = raft.raftContext.currentTerm,
+        topicId = topic.id,
         prevLogTerm = prevLogTerm,
         prevLogIndex = prevLogIndex,
         leaderId = raft.clusterSet.localNode.id,
@@ -42,7 +44,7 @@ class ReplicatorStrategy(private val raft: Raft) {
     )
   }
 
-  private fun hasNewEntries(nextIndex: Long): Boolean {
+  private fun entriesReady(nextIndex: Long): Boolean {
     return log.lastIndex >= nextIndex
   }
 

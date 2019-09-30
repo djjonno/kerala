@@ -19,14 +19,14 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
   override fun on() {
     /* for test sake, append a new entry to the logger here so we have something to replicate */
     broadcastLeaderChange()
-    replicator = Replicator(raft, LeaderContext(raft.clusterSet.nodes, raft.log.lastIndex)).apply {
-      start()
+    replicator = Replicator(raft).apply {
+      launch()
     }
   }
 
   override fun off() {
-    /* Force-stop the replication process - we must honor the transition */
-    replicator?.stop()
+    /* Force-shutdown the replication process - we must honor the transition */
+    replicator?.shutdown()
   }
 
   override val supportedOps = setOf(OpCategory.PRODUCE, OpCategory.COMMAND, OpCategory.CONSUME)

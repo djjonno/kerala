@@ -5,11 +5,8 @@ import org.elkd.core.config.Config
 import org.elkd.core.config.ConfigProvider
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.RaftFactory
-import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.log.ds.InMemoryLog
 import org.elkd.core.log.LogFactory
-import org.elkd.core.log.LogInvoker
-import org.elkd.core.runtime.RuntimeModule
+import org.elkd.core.runtime.TopicModule
 import org.elkd.core.runtime.client.command.CommandExecutor
 import org.elkd.core.runtime.client.command.CommandRouter
 import org.elkd.core.runtime.topic.TopicFactory
@@ -20,6 +17,7 @@ import org.elkd.core.server.cluster.ClusterConnectionPool
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.ClusterUtils
 import org.elkd.core.server.cluster.StaticClusterSet
+import java.util.UUID
 
 /**
  * Platform Boot
@@ -80,21 +78,13 @@ fun main(args: Array<String>) {
   /*
    * Configure client module.
    */
-  val topicRegistry = TopicRegistry()
-  val topicGateway = TopicGateway()
-  val topicFactory = TopicFactory(LogFactory())
-  val runtimeModule = RuntimeModule(topicRegistry, topicGateway, topicFactory)
-
-  val sysLog = topicFactory.create("@system")
-  topicRegistry.add(sysLog)
+  val runtimeModule = TopicModule(TopicRegistry(), TopicGateway(), TopicFactory(LogFactory()))
 
   /*
    * Configure consensus module `Raft`.
    */
-  val consensusModule = ConsensusFacade(RaftFactory.create(config, sysLog.log, clusterMessenger))
+  val consensusModule = ConsensusFacade(RaftFactory.create(config, runtimeModule, clusterMessenger))
   val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule))))
-
-  logger.info(topicRegistry.toList())
 
   try {
     with (boot) {

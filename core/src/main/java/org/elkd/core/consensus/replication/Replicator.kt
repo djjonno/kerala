@@ -4,79 +4,63 @@ import kotlinx.coroutines.*
 import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.consensus.Raft
-import org.elkd.core.log.LogChangeReason
-import org.elkd.core.log.commands.CommitCommand
-import org.elkd.shared.util.findMajority
+import org.elkd.core.runtime.topic.Topic
+import org.elkd.core.runtime.topic.TopicRegistry.Listener
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.max
-import kotlin.system.measureTimeMillis
 
 /**
  * Replicator schedules replication of the raft context over the cluster.
  */
-class Replicator @JvmOverloads constructor (
-    private val raft: Raft,
-    private val leaderContext: LeaderContext,
-    private val replicationControllerFactory: ReplicationControllerFactory = ReplicationControllerFactory.DEFAULT) : CoroutineScope {
+class Replicator(private val raft: Raft) : CoroutineScope {
   private val job = Job()
+  private val broadcastInterval = raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS)
 
   /**
    * There are a number of co-routines created in this module. To prevent leakage
    * when the Replicator is no longer needed, the consumer can simply cancel the
    * parent job/context.
    */
+  private val threadPool = Pools.replicationThreadPool
   override val coroutineContext: CoroutineContext
-    get() = job + Pools.replicationThreadPool.asCoroutineDispatcher()
+    get() = job + threadPool.asCoroutineDispatcher()
 
-  fun start() {
-    logger.info("Initiating replication across ${raft.clusterSet}")
-
-    /* launch replication workers to own replication for each specific target */
-    raft.clusterSet.nodes.forEach {
-      launch {
-        replicationControllerFactory.create(it, leaderContext, raft, coroutineContext).apply {
-          start()
-        }
-      }
-    }
-
-    launch {
-      updateReplicationProgress()
-    }
+  fun launch() {
+    LOGGER.info("Launching replicator")
+    raft.topicModule.topicRegistry.registerListener(Launcher(), threadPool, rewind = true)
   }
 
-  private suspend fun updateReplicationProgress() {
-    while (true) {
-      delay(max(raft.config.getAsLong(Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS) - measureTimeMillis {
-        commitCheck()
-      }, 0))
-    }
-  }
-
-  private fun commitCheck() {
-    val list = raft.clusterSet.nodes.map {
-      leaderContext.getMatchIndex(it)
-    }.toList() + raft.log.lastIndex
-
-    logger.info("cluster status($list)")
-
-    val majority = findMajority(list)?.toLong()
-    majority?.apply {
-      if (this > raft.log.commitIndex &&
-          raft.log.read(this)?.term == raft.raftContext.currentTerm) {
-        logger.info("majority @ index:$this w/ matching term –> committing to $this")
-        raft.logCommandExecutor.execute(CommitCommand.build(this, LogChangeReason.REPLICATION))
-      }
-    }
-  }
-
-  fun stop() {
+  /**
+   * Will kill all controllers.
+   */
+  fun shutdown() {
     job.cancel()
   }
 
+  private inner class Launcher : Listener {
+    private val controllers = mutableMapOf<Topic, GroupedNodeReplicationController>()
+
+    override fun onChange(topic: Topic, event: Listener.Event) {
+      when (event) {
+        Listener.Event.ADDED -> launch(topic)
+        Listener.Event.REMOVED -> shutdown(topic)
+      }
+    }
+
+    private fun launch(topic: Topic) {
+      // if controller already exists, kill it
+      controllers[topic]?.shutdown()
+      controllers[topic] = GroupedNodeReplicationController(raft, topic, raft.clusterSet, broadcastInterval).also {
+        launch { it.launchController() }
+      }
+    }
+
+    private fun shutdown(topic: Topic) {
+      controllers[topic]?.shutdown()
+    }
+  }
+
   companion object {
-    private val logger = Logger.getLogger(Replicator::class.java)
+    private val LOGGER = Logger.getLogger(Replicator::class.java)
   }
 }

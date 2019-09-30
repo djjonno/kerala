@@ -19,6 +19,7 @@ import org.elkd.core.consensus.states.State
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendFromCommand
 import org.elkd.core.log.commands.CommitCommand
+import org.elkd.core.runtime.topic.Topic
 import org.elkd.shared.annotations.Mockable
 import org.elkd.shared.math.randomizeNumberPoint
 import kotlin.math.min
@@ -51,12 +52,10 @@ constructor(private val raft: Raft,
                                      stream: StreamObserver<AppendEntriesResponse>) {
     resetTimeout()
     try {
-      LOGGER.info("lastIndex: ${raft.log.lastIndex}, commitIndex: ${raft.log.commitIndex}")
       with (request) {
         validateAppendEntriesRequest(this)
+        val topic = raft.topicModule.topicRegistry.get(topicId)!!
         if (entries.isNotEmpty()) {
-          LOGGER.info("appending ${entries.size} entries")
-
           /**
            * Timeout Alarm is 'paused' here whilst the entries are appended to the LOGGER,
            * as there could be many, we don't want to respond to the sender node until
@@ -64,25 +63,24 @@ constructor(private val raft: Raft,
            * it does not attribute to a leader node being absent.
            */
           stopTimeout()
-          raft.logCommandExecutor.execute(AppendFromCommand
+          topic.logFacade.commandExecutor.execute(AppendFromCommand
               .build(prevLogIndex + 1, entries, LogChangeReason.REPLICATION))
           resetTimeout()
         }
+        commitIfNecessary(topic, this)
+        replyAppendEntries(raft.raftContext, true, stream)
       }
-      commitIfNecessary(request)
-      replyAppendEntries(raft.raftContext, true, stream)
-
     } catch (e: Exception) {
       LOGGER.error(e)
       replyAppendEntries(raft.raftContext, false, stream)
     }
   }
 
-  private fun commitIfNecessary(request: AppendEntriesRequest) {
+  private fun commitIfNecessary(topic: Topic, request: AppendEntriesRequest) {
     with(request) {
-      if (leaderCommit > raft.log.commitIndex) {
-        val commitIndex = min(leaderCommit, raft.log.lastIndex)
-        raft.logCommandExecutor.execute(CommitCommand.build(commitIndex, LogChangeReason.REPLICATION))
+      if (leaderCommit > topic.logFacade.log.commitIndex) {
+        val commitIndex = min(leaderCommit, topic.logFacade.log.lastIndex)
+        topic.logFacade.commandExecutor.execute(CommitCommand.build(commitIndex, LogChangeReason.REPLICATION))
       }
     }
   }
@@ -92,7 +90,7 @@ constructor(private val raft: Raft,
     resetTimeout()
     if (raft.raftContext.currentTerm > request.term ||
         raft.raftContext.votedFor !in listOf(null, request.candidateId) ||
-        !isRequestLogLatest(request)) {
+        !withLatestLogTails(request)) {
       replyRequestVote(raft.raftContext, false, stream)
       return
     }
@@ -104,13 +102,32 @@ constructor(private val raft: Raft,
     replyRequestVote(raft.raftContext, true, stream)
   }
 
-  private fun isRequestLogLatest(request: RequestVoteRequest): Boolean {
-    return raft.log.lastIndex <= request.lastLogIndex
-        && raft.log.lastEntry.term <= request.lastLogTerm
+  private fun withLatestLogTails(request: RequestVoteRequest): Boolean {
+    // Compare log counts
+    if (request.topicTails.size < raft.topicModule.topicRegistry.size) {
+      return false
+    }
+
+    return request.topicTails.map {
+      val topic = raft.topicModule.topicRegistry.get(it.topicId)
+      if (topic != null) {
+        return topic.logFacade.log.lastIndex <= it.lastLogIndex &&
+            topic.logFacade.log.lastEntry.term <= it.lastLogTerm
+      } else true
+    }.reduce { acc, v -> acc && v }
   }
 
   @Throws(RaftException::class)
   private fun validateAppendEntriesRequest(request: AppendEntriesRequest) {
+    /*
+     * check if topic exists
+     */
+    if (request.topicId !in raft.topicModule.topicRegistry) {
+      throw RaftException("Topic ${request.topicId} does not exist")
+    }
+
+    val topic = raft.topicModule.topicRegistry.get(request.topicId)!!
+
     /*
      * request term must equal to or greater than raftContext.currentTerm, invalid.
      */
@@ -121,7 +138,7 @@ constructor(private val raft: Raft,
     /*
      * If no LOGGER at previous index, we are missing an entry and this is invalid.
      */
-    val prevEntry = raft.log.read(request.prevLogIndex) ?: throw RaftException("No entry @ ${request.prevLogIndex}")
+    val prevEntry = topic.logFacade.log.read(request.prevLogIndex) ?: throw RaftException("No entry @ ${request.prevLogIndex}")
 
     /*
      * If previous entry of request term does not match this LOGGER previous LOGGER entry term, invalid.

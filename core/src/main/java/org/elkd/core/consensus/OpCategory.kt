@@ -2,7 +2,7 @@ package org.elkd.core.consensus
 
 enum class OpCategory {
   /**
-   * Denotes an operation that produces entries to the log.
+   * Denotes an operation that produces entries to the logFacade.
    *
    * @note execution allowed only on leader nodes..
    */

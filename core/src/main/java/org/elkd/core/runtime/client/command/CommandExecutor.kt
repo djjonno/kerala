@@ -44,7 +44,7 @@ class CommandExecutor(private val consensusFacade: ConsensusFacade) : CoroutineS
 
   private fun executeCommandBundle(bundle: CommandBundle) {
     bundleRegistry[bundle] = System.currentTimeMillis() + bundle.timeout
-    consensusFacade.append("@system-todo", bundle.command.kvs) {
+    consensusFacade.append("@system", bundle.command.kvs) {
       bundleRegistry.remove(bundle)
       bundle.onComplete("ok")
     }

@@ -28,7 +28,7 @@ class ReplicatorTest {
   }
 
   private fun configureCommonExpectations() {
-    doReturn(mock<ReplicationController>())
+    doReturn(mock<NodeReplicationController>())
         .whenever(replicationControllerFactory)
         .create(any(), any(), any(), any())
   }
@@ -40,7 +40,7 @@ class ReplicatorTest {
     configureClusterSet(nodes)
 
     // When
-    replicator.start()
+    replicator.launch()
 
     // Then
     nodes.forEach { verify(replicationControllerFactory).create(eq(it), eq(leaderContext), eq(raft), any()) }

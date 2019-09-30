@@ -13,7 +13,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   private var index: Long = 0
 
   /**
-   * This is a uuid used for identifying this particular log instance.
+   * This is a uuid used for identifying this particular logFacade instance.
    */
   override val id: String = UUID.randomUUID().toString()
 
@@ -26,7 +26,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
     get() = read(lastIndex)!!
 
   init {
-    logStore = ArrayList()
+    logStore = ArrayList<E>()
 
     /* Default Log Record - prevents having to provide a logger index that
        technically does not exist e.g index = -1 */
@@ -49,26 +49,18 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   override fun read(index: Long): E? {
-    try {
+    return try {
       checkState(index in START_INDEX..this.index)
-      return logStore[index.toInt()]
+      logStore[index.toInt()]
     } catch (e: Exception) {
-      return null
+      null
     }
   }
 
   override fun read(from: Long, to: Long): List<E> {
     checkState(from in START_INDEX..to)
 
-    val subList = ArrayList<E>()
-    for (i in from.toInt()..to) {
-      val entry = read(i)
-      if (entry != null) {
-        subList.add(entry)
-      }
-    }
-
-    return ImmutableList.copyOf(subList)
+    return (from.toInt()..to).mapNotNull(::read)
   }
 
   override fun commit(index: Long): CommitResult<E> {
