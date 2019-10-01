@@ -6,73 +6,70 @@ import org.elkd.core.consensus.messages.KV
 /**
  * Command
  *
- * Object that can be executed by the CommandExecutor
+ * Object that can be executed by the CommandExecutor.
  */
-class Command(val command: Type,
-              val args: List<Pair<String, String>>) {
+open class Command(private val args: Map<String, String>) {
+
+  val command: String by args
 
   val kvs by lazy {
-    args.map { KV(it.first, it.second) }.toList()
+    args.map { KV(it.key, it.value) }.toList()
   }
 
   fun asEntry(term: Int): Entry {
-    val builder = Entry.builder(term)
-    args.forEach { pair ->
-      builder.addKV(KV(pair.first, pair.second))
-    }
-    return builder.build()
+    return Entry.builder(term)
+        .addAllKV(kvs)
+        .build()
   }
 
-  companion object {
-    private const val KEY_COMMAND = "cmd"
+  /* Builder */
 
-    inline fun builder(command: Type, commandBuilder: Builder.() -> Unit): Command {
+  companion object {
+    private const val KEY_COMMAND = "command"
+
+    inline fun builder(command: CommandType, commandBuilder: Builder.() -> Unit) : Command {
+      return builder(command.id, commandBuilder)
+    }
+
+    inline fun builder(command: String, commandBuilder: Builder.() -> Unit): Command {
       val builder = Builder(command)
       builder.commandBuilder()
       return builder.build()
     }
   }
 
-  class Builder(private val commandType: Type) {
-    private val args: MutableList<Pair<String, String>> = mutableListOf()
+  class Builder(private val command: String) {
+    private val args = mutableMapOf<String, String>()
 
     fun arg(key: String, `val`: String) {
-      args.add(Pair(key, `val`))
+      args[key] = `val`
     }
 
     fun build(): Command {
-      args.add(Pair(KEY_COMMAND, commandType.id))
-      return Command(commandType, args)
+      args[KEY_COMMAND] = command
+      return Command(args)
     }
   }
 
-  enum class Type(val id: String) {
-    /**
-     * This does not change the leader, this handlers exists when a leader is changed,
-     * and down-stream consumers should be informed.  Of course you could also obtain
-     * this state directly from the Raft module.
-     *
-     * @param node host:port of new leader.
-     */
-    LEADER_CHANGE("leader-change"),
-
-    /**
-     * Creates a new topic and configures it in the TopicRegistry.
-     *
-     * @param namespace unique name of topic.
-     */
-    CREATE_TOPIC("create-topic")
-
-    ;
-
-    companion object {
-      /**
-       * Commands are received from clients in string form, this helper method maps
-       * a string to its enum counterpart.
-       */
-      fun fromString(string: String): Type {
-        return values().first { it.id == string }
-      }
-    }
+  /**
+   * Create Topic Command
+   *
+   * Encapsulates parameters for provisioning a new Topic.
+   */
+  inner class CreateTopicCommand : Command(args) {
+    val namespace: String by args
   }
+
+  /**
+   * Leader Change Command
+   *
+   * Encapsulates consensus change information.
+   */
+  inner class LeaderChangeCommand : Command(args) {
+    val leaderNode: String by args
+  }
+}
+
+fun Entry.asCommand() : Command {
+  return Command(this.kvs.map { it.key to it.`val` }.toMap())
 }

@@ -14,7 +14,7 @@ object NotificationCenter {
    * Channels available for pub/sub.
    */
   enum class Channel(val id: String) {
-    CONSENSUS_STATE_CHANGE("state-change")
+    CONSENSUS_CHANGE("consensus-change")
   }
 
   private val subscriptions: MutableMap<Channel, MutableList<Pair<Executor, Runnable>>> = mutableMapOf()

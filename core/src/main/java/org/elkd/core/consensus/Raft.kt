@@ -29,12 +29,6 @@ internal constructor(val config: Config,
                      val raftContext: RaftContext,
                      val topicModule: TopicModule) {
 
-  val log: Log<Entry>
-    get() = topicModule.syslog.logFacade.log
-
-  val logCommandExecutor: LogCommandExecutor<Entry>
-    get() = topicModule.syslog.logFacade.commandExecutor
-
   val clusterSet: ClusterSet
     get() = clusterMessenger.clusterSet
 

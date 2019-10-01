@@ -1,6 +1,5 @@
 package org.elkd.core.log
 
-import org.apache.log4j.Logger
 import org.elkd.core.log.LogChangeEvent.APPEND
 import org.elkd.core.log.LogChangeEvent.COMMIT
 
@@ -38,9 +37,5 @@ class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>) {
       scopedOnAppendRegistrations[entry.uuid]?.forEach(Runnable::run)
       scopedOnAppendRegistrations.remove(entry.uuid)
     }
-  }
-
-  companion object {
-    private val logger = Logger.getLogger(LogChangeRegistry::class.java)
   }
 }

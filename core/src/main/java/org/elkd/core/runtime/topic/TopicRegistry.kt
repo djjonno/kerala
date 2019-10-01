@@ -5,8 +5,8 @@ import java.util.concurrent.Executor
 
 class TopicRegistry {
   private val registry: MutableMap<String, Topic> = mutableMapOf()
+  private val listeners = mutableSetOf<Pair<Listener, Executor>>()
 
-  val listeners = mutableSetOf<Pair<Listener, Executor>>()
   val topics: List<Topic> get() = registry.entries.map { it.value }
   val size = topics.size
 

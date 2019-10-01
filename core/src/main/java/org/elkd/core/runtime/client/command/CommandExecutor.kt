@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.OpCategory
@@ -26,7 +25,7 @@ class CommandExecutor(private val consensusFacade: ConsensusFacade) : CoroutineS
 
   private fun initListener() {
     NotificationCenter.sub(
-        NotificationCenter.Channel.CONSENSUS_STATE_CHANGE,
+        NotificationCenter.Channel.CONSENSUS_CHANGE,
         Pools.clientCommandThreadPool
     ) {
       checkUnsupportedBundles(consensusFacade.supportedOperations)
@@ -81,9 +80,5 @@ class CommandExecutor(private val consensusFacade: ConsensusFacade) : CoroutineS
     bundleRegistry
         .filter { e -> e.key.opCategory !in supportedOps }
         .forEach { (t, _) -> handleBundleUnsupported(t) }
-  }
-
-  companion object {
-    val logger = Logger.getLogger(CommandExecutor::class.java)
   }
 }

@@ -4,6 +4,8 @@ import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.runtime.TopicModule
 import org.elkd.core.runtime.client.command.Command
+import org.elkd.core.runtime.client.command.CommandType
+import org.elkd.core.runtime.client.command.asCommand
 
 /**
  * SystemConsumer consumes all entries on the system Topic.
@@ -16,32 +18,28 @@ import org.elkd.core.runtime.client.command.Command
  * already been committed to the logFacade so the failure mode here
  * it simply to logFacade.error and continue.
  *
- * It is a best-effort strategy to ensure an invalid command
+ * It is a best-effort strategy to ensure an invalid type
  * is not issued to the logFacade in the first place, so it is rare
  * that you will encounter a runtime failure.  It will likely
  * be some kind of systemic error as opposed to an invalid
  * state of some sorts.
  */
-class SystemConsumer(val topicModule: TopicModule) : Consumer {
+class SystemConsumer(private val topicModule: TopicModule) : Consumer {
   override fun consume(index: Long, entry: Entry) {
-    logger.info("consuming system entry -> $entry")
+    val command = entry.asCommand()
 
-    val map = entry.kvs.map { it.key to it.`val` }.toMap()
-
-    map["cmd"]?.apply {
-      when (Command.Type.fromString(this)) {
-        Command.Type.CREATE_TOPIC -> createTopic(map)
-        Command.Type.LEADER_CHANGE -> { logger.info("leader changed.") }
-      }
+    when (CommandType.fromString(command.command)) {
+      CommandType.CREATE_TOPIC -> createTopic(command.CreateTopicCommand())
+      CommandType.CONSENSUS_CHANGE -> LOGGER.info("leader changed.")
     }
   }
 
-  private fun createTopic(kvs: Map<String, String>) {
-//    topicModule.topicRegistry.add(Topic(kvs["namespace"]!!))
-    logger.info(topicModule.topicRegistry)
+  private fun createTopic(command: Command.CreateTopicCommand) {
+    val newTopic = topicModule.provisionNewTopic(command.namespace)
+    LOGGER.info("New topic provisioned: $newTopic")
   }
 
   companion object {
-    private var logger = Logger.getLogger(SystemConsumer::class.java)
+    private var LOGGER = Logger.getLogger(SystemConsumer::class.java)
   }
 }
