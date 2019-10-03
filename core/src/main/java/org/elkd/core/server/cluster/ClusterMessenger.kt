@@ -44,8 +44,7 @@ class ClusterMessenger (private val clusterConnectionPool: ClusterConnectionPool
       }
     } catch (e: Exception) {
       /* cluster messaging is best effort */
-      LOGGER.error(e)
-      LOGGER.info("node unreachable: $node")
+      LOGGER.warn("node unreachable: $node")
       onFailure(e)
     }
   }
@@ -64,8 +63,7 @@ class ClusterMessenger (private val clusterConnectionPool: ClusterConnectionPool
       }
     } catch (e: Exception) {
       /* cluster messaging is best effort */
-      LOGGER.error(e)
-      LOGGER.info("node unreachable: $node")
+      LOGGER.warn("node unreachable: $node")
       onFailure(e)
     }
   }

@@ -38,6 +38,13 @@ To create a elkd cluster with 4 nodes, run the docker-compose configuration:
 $ docker-compose up
 ```
 
+#### TODO
+
+- [ ] add topic client validation / check if topic already exists
+- [ ] harden thread model of topic consensus (synchronizing component read/writes, synchronizing the LogFacade)
+- [ ] create command client (create-topic)
+- [ ] deprecate NotificationCenter, replace with Kotlin Observables
+
 ---
 
 *an open source project by [@djjonno](https://github.com/djjonno)*

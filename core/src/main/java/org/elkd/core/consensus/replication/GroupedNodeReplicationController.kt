@@ -61,15 +61,15 @@ class GroupedNodeReplicationController(private val raft: Raft,
 
   private fun commitCheck(topic: Topic, leaderContext: LeaderContext) {
     val states = raft.clusterSet.nodes.map(leaderContext::getMatchIndex) + topic.logFacade.log.lastIndex
-    val synchronized = if (states.distinct().size == 1) "synchronized" else "propagating"
-    LOGGER.info("$topic replication $states $synchronized")
+
     states.findMajority()?.apply {
-      if (this > topic.logFacade.log.commitIndex &&
-          topic.logFacade.log.read(this)?.term == raft.raftContext.currentTerm) {
-        LOGGER.info("majority @ index:$this w/ matching term –> committing to $this")
+      if (this > topic.logFacade.log.commitIndex && topic.logFacade.log.read(this)?.term == raft.raftContext.currentTerm) {
+        LOGGER.info("majority @ $this, performing commit($this)")
         topic.logFacade.commandExecutor.execute(CommitCommand.build(this, LogChangeReason.REPLICATION))
       }
     }
+
+    LOGGER.info("$topic replication $states ${if (states.distinct().size == 1) "synchronized" else "propagating"}")
   }
 
   companion object {

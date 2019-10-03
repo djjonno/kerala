@@ -36,7 +36,7 @@ class SystemConsumer(private val topicModule: TopicModule) : Consumer {
 
   private fun createTopic(command: Command.CreateTopicCommand) {
     val newTopic = topicModule.provisionNewTopic(command.id, command.namespace)
-    LOGGER.info("New topic provisioned: $newTopic")
+    LOGGER.info("Provisioned new topic $newTopic")
   }
 
   companion object {
