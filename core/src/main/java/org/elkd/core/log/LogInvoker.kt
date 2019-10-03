@@ -1,6 +1,7 @@
 package org.elkd.core.log
 
 import org.elkd.core.log.ds.Log
+import org.elkd.core.log.ds.LogSnapshot
 import org.elkd.shared.annotations.Mockable
 import java.util.HashSet
 
@@ -32,6 +33,10 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
 
   override fun read(from: Long, to: Long): List<E> {
     return log.read(from, to)
+  }
+
+  override fun readSnapshot(from: Long, to: Long): LogSnapshot<E> {
+    return log.readSnapshot(from, to)
   }
 
   override fun append(index: Long, entry: E): Long {

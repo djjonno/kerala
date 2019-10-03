@@ -35,8 +35,8 @@ data class TopicModule(val topicRegistry: TopicRegistry,
     return topic
   }
 
-  fun provisionNewTopic(namespace: String) : Topic {
-    return topicFactory.create(namespace).also(topicRegistry::add)
+  fun provisionNewTopic(id: String, namespace: String) : Topic {
+    return topicFactory.create(id, namespace).also(topicRegistry::add)
   }
 
   companion object {

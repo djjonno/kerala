@@ -10,5 +10,5 @@ class TopicFactory(private val logFactory: LogFactory) {
    *
    * @param namespace name of topic to provision
    */
-  fun create(namespace: String, id: String = UUID.randomUUID().toString()) = Topic(id, namespace, logFactory.createLog())
+  fun create(id: String, namespace: String) = Topic(id, namespace, logFactory.createLog())
 }

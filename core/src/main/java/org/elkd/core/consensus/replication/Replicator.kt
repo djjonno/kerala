@@ -25,16 +25,19 @@ class Replicator(private val raft: Raft) : CoroutineScope {
   override val coroutineContext: CoroutineContext
     get() = job + threadPool.asCoroutineDispatcher()
 
+  private val launcher = Launcher()
+
   fun launch() {
     LOGGER.info("Launching replicator")
-    raft.topicModule.topicRegistry.registerListener(Launcher(), threadPool, rewind = true)
+    raft.topicModule.topicRegistry.registerListener(launcher, threadPool, rewind = true)
   }
 
   /**
    * Will kill all controllers.
    */
   fun shutdown() {
-    job.cancel()
+    coroutineContext.cancel()
+    launcher.shutdown()
   }
 
   private inner class Launcher : Listener {
@@ -45,6 +48,10 @@ class Replicator(private val raft: Raft) : CoroutineScope {
         Listener.Event.ADDED -> launch(topic)
         Listener.Event.REMOVED -> shutdown(topic)
       }
+    }
+
+    fun shutdown() {
+      controllers.forEach { (_, u) -> u.shutdown() }
     }
 
     private fun launch(topic: Topic) {

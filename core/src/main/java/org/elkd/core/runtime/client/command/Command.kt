@@ -57,6 +57,7 @@ open class Command(private val args: Map<String, String>) {
    * Encapsulates parameters for provisioning a new Topic.
    */
   inner class CreateTopicCommand : Command(args) {
+    val id: String by args
     val namespace: String by args
   }
 

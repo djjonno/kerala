@@ -63,6 +63,18 @@ class InMemoryLog<E : LogEntry> : Log<E> {
     return (from.toInt()..to).mapNotNull(::read)
   }
 
+  override fun readSnapshot(from: Long, to: Long) : LogSnapshot<E> {
+    val entries = read(from, to)
+    val initial = read(from - 1)!!
+
+    return LogSnapshot(
+        prevLogTerm = initial.term,
+        prevLogIndex = from - 1,
+        commitIndex = commitIndex,
+        entries = entries
+    )
+  }
+
   override fun commit(index: Long): CommitResult<E> {
     checkState(index in START_INDEX until this.index)
 

@@ -3,6 +3,7 @@ package org.elkd.core.consensus.replication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
@@ -44,7 +45,8 @@ class GroupedNodeReplicationController(private val raft: Raft,
   }
 
   fun shutdown() {
-    job.cancel()
+    LOGGER.info("shutting down replication for $topic")
+    coroutineContext.cancel()
   }
 
   /* Topic Replication Servicing */

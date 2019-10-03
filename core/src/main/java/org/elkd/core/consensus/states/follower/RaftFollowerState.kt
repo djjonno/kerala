@@ -71,7 +71,6 @@ constructor(private val raft: Raft,
         replyAppendEntries(raft.raftContext, true, stream)
       }
     } catch (e: Exception) {
-      LOGGER.error(e)
       replyAppendEntries(raft.raftContext, false, stream)
     }
   }

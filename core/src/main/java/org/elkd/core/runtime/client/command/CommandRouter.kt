@@ -42,6 +42,7 @@ class CommandRouter(private val commandExecutor: CommandExecutor) {
       request.argsList.forEach { pair ->
         arg(pair.arg, pair.param)
       }
+      arg("id", UUID.randomUUID().toString())
     }
   }
 }
