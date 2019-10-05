@@ -20,10 +20,12 @@ class ReplicatorStrategy(val topic: Topic, val raft: Raft) {
   private val log: Log<Entry> = topic.logFacade.log
 
   fun generateRequest(nextIndex: Long): AppendEntriesRequest {
-    if (entriesReady(nextIndex)) {
-      return createRequest(log.readSnapshot(nextIndex, min(nextIndex + MAX_APPEND_ENTRIES - 1, log.lastIndex)))
+    return if (entriesReady(nextIndex)) {
+      topic.logFacade.readBlock {
+        createRequest(log.readSnapshot(nextIndex, min(nextIndex + MAX_APPEND_ENTRIES - 1, log.lastIndex)))
+      }
     } else {
-      return createEmptyRequest()
+      createEmptyRequest()
     }
   }
 

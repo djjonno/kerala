@@ -26,7 +26,7 @@ class RaftCandidateState(private val raft: Raft,
       raft,
       TimeoutAlarm {
         LOGGER.info("election timeout reached. restarting election.")
-        raft.delegator.transition(State.CANDIDATE)
+        raft.delegator.transitionRequest(State.CANDIDATE)
       }
   )
 
@@ -44,7 +44,7 @@ class RaftCandidateState(private val raft: Raft,
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
-    /* If term > currentTerm, Raft will always transition to Follower state. model received
+    /* If term > currentTerm, Raft will always transitionRequest to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
     stream.onNext(AppendEntriesResponse(raft.raftContext.currentTerm, false))
@@ -53,7 +53,7 @@ class RaftCandidateState(private val raft: Raft,
 
   override fun delegateRequestVote(request: RequestVoteRequest,
                                    stream: StreamObserver<RequestVoteResponse>) {
-    /* If term > currentTerm, Raft will always transition to Follower state. model received
+    /* If term > currentTerm, Raft will always transitionRequest to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
     stream.onNext(RequestVoteResponse(raft.raftContext.currentTerm, false))
@@ -67,8 +67,8 @@ class RaftCandidateState(private val raft: Raft,
     val request = createVoteRequest()
     electionScheduler = ElectionScheduler.create(
         request,
-        { raft.delegator.transition(State.LEADER) },
-        { raft.delegator.transition(State.FOLLOWER) },
+        { raft.delegator.transitionRequest(State.LEADER) },
+        { raft.delegator.transitionRequest(State.FOLLOWER) },
         raft.clusterMessenger)
     electionScheduler?.schedule()
   }

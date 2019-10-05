@@ -42,7 +42,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   override fun delegateRequestVote(request: RequestVoteRequest,
                                    stream: StreamObserver<RequestVoteResponse>) {
-    /* If term > currentTerm, Raft will always transition to Follower state. model received
+    /* If term > currentTerm, Raft will always transitionRequest to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
     with(stream) {

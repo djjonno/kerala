@@ -63,7 +63,7 @@ class RaftDelegatorTest {
   @Test
   fun `should delegate appendEntries`() {
     // Given
-    unitUnderTest.transition(State.FOLLOWER)
+    unitUnderTest.transitionRequest(State.FOLLOWER)
 
     // When
     unitUnderTest.delegateAppendEntries(appendEntriesRequest, appendEntriesResponseStream)
@@ -75,7 +75,7 @@ class RaftDelegatorTest {
   @Test
   fun `should delegate requestVote`() {
     // Given
-    unitUnderTest.transition(State.FOLLOWER)
+    unitUnderTest.transitionRequest(State.FOLLOWER)
 
     // When
     unitUnderTest.delegateRequestVote(requestVoteRequest, requestVoteResponseStream)
@@ -87,13 +87,13 @@ class RaftDelegatorTest {
   @Test
   fun `should perform serial transitions`() {
     // Given / When
-    unitUnderTest.transition(State.FOLLOWER)
+    unitUnderTest.transitionRequest(State.FOLLOWER)
     unitUnderTest.delegateAppendEntries(appendEntriesRequest, appendEntriesResponseStream)
     unitUnderTest.delegateRequestVote(requestVoteRequest, requestVoteResponseStream)
-    unitUnderTest.transition(State.CANDIDATE)
+    unitUnderTest.transitionRequest(State.CANDIDATE)
     unitUnderTest.delegateAppendEntries(appendEntriesRequest, appendEntriesResponseStream)
     unitUnderTest.delegateRequestVote(requestVoteRequest, requestVoteResponseStream)
-    unitUnderTest.transition(State.LEADER)
+    unitUnderTest.transitionRequest(State.LEADER)
     unitUnderTest.delegateAppendEntries(appendEntriesRequest, appendEntriesResponseStream)
     unitUnderTest.delegateRequestVote(requestVoteRequest, requestVoteResponseStream)
 
@@ -137,7 +137,7 @@ class RaftDelegatorTest {
     doReturn(State.CANDIDATE)
         .`when`(transitionContract)
         .transitionTo
-    unitUnderTest.transition(State.FOLLOWER)
+    unitUnderTest.transitionRequest(State.FOLLOWER)
 
     // When
     unitUnderTest.delegateAppendEntries(appendEntriesRequest, appendEntriesResponseStream)

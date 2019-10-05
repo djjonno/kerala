@@ -12,6 +12,7 @@ import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.messages.TopicTail
 import org.elkd.core.consensus.messages.replyAppendEntries
 import org.elkd.core.consensus.messages.replyRequestVote
 import org.elkd.core.consensus.states.RaftState
@@ -34,7 +35,7 @@ constructor(private val raft: Raft,
       raft,
       TimeoutAlarm {
         LOGGER.info("follower timeout reached.")
-        raft.delegator.transition(State.CANDIDATE)
+        raft.delegator.transitionRequest(State.CANDIDATE)
       }
   )
 
@@ -87,55 +88,58 @@ constructor(private val raft: Raft,
   override fun delegateRequestVote(request: RequestVoteRequest,
                                    stream: StreamObserver<RequestVoteResponse>) {
     resetTimeout()
-    if (raft.raftContext.currentTerm > request.term ||
-        raft.raftContext.votedFor !in listOf(null, request.candidateId) ||
-        !withLatestLogTails(request)) {
-      replyRequestVote(raft.raftContext, false, stream)
-      return
-    }
 
-    with (raft.raftContext) {
-      votedFor = request.candidateId
-      currentTerm = request.term
+    synchronized(raft) {
+      if (raft.raftContext.currentTerm <= request.term
+          && raft.raftContext.votedFor in listOf(null, request.candidateId)
+          && withLogTails(request.topicTails)) {
+
+        raft.raftContext.votedFor = request.candidateId
+        raft.raftContext.currentTerm = request.term
+        replyRequestVote(raft.raftContext, true, stream)
+      } else {
+        replyRequestVote(raft.raftContext, false, stream)
+      }
     }
-    replyRequestVote(raft.raftContext, true, stream)
   }
 
-  private fun withLatestLogTails(request: RequestVoteRequest): Boolean {
-    // Compare log counts
-    if (request.topicTails.size < raft.topicModule.topicRegistry.size) {
+  private fun withLogTails(topicTails: List<TopicTail>): Boolean {
+    if (topicTails.size < raft.topicModule.topicRegistry.size) {
       return false
     }
 
-    return request.topicTails.map {
-      val topic = raft.topicModule.topicRegistry.get(it.topicId)
-      if (topic != null) {
-        return topic.logFacade.log.lastIndex <= it.lastLogIndex &&
-            topic.logFacade.log.lastEntry.term <= it.lastLogTerm
-      } else true
-    }.reduce { acc, v -> acc && v }
+    val results = topicTails.filter {
+      it.topicId in raft.topicModule.topicRegistry
+    }.map {
+      it to raft.topicModule.topicRegistry.get(it.topicId)!!
+    }.map {
+      it.second.logFacade.log.lastIndex <= it.first.lastLogIndex &&
+          it.second.logFacade.log.lastEntry.term <= it.first.lastLogTerm
+    }
+
+    return if (results.isEmpty()) {
+      false
+    } else {
+      results.reduce { acc, b -> acc && b }
+    }
   }
 
   @Throws(RaftException::class)
   private fun validateAppendEntriesRequest(request: AppendEntriesRequest) {
     /*
-     * check if topic exists
+     * Does topic exist?
      */
-    if (request.topicId !in raft.topicModule.topicRegistry) {
-      throw RaftException("Topic ${request.topicId} does not exist")
-    }
-
-    val topic = raft.topicModule.topicRegistry.get(request.topicId)!!
+    val topic = raft.topicModule.topicRegistry.get(request.topicId) ?: throw RaftException("Topic ${request.topicId} does not exist")
 
     /*
-     * request term must equal to or greater than raftContext.currentTerm, invalid.
+     * Request term must equal to or greater than raftContext.currentTerm, invalid.
      */
     if (request.term < raft.raftContext.currentTerm) {
       throw RaftException("Term mismatch (requestTerm: ${request.term}, currentTerm:${raft.raftContext.currentTerm})")
     }
 
     /*
-     * If no LOGGER at previous index, we are missing an entry and this is invalid.
+     * If no entry at previous index, we are missing an entry and this is invalid.
      */
     val prevEntry = topic.logFacade.log.read(request.prevLogIndex) ?: throw RaftException("No entry @ ${request.prevLogIndex}")
 

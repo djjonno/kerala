@@ -104,7 +104,7 @@ public class RaftFollowerStateTest {
 
     // Then
     Thread.sleep(FOLLOWER_TIMEOUT + TIMEOUT_BUFFER);
-    verify(mRaft.getDelegator()).transition(State.CANDIDATE);
+    verify(mRaft.getDelegator()).transitionRequest(State.CANDIDATE);
   }
 
   @Test
@@ -117,7 +117,7 @@ public class RaftFollowerStateTest {
 
     // Then
     verify(mTimeoutAlarm, times(2)).reset(anyLong());
-    verify(mRaft.getDelegator(), never()).transition(any());
+    verify(mRaft.getDelegator(), never()).transitionRequest(any());
   }
 
   @Test

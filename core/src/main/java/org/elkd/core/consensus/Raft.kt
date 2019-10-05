@@ -57,6 +57,6 @@ internal constructor(val config: Config,
   ))
 
   fun initialize() {
-    delegator.transition(State.FOLLOWER)
+    delegator.initialize(State.FOLLOWER)
   }
 }
