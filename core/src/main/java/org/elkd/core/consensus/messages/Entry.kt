@@ -11,6 +11,7 @@ class Entry private constructor(override val term: Int,
   }
 
   companion object {
+    @Deprecated("Logs will start from indexing from zero")
     @JvmStatic val NULL_ENTRY = builder(0, "null").build()
 
     @JvmStatic fun builder(term: Int, uuid: String = UUID.randomUUID().toString()) = Builder(term, uuid)

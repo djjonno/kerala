@@ -28,7 +28,7 @@ class CommandExecutor(private val consensusFacade: ConsensusFacade) : CoroutineS
         NotificationCenter.Channel.CONSENSUS_CHANGE,
         Pools.clientCommandThreadPool
     ) {
-      checkUnsupportedBundles(consensusFacade.supportedOperations)
+      cleanupUnsupportedBundles(consensusFacade.supportedOperations)
     }
   }
 
@@ -76,7 +76,7 @@ class CommandExecutor(private val consensusFacade: ConsensusFacade) : CoroutineS
     bundle.onError("error: operation not supported on this node")
   }
 
-  private fun checkUnsupportedBundles(supportedOps: Set<OpCategory>) {
+  private fun cleanupUnsupportedBundles(supportedOps: Set<OpCategory>) {
     bundleRegistry
         .filter { e -> e.key.opCategory !in supportedOps }
         .forEach { (t, _) -> handleBundleUnsupported(t) }

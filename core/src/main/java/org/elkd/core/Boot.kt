@@ -9,6 +9,8 @@ import org.elkd.core.log.LogFactory
 import org.elkd.core.runtime.TopicModule
 import org.elkd.core.runtime.client.command.CommandExecutor
 import org.elkd.core.runtime.client.command.CommandRouter
+import org.elkd.core.runtime.client.command.CommandType
+import org.elkd.core.runtime.client.command.CreateTopicTransformer
 import org.elkd.core.runtime.topic.TopicFactory
 import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicRegistry
@@ -17,7 +19,6 @@ import org.elkd.core.server.cluster.ClusterConnectionPool
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.ClusterUtils
 import org.elkd.core.server.cluster.StaticClusterSet
-import java.util.UUID
 
 /**
  * Platform Boot
@@ -78,13 +79,15 @@ fun main(args: Array<String>) {
   /*
    * Configure client module.
    */
-  val runtimeModule = TopicModule(TopicRegistry(), TopicGateway(), TopicFactory(LogFactory()))
+  val topicModule = TopicModule(TopicRegistry(), TopicGateway(), TopicFactory(LogFactory()))
 
   /*
    * Configure consensus module `Raft`.
    */
-  val consensusModule = ConsensusFacade(RaftFactory.create(config, runtimeModule, clusterMessenger))
-  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule))))
+  val consensusModule = ConsensusFacade(RaftFactory.create(config, topicModule, clusterMessenger))
+  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule), mapOf(
+      CommandType.CREATE_TOPIC to CreateTopicTransformer()
+  ))))
 
   try {
     with (boot) {
@@ -101,6 +104,6 @@ private fun getConfig(args: Array<String>): Config? {
   return try {
     ConfigProvider.compileConfig(args)
   } catch (e: Exception) {
-    return null
+    null
   }
 }

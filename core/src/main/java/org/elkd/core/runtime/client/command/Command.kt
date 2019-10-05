@@ -8,7 +8,7 @@ import org.elkd.core.consensus.messages.KV
  *
  * Object that can be executed by the CommandExecutor.
  */
-open class Command(private val args: Map<String, String>) {
+open class Command(val args: Map<String, String>) {
 
   val command: String by args
 

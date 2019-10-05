@@ -8,6 +8,7 @@ class TopicRegistry {
   private val listeners = mutableSetOf<Pair<Listener, Executor>>()
 
   val topics: List<Topic> get() = registry.entries.map { it.value }
+  val namespaces: List<String> get() = registry.entries.map { it.value.namespace }
   val size = topics.size
 
   fun add(topic: Topic) {
@@ -17,7 +18,7 @@ class TopicRegistry {
     }
     registry[topic.id] = topic
     notifyChange(topic, Listener.Event.ADDED)
-    LOGGER.info("new topic registered: $topic")
+    LOGGER.info("new topic $topic registered")
   }
 
   fun remove(topic: Topic) {

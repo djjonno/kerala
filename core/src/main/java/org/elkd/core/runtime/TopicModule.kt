@@ -2,28 +2,23 @@ package org.elkd.core.runtime
 
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.LogChangeListener
-import org.elkd.core.runtime.client.consumer.SystemConsumer
+import org.elkd.core.runtime.client.consumer.SyslogConsumer
 import org.elkd.core.runtime.topic.Topic
-import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicFactory
+import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicRegistry
 
-data class TopicModule(val topicRegistry: TopicRegistry,
-                       val topicGateway: TopicGateway,
-                       val topicFactory: TopicFactory) {
+class TopicModule(val topicRegistry: TopicRegistry,
+                  val topicGateway: TopicGateway,
+                  private val topicFactory: TopicFactory) {
 
-  val syslog: Topic
+  val syslog: Topic = bootstrapSyslog()
 
-  init {
-    syslog = bootstrapSysLog()
-  }
+  private fun bootstrapSyslog() : Topic {
+    val topic = provisionTopic(SYSLOG_ID, SYSLOG_NAMESPACE)
 
-  private fun bootstrapSysLog() : Topic {
-    val topic = topicFactory.create(SYSLOG_NAMESPACE, SYSLOG_ID).also(topicRegistry::add)
+    topicGateway.registerConsumer(topic, SyslogConsumer(this))
 
-    topicGateway.registerConsumer(topic, SystemConsumer(this))
-
-    // Temp
     topic.logFacade.registerListener(object : LogChangeListener<Entry> {
       override fun onCommit(index: Long, entry: Entry) {
         topicGateway.consumersFor(topic).forEach {
@@ -35,7 +30,7 @@ data class TopicModule(val topicRegistry: TopicRegistry,
     return topic
   }
 
-  fun provisionNewTopic(id: String, namespace: String) : Topic {
+  fun provisionTopic(id: String, namespace: String) : Topic {
     return topicFactory.create(id, namespace).also(topicRegistry::add)
   }
 

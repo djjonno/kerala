@@ -1,7 +1,6 @@
 package org.elkd.core.runtime.topic
 
 import org.elkd.core.log.LogFactory
-import java.util.UUID
 
 class TopicFactory(private val logFactory: LogFactory) {
 

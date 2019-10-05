@@ -8,7 +8,7 @@ import org.elkd.core.runtime.client.command.CommandType
 import org.elkd.core.runtime.client.command.asCommand
 
 /**
- * SystemConsumer consumes all entries on the system Topic.
+ * SyslogConsumer consumes all entries on the @system Topic.
  *
  * The entry comes in the form of a decomposed Command object,
  * serialized as KVS.  This component will extract it and
@@ -24,22 +24,28 @@ import org.elkd.core.runtime.client.command.asCommand
  * be some kind of systemic error as opposed to an invalid
  * state of some sorts.
  */
-class SystemConsumer(private val topicModule: TopicModule) : Consumer {
+class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
   override fun consume(index: Long, entry: Entry) {
     val command = entry.asCommand()
 
     when (CommandType.fromString(command.command)) {
       CommandType.CREATE_TOPIC -> createTopic(command.CreateTopicCommand())
-      CommandType.CONSENSUS_CHANGE -> LOGGER.info("leader changed.")
+      CommandType.CONSENSUS_CHANGE -> /* no-op for now */ LOGGER.info("leader changed -> ${command.LeaderChangeCommand().leaderNode}")
     }
   }
 
   private fun createTopic(command: Command.CreateTopicCommand) {
-    val newTopic = topicModule.provisionNewTopic(command.id, command.namespace)
+    /* Check if topic exists */
+    if (command.namespace in topicModule.topicRegistry.namespaces) {
+      LOGGER.info("Ignoring, topic `${command.namespace}` already exists")
+      return
+    }
+
+    val newTopic = topicModule.provisionTopic(command.id, command.namespace)
     LOGGER.info("Provisioned new topic $newTopic")
   }
 
   companion object {
-    private var LOGGER = Logger.getLogger(SystemConsumer::class.java)
+    private var LOGGER = Logger.getLogger(SyslogConsumer::class.java)
   }
 }

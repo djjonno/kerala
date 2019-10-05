@@ -61,7 +61,7 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
       delegate = newDelegate
       delegate?.on()
       postHook()
-      log.info("state activated: $delegate")
+      LOGGER.info("state activated: $delegate")
       NotificationCenter.pub(NotificationCenter.Channel.CONSENSUS_CHANGE)
     }
   }
@@ -113,6 +113,6 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
   }
 
   private companion object {
-    var log = Logger.getLogger(RaftDelegator::class.java)
+    var LOGGER = Logger.getLogger(RaftDelegator::class.java)
   }
 }
