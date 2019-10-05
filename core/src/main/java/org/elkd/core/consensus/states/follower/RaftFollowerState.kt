@@ -89,17 +89,15 @@ constructor(private val raft: Raft,
                                    stream: StreamObserver<RequestVoteResponse>) {
     resetTimeout()
 
-    synchronized(raft) {
-      if (raft.raftContext.currentTerm <= request.term
-          && raft.raftContext.votedFor in listOf(null, request.candidateId)
-          && withLogTails(request.topicTails)) {
+    if (raft.raftContext.currentTerm <= request.term
+        && raft.raftContext.votedFor in listOf(null, request.candidateId)
+        && withLogTails(request.topicTails)) {
 
-        raft.raftContext.votedFor = request.candidateId
-        raft.raftContext.currentTerm = request.term
-        replyRequestVote(raft.raftContext, true, stream)
-      } else {
-        replyRequestVote(raft.raftContext, false, stream)
-      }
+      raft.raftContext.votedFor = request.candidateId
+      raft.raftContext.currentTerm = request.term
+      replyRequestVote(raft.raftContext, true, stream)
+    } else {
+      replyRequestVote(raft.raftContext, false, stream)
     }
   }
 
