@@ -11,8 +11,8 @@ import org.elkd.core.consensus.replication.Replicator
 import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
-import org.elkd.core.runtime.client.controller.SyslogCommand
-import org.elkd.core.runtime.client.controller.SyslogCommandType
+import org.elkd.core.runtime.client.command.SyslogCommand
+import org.elkd.core.runtime.client.command.SyslogCommandType
 
 class RaftLeaderState(private val raft: Raft) : RaftState {
   private var replicator: Replicator? = null

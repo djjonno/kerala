@@ -142,10 +142,10 @@ constructor(private val raft: Raft,
     val prevEntry = topic.logFacade.log.read(request.prevLogIndex) ?: throw RaftException("No entry @ ${request.prevLogIndex}")
 
     /*
-     * If previous entry of controller term does not match this LOGGER previous LOGGER entry term, invalid.
+     * If previous entry of command term does not match this LOGGER previous LOGGER entry term, invalid.
      */
     if (request.prevLogTerm != prevEntry.term) {
-      throw RaftException("Entry.term mismatch (prevLogIndex: ${request.prevLogIndex}, controller: ${request.prevLogTerm}, prevEntry: ${prevEntry.term})")
+      throw RaftException("Entry.term mismatch (prevLogIndex: ${request.prevLogIndex}, command: ${request.prevLogTerm}, prevEntry: ${prevEntry.term})")
     }
   }
 

@@ -13,7 +13,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Performs an election across the cluster, requesting votes and tallying responses.
  *
- * @param voteRequest The controller to use to controller votes from cluster.
+ * @param voteRequest The command to use to command votes from cluster.
  * @param electionStrategy The election strategy to use to count the votes and determine outcome.
  * @param onSuccess Election success callback
  * @param onFailure Election fail callback

@@ -3,9 +3,9 @@ package org.elkd.core.runtime.client.consumer
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.runtime.TopicModule
-import org.elkd.core.runtime.client.controller.SyslogCommand
-import org.elkd.core.runtime.client.controller.SyslogCommandType
-import org.elkd.core.runtime.client.controller.asCommand
+import org.elkd.core.runtime.client.command.SyslogCommand
+import org.elkd.core.runtime.client.command.SyslogCommandType
+import org.elkd.core.runtime.client.command.asCommand
 
 /**
  * SyslogConsumer consumes all entries on the @system Topic.
@@ -30,6 +30,7 @@ class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
 
     when (SyslogCommandType.fromId(command.command)) {
       SyslogCommandType.CREATE_TOPIC -> createTopic(command.CreateTopicSyslogCommand())
+      SyslogCommandType.DELETE_TOPIC -> deleteTopic(command.DeleteTopicSyslogCommand())
       SyslogCommandType.CONSENSUS_CHANGE -> /* no-op for now */ LOGGER.info("leader changed -> ${command.LeaderChangeSyslogCommand().leaderNode}")
     }
   }
@@ -43,6 +44,12 @@ class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
 
     val newTopic = topicModule.provisionTopic(command.id, command.namespace)
     LOGGER.info("Provisioned new topic $newTopic")
+  }
+
+  private fun deleteTopic(command: SyslogCommand.DeleteTopicSyslogCommand) {
+    topicModule.topicRegistry.findByNamespace(command.namespace)?.let {
+      topicModule.topicRegistry.remove(it)
+    } ?: LOGGER.info("Ignoring, topic `${command.namespace}` does not exist.")
   }
 
   companion object {

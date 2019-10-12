@@ -1,6 +1,7 @@
 package org.elkd.core.consensus.replication
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
@@ -23,7 +24,7 @@ class GroupedNodeReplicationController(private val raft: Raft,
                                        private val broadcastInterval: Long,
                                        private val context: CoroutineContext) : CoroutineScope by Pools.replicationPool.asCoroutineScope(context) {
 
-  fun launchController() {
+  fun launchController() = launch {
     LOGGER.info("Launching replication for $topic")
     val leaderContext = LeaderContext(clusterSet.nodes, topic.logFacade.log.lastIndex)
 
@@ -35,9 +36,7 @@ class GroupedNodeReplicationController(private val raft: Raft,
       }
     }
 
-    launch {
-      monitorTopicReplication(topic, leaderContext)
-    }
+    monitorTopicReplication(topic, leaderContext)
   }
 
   /* Topic Replication Servicing */

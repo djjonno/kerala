@@ -1,4 +1,4 @@
-package org.elkd.core.runtime.client.controller
+package org.elkd.core.runtime.client.command
 
 import org.elkd.core.consensus.OpCategory
 import java.util.UUID

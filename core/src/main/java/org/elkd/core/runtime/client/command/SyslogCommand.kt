@@ -1,4 +1,4 @@
-package org.elkd.core.runtime.client.controller
+package org.elkd.core.runtime.client.command
 
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.KV
@@ -53,6 +53,10 @@ open class SyslogCommand(val args: Map<String, String>) {
    */
   inner class CreateTopicSyslogCommand : SyslogCommand(args) {
     val id: String by args
+    val namespace: String by args
+  }
+
+  inner class DeleteTopicSyslogCommand : SyslogCommand(args) {
     val namespace: String by args
   }
 

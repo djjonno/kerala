@@ -31,6 +31,7 @@ class TopicRegistry {
 
   fun get(id: String): Topic? = registry[id]
   fun get(topic: Topic): Topic? = get(topic.id)
+  fun findByNamespace(namespace: String): Topic? = topics.firstOrNull { it.namespace == namespace }
 
   fun registerListener(listener: Listener, executor: Executor, rewind: Boolean = false) {
     listeners.add(Pair(listener, executor))

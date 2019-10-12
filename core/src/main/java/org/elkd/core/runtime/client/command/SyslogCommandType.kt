@@ -1,6 +1,11 @@
-package org.elkd.core.runtime.client.controller
+package org.elkd.core.runtime.client.command
 
-enum class SyslogCommandType(val id: String) {
+import org.elkd.core.runtime.client.command.parsers.CommandParser
+import org.elkd.core.runtime.client.command.parsers.CreateTopicCommandParser
+import org.elkd.core.runtime.client.command.parsers.DefaultCommandParser
+import org.elkd.core.runtime.client.command.parsers.DeleteTopicCommandParser
+
+enum class SyslogCommandType(val id: String, val parser: CommandParser) {
   /**
    * This does not change the leader, this handlers exists when a leader is changed,
    * and down-stream consumers should be informed.  Of course you could also obtain
@@ -8,14 +13,21 @@ enum class SyslogCommandType(val id: String) {
    *
    * @param node host:port of new leader.
    */
-  CONSENSUS_CHANGE("consensus-change"),
+  CONSENSUS_CHANGE("consensus-change", DefaultCommandParser()),
 
   /**
    * Creates a new topic and configures it in the TopicRegistry.
    *
-   * @param namespace unique name of topic.
+   * @param namespace unique name of Topic.
    */
-  CREATE_TOPIC("create-topic")
+  CREATE_TOPIC("create-topic", CreateTopicCommandParser()),
+
+  /**
+   * Delete a topic.
+   *
+   * @param namespace unique namespace of Topic.
+   */
+  DELETE_TOPIC("delete-topic", DeleteTopicCommandParser())
 
   ;
 

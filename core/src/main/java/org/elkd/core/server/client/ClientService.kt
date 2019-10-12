@@ -2,7 +2,7 @@ package org.elkd.core.server.client
 
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.runtime.client.controller.ClientCommandHandler
+import org.elkd.core.runtime.client.command.ClientCommandHandler
 import org.elkd.core.concurrency.Pools
 
 class ClientService(private val clientCommandHandler: ClientCommandHandler): ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
