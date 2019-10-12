@@ -6,3 +6,6 @@ out/
 *.iml
 cc-test-reporter
 elkd.properties
+
+# playground dir
+core/src/main/java/org/elkd/core/playground/

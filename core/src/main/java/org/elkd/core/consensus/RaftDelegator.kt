@@ -40,7 +40,7 @@ import java.util.concurrent.ExecutorService
 @Mockable
 class RaftDelegator(private val stateFactory: RaftStateFactory,
                     private val transitionContracts: List<TransitionContract> = emptyList(),
-                    @VisibleForTesting private val serialExecutor: ExecutorService = Pools.consensusThreadPool) : RaftDelegate {
+                    @VisibleForTesting private val serialExecutor: ExecutorService = Pools.consensusPool) : RaftDelegate {
 
   /**
    * Raft state is the internal state representation. Using the state design pattern,

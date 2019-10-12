@@ -11,7 +11,7 @@ class ClientService(private val clientCommandHandler: ClientCommandHandler): Elk
   }
 
   override fun clientCommand(request: RpcClientRequest?, responseObserver: StreamObserver<RpcClientResponse>?) {
-    Pools.clientCommandThreadPool.execute {
+    Pools.clientCommandPool.execute {
       clientCommandHandler.handle(request!!, responseObserver!!)
     }
   }

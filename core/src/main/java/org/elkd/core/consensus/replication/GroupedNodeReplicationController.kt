@@ -1,13 +1,11 @@
 package org.elkd.core.consensus.replication
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
+import org.elkd.core.concurrency.asCoroutineScope
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.log.LogChangeReason
@@ -22,10 +20,8 @@ import kotlin.system.measureTimeMillis
 class GroupedNodeReplicationController(private val raft: Raft,
                                        private val topic: Topic,
                                        private val clusterSet: ClusterSet,
-                                       private val broadcastInterval: Long) : CoroutineScope {
-  private val job = Job()
-  override val coroutineContext: CoroutineContext
-    get() = job + Pools.replicationThreadPool.asCoroutineDispatcher()
+                                       private val broadcastInterval: Long,
+                                       private val context: CoroutineContext) : CoroutineScope by Pools.replicationPool.asCoroutineScope(context) {
 
   fun launchController() {
     LOGGER.info("Launching replication for $topic")
@@ -42,11 +38,6 @@ class GroupedNodeReplicationController(private val raft: Raft,
     launch {
       monitorTopicReplication(topic, leaderContext)
     }
-  }
-
-  fun shutdown() {
-    LOGGER.info("shutting down replication for $topic")
-    coroutineContext.cancel()
   }
 
   /* Topic Replication Servicing */

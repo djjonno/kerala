@@ -19,7 +19,7 @@ class SyslogCommandExecutor(private val consensusFacade: ConsensusFacade) : Coro
     /* listen to consensus state changes */
     NotificationCenter.sub(
         NotificationCenter.Channel.CONSENSUS_CHANGE,
-        Pools.clientCommandThreadPool
+        Pools.clientCommandPool
     ) {
       cleanupUnsupportedBundles(consensusFacade.supportedOperations)
     }
