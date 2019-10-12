@@ -2,17 +2,17 @@ package org.elkd.core.server.client
 
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
-import org.elkd.core.runtime.client.command.CommandRouter
+import org.elkd.core.runtime.client.controller.ClientCommandHandler
 import org.elkd.core.concurrency.Pools
 
-class ClientService(private val commandRouter: CommandRouter): ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
+class ClientService(private val clientCommandHandler: ClientCommandHandler): ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
   init {
     logger.info("Initializing client service interface")
   }
 
-  override fun clientCommand(request: RpcClientCommandRequest?, responseObserver: StreamObserver<RpcClientCommandResponse>?) {
+  override fun clientCommand(request: RpcClientRequest?, responseObserver: StreamObserver<RpcClientResponse>?) {
     Pools.clientCommandThreadPool.execute {
-      commandRouter.handle(request!!, responseObserver!!)
+      clientCommandHandler.handle(request!!, responseObserver!!)
     }
   }
 

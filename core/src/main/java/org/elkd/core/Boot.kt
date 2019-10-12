@@ -7,10 +7,10 @@ import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.RaftFactory
 import org.elkd.core.log.LogFactory
 import org.elkd.core.runtime.TopicModule
-import org.elkd.core.runtime.client.command.CommandExecutor
-import org.elkd.core.runtime.client.command.CommandRouter
-import org.elkd.core.runtime.client.command.CommandType
-import org.elkd.core.runtime.client.command.CreateTopicTransformer
+import org.elkd.core.runtime.client.controller.SyslogCommandExecutor
+import org.elkd.core.runtime.client.controller.ClientCommandHandler
+import org.elkd.core.runtime.client.controller.SyslogCommandType
+import org.elkd.core.runtime.client.controller.CreateTopicParser
 import org.elkd.core.runtime.topic.TopicFactory
 import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicRegistry
@@ -85,8 +85,8 @@ fun main(args: Array<String>) {
    * Configure consensus module `Raft`.
    */
   val consensusModule = ConsensusFacade(RaftFactory.create(config, topicModule, clusterMessenger))
-  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, CommandRouter(CommandExecutor(consensusModule), mapOf(
-      CommandType.CREATE_TOPIC to CreateTopicTransformer()
+  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, ClientCommandHandler(SyslogCommandExecutor(consensusModule), mapOf(
+      SyslogCommandType.CREATE_TOPIC to CreateTopicParser()
   ))))
 
   try {

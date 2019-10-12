@@ -3,19 +3,18 @@ package org.elkd.core.runtime.client
 import io.grpc.ManagedChannelBuilder
 import org.elkd.core.server.client.ElkdClientServiceGrpc
 import org.elkd.core.server.client.RpcArgPair
-import org.elkd.core.server.client.RpcClientCommandRequest
-import org.elkd.core.server.client.RpcClientCommandResponse
+import org.elkd.core.server.client.RpcClientRequest
+import org.elkd.core.server.client.RpcClientResponse
 import org.elkd.core.server.cluster.ElkdClusterServiceGrpc
 import org.elkd.core.server.cluster.RpcLogTail
 import org.elkd.core.server.cluster.RpcRequestVoteRequest
-import org.elkd.core.server.cluster.RpcRequestVoteResponse
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 fun main() {
-//  createTopic(9191)
+  createTopic(9191)
 
-  requestVotesMultiple(9191)
+//  requestVotesMultiple(9191)
 }
 
 private fun requestVotesMultiple(port: Int) {
@@ -50,9 +49,9 @@ private fun createTopic(port: Int) {
   )
 
   var count = 0
-  var future: Future<RpcClientCommandResponse>
+  var future: Future<RpcClientResponse>
   do {
-    future = stub.clientCommand(RpcClientCommandRequest.newBuilder()
+    future = stub.clientCommand(RpcClientRequest.newBuilder()
         .setCommand("create-topic")
         .addAllArgs(listOf(RpcArgPair.newBuilder()
             .setArg("namespace")

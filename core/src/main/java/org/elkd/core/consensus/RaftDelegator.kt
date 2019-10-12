@@ -56,7 +56,7 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
   }
 
   /**
-   * Async transition request, schedules the transition for execution
+   * Async transition controller, schedules the transition for execution
    * at some point in the future.
    */
   fun transitionRequest(state: State,

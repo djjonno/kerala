@@ -7,7 +7,7 @@ service ElkdClientService {
     // @EvolvingApi
     //
     // Execute a handlers, e.g `create-topic`
-    rpc ClientCommand (RpcClientCommandRequest) returns (RpcClientCommandResponse) {}
+    rpc ClientCommand (RpcClientRequest) returns (RpcClientResponse) {}
 
     // @EvolvingApi
     //
@@ -29,7 +29,7 @@ service ElkdClientService {
 // @property handlers    - handlers namespace to execute
 // @property params     - parameter names for args (index of parameter in list has corresponding value in `args`.
 // @property args       - values for each parameter
-message RpcClientCommandRequest {
+message RpcClientRequest {
     string command = 1;
     repeated RpcArgPair args = 3;
 }
@@ -44,7 +44,7 @@ message RpcArgPair {
 // Response returned by invoking ClientCommandRequest.
 //
 // @property response - handlers response
-message RpcClientCommandResponse {
+message RpcClientResponse {
     string response = 1;
 }
 

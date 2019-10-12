@@ -13,7 +13,7 @@ class LogCommandExecutor<E : LogEntry> constructor(private val log: Log<E>,
     LOGGER.info("Executing $command")
     threadPool.submit {
       command.execute(log)
-    }.get() /* wait for executiojn */
+    }.get() /* wait for execution */
   }
 
   private companion object {

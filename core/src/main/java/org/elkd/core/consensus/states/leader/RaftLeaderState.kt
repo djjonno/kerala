@@ -11,8 +11,8 @@ import org.elkd.core.consensus.replication.Replicator
 import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
-import org.elkd.core.runtime.client.command.Command
-import org.elkd.core.runtime.client.command.CommandType
+import org.elkd.core.runtime.client.controller.SyslogCommand
+import org.elkd.core.runtime.client.controller.SyslogCommandType
 
 class RaftLeaderState(private val raft: Raft) : RaftState {
   private var replicator: Replicator? = null
@@ -53,7 +53,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   private fun broadcastConsensusInformation() {
     raft.topicModule.syslog.logFacade.commandExecutor.execute(AppendCommand.build(
-        Command.builder(CommandType.CONSENSUS_CHANGE) {
+        SyslogCommand.builder(SyslogCommandType.CONSENSUS_CHANGE) {
           arg("leaderNode", raft.clusterSet.localNode.id)
         }.asEntry(raft.raftContext.currentTerm),
         LogChangeReason.REPLICATION

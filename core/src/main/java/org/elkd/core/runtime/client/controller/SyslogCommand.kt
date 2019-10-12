@@ -1,14 +1,15 @@
-package org.elkd.core.runtime.client.command
+package org.elkd.core.runtime.client.controller
 
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.KV
 
 /**
- * Command
+ * SyslogCommand
  *
- * Object that can be executed by the CommandExecutor.
+ * An object that encapsulates command literals, usually originating from a client,
+ * which are destined for the @syslog Topic for replication and finally execution.
  */
-open class Command(val args: Map<String, String>) {
+open class SyslogCommand(val args: Map<String, String>) {
 
   val command: String by args
 
@@ -22,55 +23,49 @@ open class Command(val args: Map<String, String>) {
         .build()
   }
 
-  /* Builder */
-
   companion object {
     private const val KEY_COMMAND = "command"
 
-    inline fun builder(command: CommandType, commandBuilder: Builder.() -> Unit) : Command {
-      return builder(command.id, commandBuilder)
-    }
-
-    inline fun builder(command: String, commandBuilder: Builder.() -> Unit): Command {
+    inline fun builder(command: SyslogCommandType, commandBuilder: Builder.() -> Unit): SyslogCommand {
       val builder = Builder(command)
       builder.commandBuilder()
       return builder.build()
     }
   }
 
-  class Builder(private val command: String) {
+  class Builder(private val command: SyslogCommandType) {
     private val args = mutableMapOf<String, String>()
 
     fun arg(key: String, `val`: String) {
       args[key] = `val`
     }
 
-    fun build(): Command {
-      args[KEY_COMMAND] = command
-      return Command(args)
+    fun build(): SyslogCommand {
+      args[KEY_COMMAND] = command.id
+      return SyslogCommand(args)
     }
   }
 
   /**
-   * Create Topic Command
+   * Create Topic SyslogCommand
    *
    * Encapsulates parameters for provisioning a new Topic.
    */
-  inner class CreateTopicCommand : Command(args) {
+  inner class CreateTopicSyslogCommand : SyslogCommand(args) {
     val id: String by args
     val namespace: String by args
   }
 
   /**
-   * Leader Change Command
+   * Leader Change SyslogCommand
    *
    * Encapsulates consensus change information.
    */
-  inner class LeaderChangeCommand : Command(args) {
+  inner class LeaderChangeSyslogCommand : SyslogCommand(args) {
     val leaderNode: String by args
   }
 }
 
-fun Entry.asCommand() : Command {
-  return Command(this.kvs.map { it.key to it.`val` }.toMap())
+fun Entry.asCommand() : SyslogCommand {
+  return SyslogCommand(this.kvs.map { it.key to it.`val` }.toMap())
 }

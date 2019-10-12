@@ -10,7 +10,7 @@ object Pools {
   private const val REPLICATION_THREAD_POOL = 8;
 
   /**
-   * Pool for client command execution.
+   * Pool for client controller execution.
    */
   val clientCommandThreadPool: ExecutorService = Executors.newFixedThreadPool(
       CLIENT_COMMAND_THREAD_POOL_SIZE, ThreadFactoryProvider.create("client-cmd"))
@@ -31,7 +31,7 @@ object Pools {
       REPLICATION_THREAD_POOL, ThreadFactoryProvider.create("replication"))
 
   /**
-   * Pool for logger command execution
+   * Pool for logger controller execution
    */
   fun createPool(name: String, size: Int = 1): ExecutorService = Executors.newFixedThreadPool(
       size, ThreadFactoryProvider.create(name))

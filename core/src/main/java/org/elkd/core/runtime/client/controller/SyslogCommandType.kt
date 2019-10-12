@@ -1,6 +1,6 @@
-package org.elkd.core.runtime.client.command
+package org.elkd.core.runtime.client.controller
 
-enum class CommandType(val id: String) {
+enum class SyslogCommandType(val id: String) {
   /**
    * This does not change the leader, this handlers exists when a leader is changed,
    * and down-stream consumers should be informed.  Of course you could also obtain
@@ -24,8 +24,13 @@ enum class CommandType(val id: String) {
      * Commands are received from clients in string form, this helper method maps
      * a string to its enum counterpart.
      */
-    fun fromString(string: String): CommandType {
+    fun fromId(string: String): SyslogCommandType {
       return values().first { it.id == string }
     }
+
+    /**
+     * Return Syslog availableCommandIds
+     */
+    val availableCommandIds: List<String> = values().map { it.id }
   }
 }
