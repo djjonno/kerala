@@ -3,14 +3,14 @@ package org.elkd.core.runtime.client.consumer
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.runtime.TopicModule
-import org.elkd.core.runtime.client.command.SyslogCommand
-import org.elkd.core.runtime.client.command.SyslogCommandType
+import org.elkd.core.runtime.client.command.ClientCommand
+import org.elkd.core.runtime.client.command.ClientCommandType
 import org.elkd.core.runtime.client.command.asCommand
 
 /**
  * SyslogConsumer consumes all entries on the @system Topic.
  *
- * The entry comes in the form of a decomposed SyslogCommand object,
+ * The entry comes in the form of a decomposed ClientCommand object,
  * serialized as KVS.  This component will extract it and
  * execute it appropriate against the runtime.
  *
@@ -28,25 +28,25 @@ class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
   override fun consume(index: Long, entry: Entry) {
     val command = entry.asCommand()
 
-    when (SyslogCommandType.fromId(command.command)) {
-      SyslogCommandType.CREATE_TOPIC -> createTopic(command.CreateTopicSyslogCommand())
-      SyslogCommandType.DELETE_TOPIC -> deleteTopic(command.DeleteTopicSyslogCommand())
-      SyslogCommandType.CONSENSUS_CHANGE -> /* no-op for now */ LOGGER.info("leader changed -> ${command.LeaderChangeSyslogCommand().leaderNode}")
+    when (ClientCommandType.fromId(command.command)) {
+      ClientCommandType.CREATE_TOPIC -> createTopic(command.CreateTopicClientCommand())
+      ClientCommandType.DELETE_TOPIC -> deleteTopic(command.DeleteTopicClientCommand())
+      ClientCommandType.CONSENSUS_CHANGE -> {
+        /* no-op for now */ LOGGER.info("leader changed -> ${command.LeaderChangeClientCommand().leaderNode}")
+      }
     }
   }
 
-  private fun createTopic(command: SyslogCommand.CreateTopicSyslogCommand) {
-    /* Check if topic exists */
-    if (command.namespace in topicModule.topicRegistry.namespaces) {
+  private fun createTopic(command: ClientCommand.CreateTopicClientCommand) {
+    topicModule.topicRegistry.findByNamespace(command.namespace)?.let {
       LOGGER.info("Ignoring, topic `${command.namespace}` already exists")
-      return
+    } ?: run {
+      val newTopic = topicModule.provisionTopic(command.id, command.namespace)
+      LOGGER.info("Provisioned new topic $newTopic")
     }
-
-    val newTopic = topicModule.provisionTopic(command.id, command.namespace)
-    LOGGER.info("Provisioned new topic $newTopic")
   }
 
-  private fun deleteTopic(command: SyslogCommand.DeleteTopicSyslogCommand) {
+  private fun deleteTopic(command: ClientCommand.DeleteTopicClientCommand) {
     topicModule.topicRegistry.findByNamespace(command.namespace)?.let {
       topicModule.topicRegistry.remove(it)
     } ?: LOGGER.info("Ignoring, topic `${command.namespace}` does not exist.")

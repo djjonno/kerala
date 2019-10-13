@@ -8,24 +8,23 @@ class TopicRegistry {
   private val listeners = mutableSetOf<Pair<Listener, Executor>>()
 
   val topics: List<Topic> get() = registry.entries.map { it.value }
-  val namespaces: List<String> get() = registry.entries.map { it.value.namespace }
   val size = topics.size
 
   fun add(topic: Topic) {
     if (get(topic) != null) {
-      LOGGER.warn("$topic already exists, ignoring op.")
+      LOGGER.warn("$topic already exists - ignoring")
       return
     }
     registry[topic.id] = topic
     notifyChange(topic, Listener.Event.ADDED)
-    LOGGER.info("new topic $topic registered")
+    LOGGER.info("topic $topic registered")
   }
 
   fun remove(topic: Topic) {
     get(topic)?.apply {
       registry.remove(id)
       notifyChange(this, Listener.Event.REMOVED)
-      LOGGER.info("topic removed: $topic")
+      LOGGER.info("topic $topic removed")
     }
   }
 

@@ -109,7 +109,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
   }
 
   override fun toString(): String {
-    return "Log(last: ${logStore[logStore.size - 1]})"
+    return "Log(size=${logStore.size}, index=$index)"
   }
 
   companion object {

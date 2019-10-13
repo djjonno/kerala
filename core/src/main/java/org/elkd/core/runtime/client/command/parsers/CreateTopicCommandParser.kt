@@ -1,19 +1,19 @@
 package org.elkd.core.runtime.client.command.parsers
 
-import org.elkd.core.runtime.client.command.SyslogCommand
-import org.elkd.core.runtime.client.command.SyslogCommandType
+import org.elkd.core.runtime.client.command.ClientCommand
+import org.elkd.core.runtime.client.command.ClientCommandType
 import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.server.client.RpcClientRequest
 
 class CreateTopicCommandParser : CommandParser() {
-  override fun parse(type: SyslogCommandType, request: RpcClientRequest): SyslogCommand {
-    return SyslogCommand.builder(type) {
+  override fun parse(type: ClientCommandType, request: RpcClientRequest): ClientCommand {
+    return ClientCommand.builder(type) {
       request.argsList.forEach { pair ->
         arg(pair.arg, pair.param)
       }
       /* A topic requires a UUID */
       arg("id", Topic.generateId())
-    }.CreateTopicSyslogCommand()
+    }.CreateTopicClientCommand()
   }
 
   override fun rules() = listOf(

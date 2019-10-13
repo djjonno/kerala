@@ -46,6 +46,7 @@ message RpcArgPair {
 // @property response - handlers response
 message RpcClientResponse {
     string response = 1;
+    uint32 code = 2;
 }
 
 // @Experimental

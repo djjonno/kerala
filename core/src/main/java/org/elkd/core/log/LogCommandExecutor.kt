@@ -10,8 +10,8 @@ import java.util.concurrent.ExecutorService
 class LogCommandExecutor<E : LogEntry> constructor(private val log: Log<E>,
                                                    private val threadPool: ExecutorService) {
   fun execute(command: LogCommand<E>) {
-    LOGGER.info("Executing $command")
     threadPool.submit {
+      LOGGER.info("executing $command")
       command.execute(log)
     }.get() /* wait for execution */
   }

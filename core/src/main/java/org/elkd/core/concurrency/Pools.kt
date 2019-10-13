@@ -35,9 +35,6 @@ object Pools {
   val replicationPool: ExecutorService = Executors.newFixedThreadPool(
       REPLICATION_THREAD_POOL, ThreadFactoryProvider.create("replication"))
 
-  /**
-   * Pool for logger command execution
-   */
   fun createPool(name: String, size: Int = 1): ExecutorService = Executors.newFixedThreadPool(
       size, ThreadFactoryProvider.create(name))
 

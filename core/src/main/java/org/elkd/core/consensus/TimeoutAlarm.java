@@ -41,10 +41,9 @@ public class TimeoutAlarm {
     }
   }
 
-
   @VisibleForTesting static class TimerFactory {
     Timer createDaemonTimer() {
-      return new Timer(true);
+      return new Timer(false);
     }
   }
 }

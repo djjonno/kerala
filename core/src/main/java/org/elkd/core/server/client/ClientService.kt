@@ -10,9 +10,9 @@ class ClientService(private val clientCommandHandler: ClientCommandHandler): Elk
     logger.info("Initializing client service interface")
   }
 
-  override fun clientCommand(request: RpcClientRequest?, responseObserver: StreamObserver<RpcClientResponse>?) {
+  override fun clientCommand(request: RpcClientRequest, responseObserver: StreamObserver<RpcClientResponse>) {
     Pools.clientCommandPool.execute {
-      clientCommandHandler.handle(request!!, responseObserver!!)
+      clientCommandHandler.handle(request, responseObserver)
     }
   }
 

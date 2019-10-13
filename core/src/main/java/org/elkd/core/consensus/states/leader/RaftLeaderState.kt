@@ -11,8 +11,8 @@ import org.elkd.core.consensus.replication.Replicator
 import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.commands.AppendCommand
-import org.elkd.core.runtime.client.command.SyslogCommand
-import org.elkd.core.runtime.client.command.SyslogCommandType
+import org.elkd.core.runtime.client.command.ClientCommand
+import org.elkd.core.runtime.client.command.ClientCommandType
 
 class RaftLeaderState(private val raft: Raft) : RaftState {
   private var replicator: Replicator? = null
@@ -30,7 +30,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
     replicator?.shutdown()
   }
 
-  override val supportedOps = setOf(OpCategory.PRODUCE, OpCategory.COMMAND, OpCategory.CONSUME)
+  override val supportedOps = setOf(OpCategory.WRITE, OpCategory.READ)
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
@@ -53,7 +53,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   private fun broadcastConsensusInformation() {
     raft.topicModule.syslog.logFacade.commandExecutor.execute(AppendCommand.build(
-        SyslogCommand.builder(SyslogCommandType.CONSENSUS_CHANGE) {
+        ClientCommand.builder(ClientCommandType.CONSENSUS_CHANGE) {
           arg("leaderNode", raft.clusterSet.localNode.id)
         }.asEntry(raft.raftContext.currentTerm),
         LogChangeReason.REPLICATION

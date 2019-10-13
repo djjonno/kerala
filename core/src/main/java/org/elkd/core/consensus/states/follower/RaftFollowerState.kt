@@ -47,7 +47,7 @@ constructor(private val raft: Raft,
     stopTimeout()
   }
 
-  override val supportedOps = setOf(OpCategory.CONSUME)
+  override val supportedOps = setOf(OpCategory.READ)
 
   override fun delegateAppendEntries(request: AppendEntriesRequest,
                                      stream: StreamObserver<AppendEntriesResponse>) {
@@ -60,7 +60,7 @@ constructor(private val raft: Raft,
           /**
            * Timeout Alarm is 'paused' here whilst the entries are appended to the LOGGER,
            * as there could be many, we don't want to respond to the sender node until
-           * the logs have been appended.  While performing this lengthy operation, it
+           * the logs have been appended.  While performing this lengthy category, it
            * it does not attribute to a leader node being absent.
            */
           stopTimeout()
