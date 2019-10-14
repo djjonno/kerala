@@ -9,6 +9,7 @@ import org.elkd.core.log.LogFactory
 import org.elkd.core.runtime.TopicModule
 import org.elkd.core.runtime.client.command.ClientCommandExecutor
 import org.elkd.core.runtime.client.command.ClientCommandHandler
+import org.elkd.core.runtime.client.stream.ClientStreamHandler
 import org.elkd.core.runtime.topic.TopicFactory
 import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicRegistry
@@ -75,15 +76,14 @@ fun main(args: Array<String>) {
   val clusterMessenger = ClusterMessenger(clusterConnectionPool)
 
   /*
-   * Configure client module.
+   * Configure client systems.
    */
   val topicModule = TopicModule(TopicRegistry(), TopicGateway(), TopicFactory(LogFactory()))
+  val consensusFacade = ConsensusFacade(RaftFactory.create(config, topicModule, clusterMessenger))
+  val clientStreamHandler = ClientStreamHandler(consensusFacade, topicModule)
+  val clientCommandHandler = ClientCommandHandler(ClientCommandExecutor(consensusFacade, topicModule))
 
-  /*
-   * Configure consensus module `Raft`.
-   */
-  val consensusModule = ConsensusFacade(RaftFactory.create(config, topicModule, clusterMessenger))
-  val boot = Boot(config, consensusModule, Server(consensusModule.delegator, ClientCommandHandler(ClientCommandExecutor(consensusModule, topicModule))))
+  val boot = Boot(config, consensusFacade, Server(consensusFacade.delegator, clientCommandHandler, clientStreamHandler))
 
   try {
     with (boot) {

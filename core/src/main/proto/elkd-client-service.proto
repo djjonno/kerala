@@ -12,7 +12,7 @@ service ElkdClientService {
     // @EvolvingApi
     //
     // Provide a stream for clients to produce to a topic.
-    rpc ProduceTopic (stream ProducerRecord) returns (stream RpcProducerAck) {}
+    rpc ProduceTopic (stream RpcProducerRecord) returns (stream RpcProducerAck) {}
 
     // @EvolvingApi
     //
@@ -26,7 +26,7 @@ service ElkdClientService {
 // To prevent having to change the RPC service definition each time we wish
 // to addKV a new client handlers, we can instead use this flexible model.
 //
-// @property handlers    - handlers namespace to execute
+// @property handlers   - handlers namespace to execute
 // @property params     - parameter names for args (index of parameter in list has corresponding value in `args`.
 // @property args       - values for each parameter
 message RpcClientRequest {
@@ -51,11 +51,11 @@ message RpcClientResponse {
 
 // @Experimental
 //
-// Producer Acknowledgement configurations:
+// ProducerVM Acknowledgement configurations:
 // 1. fire-and-forget
 // 2. all
 message RpcProducerAck {
-    string notification = 1;
+    uint32 notification = 1;
 }
 
 // @EvolvingApi
@@ -63,9 +63,9 @@ message RpcProducerAck {
 // Common stream payload, representing a key and value.
 //
 // @property topic  - topic to send Key/Value to.
-message ProducerRecord {
+message RpcProducerRecord {
     string topic = 1;
-    RpcKV kv = 2;
+    repeated RpcKV kv = 2;
 }
 
 // @EvolvingApi

@@ -11,17 +11,17 @@ import kotlin.coroutines.EmptyCoroutineContext
 object Pools {
 
   private const val CONSENSUS_THREAD_POOL = 1;
-  private const val CLIENT_COMMAND_THREAD_POOL_SIZE = 1;
+  private const val CLIENT_REQUEST_THREAD_POOL_SIZE = 1;
   private const val REPLICATION_THREAD_POOL = 8;
 
   /**
-   * Pool for client command execution.
+   * Pool for servicing client requests.
    */
-  val clientCommandPool: ExecutorService = Executors.newFixedThreadPool(
-      CLIENT_COMMAND_THREAD_POOL_SIZE, ThreadFactoryProvider.create("client-cmd"))
+  val clientRequestPool: ExecutorService = Executors.newFixedThreadPool(
+      CLIENT_REQUEST_THREAD_POOL_SIZE, ThreadFactoryProvider.create("client-req"))
 
   /**
-   * Single-threaded consensus thread pool.
+   * Single-threaded consensus thread threadPool.
    *
    * This allows all state components within the consensus package to
    * be without synchronization primitives.
@@ -35,6 +35,9 @@ object Pools {
   val replicationPool: ExecutorService = Executors.newFixedThreadPool(
       REPLICATION_THREAD_POOL, ThreadFactoryProvider.create("replication"))
 
+  /**
+   * Create a new Pool with size.
+   */
   fun createPool(name: String, size: Int = 1): ExecutorService = Executors.newFixedThreadPool(
       size, ThreadFactoryProvider.create(name))
 

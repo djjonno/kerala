@@ -38,7 +38,7 @@ class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
   }
 
   private fun createTopic(command: ClientCommand.CreateTopicClientCommand) {
-    topicModule.topicRegistry.findByNamespace(command.namespace)?.let {
+    topicModule.topicRegistry.getByNamespace(command.namespace)?.let {
       LOGGER.info("Ignoring, topic `${command.namespace}` already exists")
     } ?: run {
       val newTopic = topicModule.provisionTopic(command.id, command.namespace)
@@ -47,7 +47,7 @@ class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
   }
 
   private fun deleteTopic(command: ClientCommand.DeleteTopicClientCommand) {
-    topicModule.topicRegistry.findByNamespace(command.namespace)?.let {
+    topicModule.topicRegistry.getByNamespace(command.namespace)?.let {
       topicModule.topicRegistry.remove(it)
     } ?: LOGGER.info("Ignoring, topic `${command.namespace}` does not exist.")
   }

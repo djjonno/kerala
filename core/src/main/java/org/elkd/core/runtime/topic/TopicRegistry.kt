@@ -4,33 +4,44 @@ import org.apache.log4j.Logger
 import java.util.concurrent.Executor
 
 class TopicRegistry {
-  private val registry: MutableMap<String, Topic> = mutableMapOf()
+  private val registryById: MutableMap<String, Topic> = mutableMapOf()
+  private val registryByNamespace: MutableMap<String, Topic> = mutableMapOf()
   private val listeners = mutableSetOf<Pair<Listener, Executor>>()
 
-  val topics: List<Topic> get() = registry.entries.map { it.value }
-  val size = topics.size
+  val topics: List<Topic> get() = registryById.entries.map { it.value }
+  val size = registryById.size
 
   fun add(topic: Topic) {
-    if (get(topic) != null) {
+    if (getByTopic(topic) != null) {
       LOGGER.warn("$topic already exists - ignoring")
       return
     }
-    registry[topic.id] = topic
+    set(topic)
     notifyChange(topic, Listener.Event.ADDED)
     LOGGER.info("topic $topic registered")
   }
 
   fun remove(topic: Topic) {
-    get(topic)?.apply {
-      registry.remove(id)
+    getByTopic(topic)?.apply {
+      unset(this)
       notifyChange(this, Listener.Event.REMOVED)
       LOGGER.info("topic $topic removed")
     }
   }
 
-  fun get(id: String): Topic? = registry[id]
-  fun get(topic: Topic): Topic? = get(topic.id)
-  fun findByNamespace(namespace: String): Topic? = topics.firstOrNull { it.namespace == namespace }
+  private fun set(topic: Topic) {
+    registryById[topic.id] = topic
+    registryByNamespace[topic.namespace] = topic
+  }
+
+  private fun unset(topic: Topic) {
+    registryById.remove(topic.id)
+    registryByNamespace.remove(topic.namespace)
+  }
+
+  fun getById(id: String): Topic? = registryById[id]
+  fun getByNamespace(namespace: String): Topic? = registryByNamespace[namespace]
+  private fun getByTopic(topic: Topic): Topic? = getById(topic.id)
 
   fun registerListener(listener: Listener, executor: Executor, rewind: Boolean = false) {
     listeners.add(Pair(listener, executor))
@@ -40,10 +51,7 @@ class TopicRegistry {
     }
   }
 
-  override fun toString() = "TopicRegistry($registry)"
-  operator fun contains(topicId: String): Boolean {
-    return registry.containsKey(topicId)
-  }
+  override fun toString() = "TopicRegistry($registryById)"
 
   private fun notifyChange(topic: Topic, event: Listener.Event) {
     listeners.forEach {

@@ -1,6 +1,7 @@
 package org.elkd.core.runtime.client.command
 
 import io.grpc.stub.StreamObserver
+import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.OpCategory
 import org.elkd.core.server.client.RpcClientRequest
 import org.elkd.core.server.client.RpcClientResponse
@@ -12,11 +13,14 @@ class ClientCommandHandler(
     private val clientCommandExecutor: ClientCommandExecutor
 ) {
 
-  fun handle(request: RpcClientRequest, response: StreamObserver<RpcClientResponse>) = when (request.command) {
-    in ClientCommandType.writeCommands -> writeCommandHandler(request, response)
-    in ClientCommandType.readCommands -> readCommandHandler(request, response)
-    else -> returnError(response, "command `${request.command}` unknown")
-  }
+  fun handle(request: RpcClientRequest, response: StreamObserver<RpcClientResponse>) =
+      Pools.clientRequestPool.execute {
+        when (request.command) {
+          in ClientCommandType.writeCommands -> writeCommandHandler(request, response)
+          in ClientCommandType.readCommands -> readCommandHandler(request, response)
+          else -> returnError(response, "command `${request.command}` unknown")
+        }
+      }
 
   /**
    * Write Commands are executed on @syslog

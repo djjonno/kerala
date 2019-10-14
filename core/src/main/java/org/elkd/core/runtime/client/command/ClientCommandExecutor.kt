@@ -17,7 +17,7 @@ class ClientCommandExecutor(private val consensusFacade: ConsensusFacade,
     /* listen to consensus state changes */
     NotificationCenter.sub(
         NotificationCenter.Channel.CONSENSUS_CHANGE,
-        Pools.clientCommandPool
+        Pools.clientRequestPool
     ) {
       cleanupUnsupportedBundles(consensusFacade.supportedOperations)
     }

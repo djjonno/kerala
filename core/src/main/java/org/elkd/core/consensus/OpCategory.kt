@@ -9,7 +9,9 @@ enum class OpCategory {
   WRITE,
 
   /**
-   * Denotes a read operation that can be executed on any node.
+   * Denotes a read operation.
+   *
+   * @note execution allowed on any node.
    */
   READ
 }

@@ -6,8 +6,6 @@ Ground work for topic production/consumption
 - [ ] log start from zero / remove need for NULL_ENTRY
 - [x] harden command execution components (abstractions don't really make sense)
 - [ ] create cli client (create-topic)
-- [ ] deprecate NotificationCenter, replace with Kotlin Observables
-- [ ] new TimeoutAlarm component
 
 Clients (Kotlin client)
 - [ ] implement basic produce/consume API

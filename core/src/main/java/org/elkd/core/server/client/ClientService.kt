@@ -1,22 +1,24 @@
 package org.elkd.core.server.client
 
 import io.grpc.stub.StreamObserver
-import org.apache.log4j.Logger
 import org.elkd.core.runtime.client.command.ClientCommandHandler
-import org.elkd.core.concurrency.Pools
+import org.elkd.core.runtime.client.stream.ClientStreamHandler
 
-class ClientService(private val clientCommandHandler: ClientCommandHandler): ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
-  init {
-    logger.info("Initializing client service interface")
-  }
-
+/**
+ * ClientService receives connections from clients and routes
+ * to the appropriate component.
+ */
+class ClientService(private val clientCommandHandler: ClientCommandHandler,
+                    private val clientStreamHandler: ClientStreamHandler): ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
   override fun clientCommand(request: RpcClientRequest, responseObserver: StreamObserver<RpcClientResponse>) {
-    Pools.clientCommandPool.execute {
-      clientCommandHandler.handle(request, responseObserver)
-    }
+    /**
+     * Client commands are executed in-serial to ensure appropriate
+     * execution order, preventing race conditions.
+     */
+    clientCommandHandler.handle(request, responseObserver)
   }
 
-  private companion object {
-    private val logger = Logger.getLogger(ClientService::class.java)
+  override fun produceTopic(responseObserver: StreamObserver<RpcProducerAck>): StreamObserver<RpcProducerRecord> {
+    return clientStreamHandler.establishProducerStream(responseObserver)
   }
 }

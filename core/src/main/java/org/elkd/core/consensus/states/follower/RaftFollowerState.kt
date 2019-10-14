@@ -55,7 +55,7 @@ constructor(private val raft: Raft,
     try {
       with (request) {
         validateAppendEntriesRequest(this)
-        val topic = raft.topicModule.topicRegistry.get(topicId)!!
+        val topic = raft.topicModule.topicRegistry.getById(topicId)!!
         if (entries.isNotEmpty()) {
           /**
            * Timeout Alarm is 'paused' here whilst the entries are appended to the LOGGER,
@@ -107,9 +107,9 @@ constructor(private val raft: Raft,
     }
 
     val results = topicTails.filter {
-      it.topicId in raft.topicModule.topicRegistry
+      raft.topicModule.topicRegistry.getById(it.topicId) != null
     }.map {
-      it to raft.topicModule.topicRegistry.get(it.topicId)!!
+      it to raft.topicModule.topicRegistry.getById(it.topicId)!!
     }.map {
       it.second.logFacade.log.lastIndex <= it.first.lastLogIndex &&
           it.second.logFacade.log.lastEntry.term <= it.first.lastLogTerm
@@ -127,7 +127,7 @@ constructor(private val raft: Raft,
     /*
      * Does topic exist?
      */
-    val topic = raft.topicModule.topicRegistry.get(request.topicId) ?: throw RaftException("Topic ${request.topicId} does not exist")
+    val topic = raft.topicModule.topicRegistry.getById(request.topicId) ?: throw RaftException("Topic ${request.topicId} does not exist")
 
     /*
      * Request term must equal to or greater than raftContext.currentTerm, invalid.
