@@ -1,13 +1,11 @@
 package org.elkd.core.runtime.client.command
 
-import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.OpCategory
+import org.elkd.core.log.LogChangeReason
 import org.elkd.core.runtime.NotificationCenter
 import org.elkd.core.runtime.TopicModule
-
-private val LOGGER = Logger.getLogger(ClientCommandExecutor::class.java)
 
 class ClientCommandExecutor(
     private val consensusFacade: ConsensusFacade,
@@ -46,7 +44,7 @@ class ClientCommandExecutor(
 
   private fun writeCommandToSyslog(bundle: ClientCommandPack) {
     bundleRegistry.add(bundle)
-    consensusFacade.appendToSyslog(bundle.command.kvs) {
+    consensusFacade.writeToTopic(topicModule.syslog, bundle.command.kvs) {
       bundleRegistry.remove(bundle)
       bundle.onComplete("")
     }

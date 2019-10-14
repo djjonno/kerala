@@ -45,7 +45,7 @@ public class Config {
   /**
    * Time between message dispatch from leader to followers.
    */
-  @Key(defaultValue = "500") public static final String KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS = "consensus.leader.interval";
+  @Key(defaultValue = "250") public static final String KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS = "consensus.leader.interval";
 
   /*  -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  */
 
