@@ -24,8 +24,10 @@ package org.elkd.core.consensus.messages
  * all, it simply ensures they're delivered, in the correct order.
  */
 data class KV(
-    /* private to enforce opaqueness */ val key: String,
-    /* private to enforce opaqueness */ val `val`: String
+    /* private to enforce opaqueness */
+    val key: String,
+    /* private to enforce opaqueness */
+    val `val`: String
 ) {
   override fun toString(): String {
     return "KV($key, $`val`)"

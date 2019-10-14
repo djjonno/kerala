@@ -24,9 +24,11 @@ import org.elkd.core.server.cluster.StaticClusterSet
  *
  * Bootstrapping module - configure all runtime dependencies.
  */
-internal class Boot(private val config: Config,
-                    private val consensusFacade: ConsensusFacade,
-                    private val server: Server) {
+internal class Boot(
+    private val config: Config,
+    private val consensusFacade: ConsensusFacade,
+    private val server: Server
+) {
 
   fun start() {
     val port = config.getAsInteger(Config.KEY_PORT)
@@ -86,7 +88,7 @@ fun main(args: Array<String>) {
   val boot = Boot(config, consensusFacade, Server(consensusFacade.delegator, clientCommandHandler, clientStreamHandler))
 
   try {
-    with (boot) {
+    with(boot) {
       Runtime.getRuntime().addShutdownHook(Thread(Runnable { shutdown() }))
       start()
       awaitTermination()

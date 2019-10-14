@@ -1,15 +1,15 @@
 package org.elkd.core.log.commands
 
 import com.nhaarman.mockitokotlin2.*
+import kotlin.test.assertEquals
 import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.log.ds.Log
 import org.elkd.core.log.LogChangeReason
+import org.elkd.core.log.ds.Log
 import org.elkd.core.log.exceptions.NonSequentialAppendException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import kotlin.test.assertEquals
 
 class AppendFromCommandTest {
 

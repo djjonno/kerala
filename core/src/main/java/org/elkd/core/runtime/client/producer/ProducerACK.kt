@@ -17,5 +17,4 @@ object ProducerACK {
     val INVALID_OPERATION = RpcProducerAck.newBuilder().setNotification(Codes.INVALID_OPERATION).build()
     val UNKNOWN_TOPIC = RpcProducerAck.newBuilder().setNotification(Codes.UNKNOWN_TOPIC).build()
   }
-
 }

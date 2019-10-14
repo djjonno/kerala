@@ -1,13 +1,15 @@
 package org.elkd.core.log
 
+import java.lang.Exception
+import java.util.concurrent.ExecutorService
 import org.apache.log4j.Logger
 import org.elkd.core.log.LogChangeEvent.APPEND
 import org.elkd.core.log.LogChangeEvent.COMMIT
-import java.lang.Exception
-import java.util.concurrent.ExecutorService
 
-class LogChangeRegistry<E : LogEntry> constructor(log: LogInvoker<E>,
-                                                  private val threadPool: ExecutorService) {
+class LogChangeRegistry<E : LogEntry> constructor(
+    log: LogInvoker<E>,
+    private val threadPool: ExecutorService
+) {
   private val listener: Listener<E> = Listener()
 
   private val scopedOnCommitRegistrations: MutableMap<String, MutableList<Runnable>> = mutableMapOf()

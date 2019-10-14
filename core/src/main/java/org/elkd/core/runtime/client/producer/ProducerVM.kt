@@ -1,10 +1,10 @@
 package org.elkd.core.runtime.client.producer
 
 import io.grpc.stub.StreamObserver
+import java.util.concurrent.ExecutorService
 import org.apache.log4j.Logger
 import org.elkd.core.server.client.RpcProducerAck
 import org.elkd.core.server.client.RpcProducerRecord
-import java.util.concurrent.ExecutorService
 
 private val LOGGER = Logger.getLogger(ProducerVM::class.java)
 

@@ -1,7 +1,7 @@
 package org.elkd.core.runtime.topic
 
-import org.apache.log4j.Logger
 import java.util.concurrent.Executor
+import org.apache.log4j.Logger
 
 class TopicRegistry {
   private val registryById: MutableMap<String, Topic> = mutableMapOf()

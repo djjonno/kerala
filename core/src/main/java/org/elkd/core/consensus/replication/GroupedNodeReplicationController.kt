@@ -1,7 +1,9 @@
 package org.elkd.core.consensus.replication
 
+import kotlin.coroutines.CoroutineContext
+import kotlin.math.max
+import kotlin.system.measureTimeMillis
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
@@ -14,15 +16,14 @@ import org.elkd.core.log.commands.CommitCommand
 import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.server.cluster.ClusterSet
 import org.elkd.shared.util.findMajority
-import kotlin.coroutines.CoroutineContext
-import kotlin.math.max
-import kotlin.system.measureTimeMillis
 
-class GroupedNodeReplicationController(private val raft: Raft,
-                                       private val topic: Topic,
-                                       private val clusterSet: ClusterSet,
-                                       private val broadcastInterval: Long,
-                                       private val context: CoroutineContext) : CoroutineScope by Pools.replicationPool.asCoroutineScope(context) {
+class GroupedNodeReplicationController(
+    private val raft: Raft,
+    private val topic: Topic,
+    private val clusterSet: ClusterSet,
+    private val broadcastInterval: Long,
+    private val context: CoroutineContext
+) : CoroutineScope by Pools.replicationPool.asCoroutineScope(context) {
 
   fun launchController() = launch {
     LOGGER.info("Launching replication for $topic")

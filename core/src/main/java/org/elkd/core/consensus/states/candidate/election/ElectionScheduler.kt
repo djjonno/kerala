@@ -1,5 +1,6 @@
 package org.elkd.core.consensus.states.candidate.election
 
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -8,7 +9,6 @@ import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.Node
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Performs an election across the cluster, requesting votes and tallying responses.
@@ -19,11 +19,13 @@ import kotlin.coroutines.CoroutineContext
  * @param onFailure Election fail callback
  * @param clusterMessenger Messenger mechanism, contains logical cluster to perform election across.
  */
-class ElectionScheduler private constructor(private val voteRequest: RequestVoteRequest,
-                                            private val electionStrategy: ElectionStrategy,
-                                            private var onSuccess: () -> Unit,
-                                            private var onFailure: () -> Unit,
-                                            private val clusterMessenger: ClusterMessenger): CoroutineScope {
+class ElectionScheduler private constructor(
+    private val voteRequest: RequestVoteRequest,
+    private val electionStrategy: ElectionStrategy,
+    private var onSuccess: () -> Unit,
+    private var onFailure: () -> Unit,
+    private val clusterMessenger: ClusterMessenger
+) : CoroutineScope {
   val job: Job
     get() = Job()
   override val coroutineContext: CoroutineContext
@@ -86,10 +88,12 @@ class ElectionScheduler private constructor(private val voteRequest: RequestVote
 
   companion object {
     private val LOGGER = Logger.getLogger(ElectionScheduler::class.java.name)
-    @JvmStatic fun create(voteRequest: RequestVoteRequest,
-                          onSuccess: () -> Unit,
-                          onFailure: () -> Unit,
-                          clusterMessenger: ClusterMessenger): ElectionScheduler {
+    @JvmStatic fun create(
+        voteRequest: RequestVoteRequest,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit,
+        clusterMessenger: ClusterMessenger
+    ): ElectionScheduler {
       return ElectionScheduler(
           voteRequest,
           /* Raft uses majority, so we'll just hard-code this strategy for now. */

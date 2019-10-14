@@ -8,13 +8,15 @@ import org.elkd.core.runtime.topic.TopicFactory
 import org.elkd.core.runtime.topic.TopicGateway
 import org.elkd.core.runtime.topic.TopicRegistry
 
-class TopicModule(val topicRegistry: TopicRegistry,
-                  val topicGateway: TopicGateway,
-                  private val topicFactory: TopicFactory) {
+class TopicModule(
+    val topicRegistry: TopicRegistry,
+    val topicGateway: TopicGateway,
+    private val topicFactory: TopicFactory
+) {
 
   val syslog: Topic = bootstrapSyslog()
 
-  private fun bootstrapSyslog() : Topic {
+  private fun bootstrapSyslog(): Topic {
     val topic = provisionTopic(SYSLOG_ID, SYSLOG_NAMESPACE)
 
     topicGateway.registerConsumer(topic, SyslogConsumer(this))
@@ -30,7 +32,7 @@ class TopicModule(val topicRegistry: TopicRegistry,
     return topic
   }
 
-  fun provisionTopic(id: String, namespace: String) : Topic {
+  fun provisionTopic(id: String, namespace: String): Topic {
     return topicFactory.create(id, namespace).also(topicRegistry::add)
   }
 

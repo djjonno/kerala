@@ -9,7 +9,7 @@ import org.elkd.core.consensus.states.follower.RaftFollowerState
 import org.elkd.core.consensus.states.leader.RaftLeaderState
 
 class RaftStateFactory(private val raft: Raft) {
-  fun getState(state: State) = when(state) {
+  fun getState(state: State) = when (state) {
     FOLLOWER -> RaftFollowerState(raft)
     CANDIDATE -> RaftCandidateState(raft)
     LEADER -> RaftLeaderState(raft)

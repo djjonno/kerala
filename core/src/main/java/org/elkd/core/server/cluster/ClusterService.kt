@@ -8,15 +8,19 @@ import org.elkd.core.server.converters.ConverterRegistry
 import org.elkd.core.server.converters.RequestVoteConverters
 import org.elkd.core.server.converters.StreamConverterDecorator
 
-class ClusterService(private val raftDelegate: RaftDelegate,
-                     private val converterRegistry: ConverterRegistry) : ElkdClusterServiceGrpc.ElkdClusterServiceImplBase() {
+class ClusterService(
+    private val raftDelegate: RaftDelegate,
+    private val converterRegistry: ConverterRegistry
+) : ElkdClusterServiceGrpc.ElkdClusterServiceImplBase() {
 
   init {
     LOGGER.info("Service ready to accept target connections")
   }
 
-  override fun appendEntries(request: RpcAppendEntriesRequest,
-                             responseObserver: StreamObserver<RpcAppendEntriesResponse>) {
+  override fun appendEntries(
+      request: RpcAppendEntriesRequest,
+      responseObserver: StreamObserver<RpcAppendEntriesResponse>
+  ) {
     try {
       raftDelegate.delegateAppendEntries(
           converterRegistry.getConverter<AppendEntriesConverters.FromRpcRequest>().convert(request),
@@ -29,8 +33,10 @@ class ClusterService(private val raftDelegate: RaftDelegate,
     }
   }
 
-  override fun requestVote(request: RpcRequestVoteRequest,
-                           responseObserver: StreamObserver<RpcRequestVoteResponse>) {
+  override fun requestVote(
+      request: RpcRequestVoteRequest,
+      responseObserver: StreamObserver<RpcRequestVoteResponse>
+  ) {
     try {
       raftDelegate.delegateRequestVote(
           converterRegistry.getConverter<RequestVoteConverters.FromRpcRequest>().convert(request),
@@ -41,7 +47,6 @@ class ClusterService(private val raftDelegate: RaftDelegate,
       responseObserver.onError(e)
       responseObserver.onCompleted()
     }
-
   }
 
   companion object {

@@ -17,7 +17,7 @@ interface Log<E : LogEntry> {
 
   fun read(from: Long, to: Long): List<E>
 
-  fun readSnapshot(from: Long, to: Long) : LogSnapshot<E>
+  fun readSnapshot(from: Long, to: Long): LogSnapshot<E>
 
   fun commit(index: Long): CommitResult<E>
 

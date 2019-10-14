@@ -65,8 +65,8 @@ class ElectionTallyTest {
 
   companion object {
     private const val EXPECTED_VOTES = 5
-    private const val ID_1 = "id1";
-    private const val ID_2 = "id2";
-    private const val ID_3 = "id3";
+    private const val ID_1 = "id1"
+    private const val ID_2 = "id2"
+    private const val ID_3 = "id3"
   }
 }

@@ -1,12 +1,9 @@
 package org.elkd.core.consensus
 
 import org.elkd.core.config.Config
-import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.consensus.messages.Request
 import org.elkd.core.consensus.states.RaftStateFactory
 import org.elkd.core.consensus.states.State
-import org.elkd.core.log.ds.Log
-import org.elkd.core.log.LogCommandExecutor
 import org.elkd.core.runtime.TopicModule
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.ClusterSet
@@ -24,10 +21,12 @@ import org.elkd.shared.annotations.Mockable
  */
 @Mockable
 class Raft
-internal constructor(val config: Config,
-                     val clusterMessenger: ClusterMessenger,
-                     val raftContext: RaftContext,
-                     val topicModule: TopicModule) {
+internal constructor(
+    val config: Config,
+    val clusterMessenger: ClusterMessenger,
+    val raftContext: RaftContext,
+    val topicModule: TopicModule
+) {
 
   val clusterSet: ClusterSet
     get() = clusterMessenger.clusterSet
@@ -36,7 +35,7 @@ internal constructor(val config: Config,
     get() = delegator.supportedOps
 
   val delegator: RaftDelegator = RaftDelegator(RaftStateFactory(this), listOf(
-      object: TransitionContract {
+      object : TransitionContract {
 
         override fun isTransitionRequired(request: Request): Boolean {
           return request.term > raftContext.currentTerm

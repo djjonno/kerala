@@ -70,6 +70,6 @@ open class ClientCommand(val args: Map<String, String>) {
   }
 }
 
-fun Entry.asCommand() : ClientCommand {
+fun Entry.asCommand(): ClientCommand {
   return ClientCommand(this.kvs.map { it.key to it.`val` }.toMap())
 }

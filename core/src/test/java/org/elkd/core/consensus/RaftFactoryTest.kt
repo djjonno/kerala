@@ -3,8 +3,8 @@ package org.elkd.core.consensus
 import com.nhaarman.mockitokotlin2.mock
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.LogCommandExecutor
-import org.elkd.core.log.LogInvoker
 import org.elkd.core.log.LogFactory
+import org.elkd.core.log.LogInvoker
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.junit.Assert.assertSame
 import org.junit.Before

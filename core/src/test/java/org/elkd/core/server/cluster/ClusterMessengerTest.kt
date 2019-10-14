@@ -1,7 +1,12 @@
 package org.elkd.core.server.cluster
 
 import com.google.common.util.concurrent.ListenableFuture
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.doThrow
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import java.util.concurrent.ExecutionException
 import kotlinx.coroutines.runBlocking
 import org.elkd.core.ElkdRuntimeException
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -15,7 +20,6 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import java.util.concurrent.ExecutionException
 
 class ClusterMessengerTest {
   @Mock lateinit var node: Node

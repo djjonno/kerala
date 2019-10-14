@@ -1,5 +1,7 @@
 package org.elkd.core.consensus.replication
 
+import kotlin.math.max
+import kotlin.system.measureTimeMillis
 import kotlinx.coroutines.delay
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.Raft
@@ -9,8 +11,6 @@ import org.elkd.core.consensus.states.leader.LeaderContext
 import org.elkd.core.runtime.topic.Topic
 import org.elkd.core.server.cluster.Node
 import org.elkd.shared.annotations.Mockable
-import kotlin.math.max
-import kotlin.system.measureTimeMillis
 
 /**
  * NodeReplicationController replicates the given raft state to the target {$link Node}.
@@ -19,12 +19,14 @@ import kotlin.system.measureTimeMillis
  * @see Replicator
  */
 @Mockable
-class NodeReplicationController(val raft: Raft,
-                                val topic: Topic,
-                                val target: Node,
-                                val leaderContext: LeaderContext,
-                                private val broadcastInterval: Long,
-                                private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(topic, raft)) {
+class NodeReplicationController(
+    val raft: Raft,
+    val topic: Topic,
+    val target: Node,
+    val leaderContext: LeaderContext,
+    private val broadcastInterval: Long,
+    private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(topic, raft)
+) {
   init {
     LOGGER.info("Replicating $topic -> $target")
   }

@@ -1,9 +1,9 @@
 package org.elkd.core.log
 
+import java.util.HashSet
 import org.elkd.core.log.ds.Log
 import org.elkd.core.log.ds.LogSnapshot
 import org.elkd.shared.annotations.Mockable
-import java.util.HashSet
 
 @Mockable
 class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {

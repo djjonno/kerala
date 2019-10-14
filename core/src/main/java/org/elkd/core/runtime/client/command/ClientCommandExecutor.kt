@@ -9,8 +9,10 @@ import org.elkd.core.runtime.TopicModule
 
 private val LOGGER = Logger.getLogger(ClientCommandExecutor::class.java)
 
-class ClientCommandExecutor(private val consensusFacade: ConsensusFacade,
-                            private val topicModule: TopicModule) {
+class ClientCommandExecutor(
+    private val consensusFacade: ConsensusFacade,
+    private val topicModule: TopicModule
+) {
   private val bundleRegistry: MutableSet<ClientCommandPack> = mutableSetOf()
 
   init {

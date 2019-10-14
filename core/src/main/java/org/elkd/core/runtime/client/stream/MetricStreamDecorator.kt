@@ -1,8 +1,8 @@
 package org.elkd.core.runtime.client.stream
 
 import io.grpc.stub.StreamObserver
-import org.apache.log4j.Logger
 import kotlin.system.measureTimeMillis
+import org.apache.log4j.Logger
 
 class MetricStreamDecorator<T>(private val next: StreamObserver<T>) : StreamObserver<T> {
   override fun onNext(value: T) {

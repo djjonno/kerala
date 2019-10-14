@@ -32,16 +32,20 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   override val supportedOps = setOf(OpCategory.WRITE, OpCategory.READ)
 
-  override fun delegateAppendEntries(request: AppendEntriesRequest,
-                                     stream: StreamObserver<AppendEntriesResponse>) {
+  override fun delegateAppendEntries(
+      request: AppendEntriesRequest,
+      stream: StreamObserver<AppendEntriesResponse>
+  ) {
     with(stream) {
       onNext(AppendEntriesResponse(raft.raftContext.currentTerm, false))
       onCompleted()
     }
   }
 
-  override fun delegateRequestVote(request: RequestVoteRequest,
-                                   stream: StreamObserver<RequestVoteResponse>) {
+  override fun delegateRequestVote(
+      request: RequestVoteRequest,
+      stream: StreamObserver<RequestVoteResponse>
+  ) {
     /* If term > currentTerm, Raft will always transitionRequest to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */

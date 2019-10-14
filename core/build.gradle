@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+configurations {
+    ktlint
+}
+
 def grpcVersion = "1.18.0"
 def protobufVersion = "3.7.1"
 def protocVersion = "3.7.1"
@@ -32,6 +36,8 @@ dependencies {
     testCompile "io.grpc:grpc-testing:${grpcVersion}"
     testCompile "org.hamcrest:hamcrest-junit:2.+"
     testCompile group: "com.nhaarman.mockitokotlin2", name: "mockito-kotlin", version: "2.0.0-alpha01"
+    
+    ktlint "com.pinterest:ktlint:0.35.0"
 }
 
 protobuf {
@@ -77,4 +83,22 @@ applicationDistribution.from(copyLicense) {
 
 applicationDistribution.into("bin") {
     fileMode = 0755
+}
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "src/**/*.kt"
+    // to generate report in checkstyle format prepend following args:
+    // "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
+    // see https://github.com/pinterest/ktlint#usage for more
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "-F", "src/**/*.kt"
 }

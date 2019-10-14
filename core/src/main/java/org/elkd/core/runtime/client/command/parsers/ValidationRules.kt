@@ -12,14 +12,18 @@ class PropertyExists(private val attr: String) : ValidationRule {
   override fun message(command: ClientCommand) = "`$attr` is a required field"
 }
 
-class Lambda(private val block: (command: ClientCommand) -> Boolean,
-             private val constructError: (command: ClientCommand) -> String): ValidationRule {
+class Lambda(
+    private val block: (command: ClientCommand) -> Boolean,
+    private val constructError: (command: ClientCommand) -> String
+) : ValidationRule {
   override fun check(command: ClientCommand): Boolean = block(command)
   override fun message(command: ClientCommand) = constructError(command)
 }
 
-class PropertyRegex(private val property: String,
-                    private val regex: String): ValidationRule {
+class PropertyRegex(
+    private val property: String,
+    private val regex: String
+) : ValidationRule {
   override fun check(command: ClientCommand): Boolean {
     val namespace = command.args[property]
     return if (namespace != null) {

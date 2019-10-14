@@ -2,6 +2,7 @@ package org.elkd.core.consensus.states.follower
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
+import kotlin.math.min
 import org.apache.log4j.Logger
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.OpCategory
@@ -23,12 +24,13 @@ import org.elkd.core.log.commands.CommitCommand
 import org.elkd.core.runtime.topic.Topic
 import org.elkd.shared.annotations.Mockable
 import org.elkd.shared.math.randomizeNumberPoint
-import kotlin.math.min
 
 @Mockable
 class RaftFollowerState @VisibleForTesting
-constructor(private val raft: Raft,
-            @VisibleForTesting private val timeoutAlarm: TimeoutAlarm) : RaftState {
+constructor(
+    private val raft: Raft,
+    @VisibleForTesting private val timeoutAlarm: TimeoutAlarm
+) : RaftState {
   private val timeout = raft.config.getAsInteger(Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS)
 
   constructor(raft: Raft) : this(
@@ -49,11 +51,13 @@ constructor(private val raft: Raft,
 
   override val supportedOps = setOf(OpCategory.READ)
 
-  override fun delegateAppendEntries(request: AppendEntriesRequest,
-                                     stream: StreamObserver<AppendEntriesResponse>) {
+  override fun delegateAppendEntries(
+      request: AppendEntriesRequest,
+      stream: StreamObserver<AppendEntriesResponse>
+  ) {
     resetTimeout()
     try {
-      with (request) {
+      with(request) {
         validateAppendEntriesRequest(this)
         val topic = raft.topicModule.topicRegistry.getById(topicId)!!
         if (entries.isNotEmpty()) {
@@ -85,13 +89,15 @@ constructor(private val raft: Raft,
     }
   }
 
-  override fun delegateRequestVote(request: RequestVoteRequest,
-                                   stream: StreamObserver<RequestVoteResponse>) {
+  override fun delegateRequestVote(
+      request: RequestVoteRequest,
+      stream: StreamObserver<RequestVoteResponse>
+  ) {
     resetTimeout()
 
-    if (raft.raftContext.currentTerm <= request.term
-        && raft.raftContext.votedFor in listOf(null, request.candidateId)
-        && withLogTails(request.topicTails)) {
+    if (raft.raftContext.currentTerm <= request.term &&
+        raft.raftContext.votedFor in listOf(null, request.candidateId) &&
+        withLogTails(request.topicTails)) {
 
       raft.raftContext.votedFor = request.candidateId
       raft.raftContext.currentTerm = request.term

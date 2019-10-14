@@ -1,8 +1,8 @@
 package org.elkd.core.server.converters
 
-import org.elkd.core.consensus.messages.TopicTail
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.messages.TopicTail
 import org.elkd.core.server.cluster.RpcLogTail
 import org.elkd.core.server.cluster.RpcRequestVoteRequest
 import org.elkd.core.server.cluster.RpcRequestVoteResponse

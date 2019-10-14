@@ -2,11 +2,10 @@ package org.elkd.core.log.ds
 
 import com.google.common.base.Preconditions.checkNotNull
 import com.google.common.base.Preconditions.checkState
-import com.google.common.collect.ImmutableList
+import java.util.UUID
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.CommitResult
 import org.elkd.core.log.LogEntry
-import java.util.UUID
 
 class InMemoryLog<E : LogEntry> : Log<E> {
   private val logStore: MutableList<E>
@@ -63,7 +62,7 @@ class InMemoryLog<E : LogEntry> : Log<E> {
     return (from.toInt()..to).mapNotNull(::read)
   }
 
-  override fun readSnapshot(from: Long, to: Long) : LogSnapshot<E> {
+  override fun readSnapshot(from: Long, to: Long): LogSnapshot<E> {
     val entries = read(from, to)
     val initial = read(from - 1)!!
 

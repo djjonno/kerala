@@ -10,6 +10,6 @@ object ThreadFactoryProvider {
   fun create(name: String) = Factory(name, ++globalPoolCount)
 
   class Factory internal constructor(val name: String, val poolCount: Int) : ThreadFactory {
-    override fun newThread(r: Runnable) = Thread(r, "$THREAD_NAME${poolCount}-$name-${globalThreadCount++}")
+    override fun newThread(r: Runnable) = Thread(r, "$THREAD_NAME$poolCount-$name-${globalThreadCount++}")
   }
 }

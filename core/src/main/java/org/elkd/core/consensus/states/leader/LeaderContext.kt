@@ -1,10 +1,10 @@
 package org.elkd.core.consensus.states.leader
 
 import com.google.common.base.Preconditions
-import org.elkd.core.server.cluster.Node
-import org.elkd.shared.annotations.Mockable
 import java.util.*
 import kotlin.math.max
+import org.elkd.core.server.cluster.Node
+import org.elkd.shared.annotations.Mockable
 
 @Mockable
 class LeaderContext(nodes: Set<Node>, lastLogIndex: Long) {
@@ -51,7 +51,7 @@ class LeaderContext(nodes: Set<Node>, lastLogIndex: Long) {
   }
 
   companion object {
-    const val MIN_NEXT_INDEX = 1L;
+    const val MIN_NEXT_INDEX = 1L
     const val DEFAULT_MATCH_INDEX = 0L
   }
 }

@@ -9,10 +9,12 @@ import org.elkd.core.runtime.client.producer.ProducerACK
 import org.elkd.core.server.client.RpcProducerAck
 import org.elkd.core.server.client.RpcProducerRecord
 
-class NodeStateCheckStreamDecorator(private val next: StreamObserver<RpcProducerRecord>,
-                                    private val responseObserver: StreamObserver<RpcProducerAck>,
-                                    private val consensusFacade: ConsensusFacade,
-                                    private val topicModule: TopicModule) : StreamObserver<RpcProducerRecord> {
+class NodeStateCheckStreamDecorator(
+    private val next: StreamObserver<RpcProducerRecord>,
+    private val responseObserver: StreamObserver<RpcProducerAck>,
+    private val consensusFacade: ConsensusFacade,
+    private val topicModule: TopicModule
+) : StreamObserver<RpcProducerRecord> {
 
   override fun onNext(value: RpcProducerRecord) {
     LOGGER.info("checking node ops ${consensusFacade.supportedOperations}")

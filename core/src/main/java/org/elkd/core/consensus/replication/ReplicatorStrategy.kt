@@ -1,13 +1,12 @@
 package org.elkd.core.consensus.replication
 
+import kotlin.math.min
 import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.ds.Log
 import org.elkd.core.log.ds.LogSnapshot
 import org.elkd.core.runtime.topic.Topic
-import kotlin.math.min
-
 
 /**
  * ReplicatorStrategy will provide the necessary AppendEntriesRequest object

@@ -8,8 +8,10 @@ import org.elkd.core.runtime.client.stream.ClientStreamHandler
  * ClientService receives connections from clients and routes
  * to the appropriate component.
  */
-class ClientService(private val clientCommandHandler: ClientCommandHandler,
-                    private val clientStreamHandler: ClientStreamHandler): ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
+class ClientService(
+    private val clientCommandHandler: ClientCommandHandler,
+    private val clientStreamHandler: ClientStreamHandler
+) : ElkdClientServiceGrpc.ElkdClientServiceImplBase() {
   override fun clientCommand(request: RpcClientRequest, responseObserver: StreamObserver<RpcClientResponse>) {
     /**
      * Client commands are executed in-serial to ensure appropriate

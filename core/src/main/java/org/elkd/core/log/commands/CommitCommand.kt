@@ -1,8 +1,8 @@
 package org.elkd.core.log.commands
 
-import org.elkd.core.log.ds.Log
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.LogEntry
+import org.elkd.core.log.ds.Log
 
 class CommitCommand<E : LogEntry> constructor(
     private val index: Long,

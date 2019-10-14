@@ -11,8 +11,10 @@ import org.elkd.core.server.client.RpcProducerRecord
 
 private val LOGGER = Logger.getLogger(ClientStreamHandler::class.java)
 
-class ClientStreamHandler(val consensusFacade: ConsensusFacade,
-                          val topicModule: TopicModule) {
+class ClientStreamHandler(
+    val consensusFacade: ConsensusFacade,
+    val topicModule: TopicModule
+) {
 
   fun establishConsumerStream() { }
 

@@ -8,17 +8,19 @@ import org.elkd.core.consensus.Raft
 import org.elkd.core.consensus.TimeoutAlarm
 import org.elkd.core.consensus.messages.AppendEntriesRequest
 import org.elkd.core.consensus.messages.AppendEntriesResponse
-import org.elkd.core.consensus.messages.TopicTail
 import org.elkd.core.consensus.messages.RequestVoteRequest
 import org.elkd.core.consensus.messages.RequestVoteResponse
+import org.elkd.core.consensus.messages.TopicTail
 import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.consensus.states.State
 import org.elkd.core.consensus.states.candidate.election.ElectionScheduler
 import org.elkd.shared.annotations.Mockable
 
 @Mockable
-class RaftCandidateState(private val raft: Raft,
-                         private val timeoutAlarm: TimeoutAlarm) : RaftState {
+class RaftCandidateState(
+    private val raft: Raft,
+    private val timeoutAlarm: TimeoutAlarm
+) : RaftState {
   private val timeout = raft.config.getAsInteger(Config.KEY_RAFT_ELECTION_TIMEOUT_MS)
   private var electionScheduler: ElectionScheduler? = null
 
@@ -42,8 +44,10 @@ class RaftCandidateState(private val raft: Raft,
 
   override val supportedOps = emptySet<OpCategory>()
 
-  override fun delegateAppendEntries(request: AppendEntriesRequest,
-                                     stream: StreamObserver<AppendEntriesResponse>) {
+  override fun delegateAppendEntries(
+      request: AppendEntriesRequest,
+      stream: StreamObserver<AppendEntriesResponse>
+  ) {
     /* If term > currentTerm, Raft will always transitionRequest to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */
@@ -51,8 +55,10 @@ class RaftCandidateState(private val raft: Raft,
     stream.onCompleted()
   }
 
-  override fun delegateRequestVote(request: RequestVoteRequest,
-                                   stream: StreamObserver<RequestVoteResponse>) {
+  override fun delegateRequestVote(
+      request: RequestVoteRequest,
+      stream: StreamObserver<RequestVoteResponse>
+  ) {
     /* If term > currentTerm, Raft will always transitionRequest to Follower state. model received
        here will only be term <= currentTerm so we can defer all logic to the consensus delegate.
      */

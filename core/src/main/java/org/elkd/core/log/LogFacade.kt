@@ -6,7 +6,7 @@ import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.messages.Entry
 import org.elkd.core.log.ds.Log
 
-class LogFacade (log: Log<Entry>) {
+class LogFacade(log: Log<Entry>) {
   val log by lazy { invoker }
   val commandExecutor by lazy { LogCommandExecutor(invoker, threadPool) }
   val changeRegistry by lazy { LogChangeRegistry(invoker, threadPool) }

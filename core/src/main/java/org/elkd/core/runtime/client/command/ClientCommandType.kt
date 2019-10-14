@@ -6,9 +6,11 @@ import org.elkd.core.runtime.client.command.parsers.CreateTopicCommandParser
 import org.elkd.core.runtime.client.command.parsers.DefaultCommandParser
 import org.elkd.core.runtime.client.command.parsers.DeleteTopicCommandParser
 
-enum class ClientCommandType(val id: String,
-                             val parser: CommandParser,
-                             val category: OpCategory) {
+enum class ClientCommandType(
+    val id: String,
+    val parser: CommandParser,
+    val category: OpCategory
+) {
   /**
    * This does not change the leader, this handlers exists when a leader is changed,
    * and down-stream consumers should be informed.  Of course you could also obtain

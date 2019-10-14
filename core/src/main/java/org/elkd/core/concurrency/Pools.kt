@@ -1,18 +1,18 @@
 package org.elkd.core.concurrency
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
 
 object Pools {
 
-  private const val CONSENSUS_THREAD_POOL = 1;
-  private const val CLIENT_REQUEST_THREAD_POOL_SIZE = 1;
-  private const val REPLICATION_THREAD_POOL = 8;
+  private const val CONSENSUS_THREAD_POOL = 1
+  private const val CLIENT_REQUEST_THREAD_POOL_SIZE = 1
+  private const val REPLICATION_THREAD_POOL = 8
 
   /**
    * Pool for servicing client requests.
@@ -40,9 +40,8 @@ object Pools {
    */
   fun createPool(name: String, size: Int = 1): ExecutorService = Executors.newFixedThreadPool(
       size, ThreadFactoryProvider.create(name))
-
 }
 
-fun ExecutorService.asCoroutineScope(context: CoroutineContext = EmptyCoroutineContext) : CoroutineScope {
+fun ExecutorService.asCoroutineScope(context: CoroutineContext = EmptyCoroutineContext): CoroutineScope {
   return CoroutineScope(asCoroutineDispatcher() + Job(context[Job]))
 }

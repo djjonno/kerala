@@ -2,6 +2,7 @@ package org.elkd.core.consensus
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
+import java.util.concurrent.ExecutorService
 import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -14,7 +15,6 @@ import org.elkd.core.consensus.states.RaftStateFactory
 import org.elkd.core.consensus.states.State
 import org.elkd.core.runtime.NotificationCenter
 import org.elkd.shared.annotations.Mockable
-import java.util.concurrent.ExecutorService
 
 /**
  * RaftDelegator delegates model to the correct internal raft state [follower, candidate, leader]
@@ -38,9 +38,11 @@ import java.util.concurrent.ExecutorService
  * @see serialDispatcher
  */
 @Mockable
-class RaftDelegator(private val stateFactory: RaftStateFactory,
-                    private val transitionContracts: List<TransitionContract> = emptyList(),
-                    @VisibleForTesting private val serialExecutor: ExecutorService = Pools.consensusPool) : RaftDelegate {
+class RaftDelegator(
+    private val stateFactory: RaftStateFactory,
+    private val transitionContracts: List<TransitionContract> = emptyList(),
+    @VisibleForTesting private val serialExecutor: ExecutorService = Pools.consensusPool
+) : RaftDelegate {
 
   /**
    * Raft state is the internal state representation. Using the state design pattern,
@@ -59,17 +61,21 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
    * Async transition command, schedules the transition for execution
    * at some point in the future.
    */
-  fun transitionRequest(state: State,
-                        preHook: () -> Unit = {},
-                        postHook: () -> Unit = {}) {
+  fun transitionRequest(
+      state: State,
+      preHook: () -> Unit = {},
+      postHook: () -> Unit = {}
+  ) {
     serialOperation {
       transition(state, preHook, postHook)
     }
   }
 
-  private fun transition(state: State,
-                         preHook: () -> Unit = {},
-                         postHook: () -> Unit = {}) {
+  private fun transition(
+      state: State,
+      preHook: () -> Unit = {},
+      postHook: () -> Unit = {}
+  ) {
     val newDelegate = stateFactory.getState(state)
     delegate?.off()
     preHook()
@@ -87,8 +93,10 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
   /**
    * Delegate appendEntries to internal state handler for processing.
    */
-  override fun delegateAppendEntries(request: AppendEntriesRequest,
-                                     stream: StreamObserver<AppendEntriesResponse>) {
+  override fun delegateAppendEntries(
+      request: AppendEntriesRequest,
+      stream: StreamObserver<AppendEntriesResponse>
+  ) {
     serialOperation {
       evaluateTransitionRequirements(request) {
         delegate?.delegateAppendEntries(request, stream)
@@ -99,8 +107,10 @@ class RaftDelegator(private val stateFactory: RaftStateFactory,
   /**
    * Delegate requestVote to internal state handler for processing.
    */
-  override fun delegateRequestVote(request: RequestVoteRequest,
-                                   stream: StreamObserver<RequestVoteResponse>) {
+  override fun delegateRequestVote(
+      request: RequestVoteRequest,
+      stream: StreamObserver<RequestVoteResponse>
+  ) {
     serialOperation {
       evaluateTransitionRequirements(request) {
         delegate?.delegateRequestVote(request, stream)

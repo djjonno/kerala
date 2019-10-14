@@ -1,7 +1,7 @@
 package org.elkd.core.runtime
 
-import org.apache.log4j.Logger
 import java.util.concurrent.Executor
+import org.apache.log4j.Logger
 
 /**
  * PubSub singleton for runtime events.

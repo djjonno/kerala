@@ -1,10 +1,9 @@
 package org.elkd.core.server.cluster
 
 import com.google.common.base.Preconditions
+import java.util.Objects
 import org.elkd.shared.annotations.Mockable
 import org.elkd.shared.schemes.URI
-
-import java.util.Objects
 
 @Mockable
 class Node(uri: URI) {

@@ -42,6 +42,5 @@ class TopicGateway {
   fun deregisterProducer(topic: Topic, producerVM: ProducerVM) = producerVMRegistry[topic]?.remove(producerVM)
 
   private fun onConsensusChange() {
-
   }
 }

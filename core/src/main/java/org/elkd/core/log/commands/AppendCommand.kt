@@ -1,12 +1,13 @@
 package org.elkd.core.log.commands
 
-import org.elkd.core.log.ds.Log
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.LogEntry
+import org.elkd.core.log.ds.Log
 
 class AppendCommand<E : LogEntry> constructor(
     private val entries: List<E>,
-    override val reason: LogChangeReason) : LogCommand<E> {
+    override val reason: LogChangeReason
+) : LogCommand<E> {
 
   override fun execute(log: Log<E>) {
     entries.forEach { log.append(it) }

@@ -1,19 +1,21 @@
 package org.elkd.core.server
 
 import io.grpc.ServerBuilder
+import java.io.IOException
+import java.net.InetAddress
 import org.apache.log4j.Logger
-import org.elkd.core.runtime.client.command.ClientCommandHandler
 import org.elkd.core.consensus.RaftDelegate
+import org.elkd.core.runtime.client.command.ClientCommandHandler
 import org.elkd.core.runtime.client.stream.ClientStreamHandler
 import org.elkd.core.server.client.ClientService
 import org.elkd.core.server.cluster.ClusterService
 import org.elkd.core.server.converters.ConverterRegistry
-import java.io.IOException
-import java.net.InetAddress
 
-class Server(val raftDelegate: RaftDelegate,
-             val clientCommandHandler: ClientCommandHandler,
-             val clientStreamHandler: ClientStreamHandler) {
+class Server(
+    val raftDelegate: RaftDelegate,
+    val clientCommandHandler: ClientCommandHandler,
+    val clientStreamHandler: ClientStreamHandler
+) {
 
   private var rpcClusterServer: io.grpc.Server? = null
   private val converterRegistry = ConverterRegistry.instance

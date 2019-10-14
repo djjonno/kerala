@@ -1,17 +1,15 @@
 package org.elkd.core
 
+import java.io.IOException
 import org.elkd.core.config.Config
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.server.Server
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
-
-import java.io.IOException
-
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
+import org.mockito.MockitoAnnotations
 
 class BootTest {
 

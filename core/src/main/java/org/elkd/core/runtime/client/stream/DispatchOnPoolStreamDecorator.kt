@@ -1,11 +1,12 @@
 package org.elkd.core.runtime.client.stream
 
 import io.grpc.stub.StreamObserver
-import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 
-class DispatchOnPoolStreamDecorator<T>(private val next: StreamObserver<T>,
-                                       private val executor: ExecutorService) : StreamObserver<T> {
+class DispatchOnPoolStreamDecorator<T>(
+    private val next: StreamObserver<T>,
+    private val executor: ExecutorService
+) : StreamObserver<T> {
   override fun onNext(value: T) {
     executor.submit {
       next.onNext(value)

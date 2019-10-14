@@ -5,8 +5,10 @@ import org.apache.log4j.Logger
 
 private val LOGGER = Logger.getLogger(ThrottlingStreamDecorator::class.java)
 
-class ThrottlingStreamDecorator<T>(private val stream: StreamObserver<T>,
-                                   private val sleep: Long = 1) : StreamObserver<T> by StreamObserverDecorator(
+class ThrottlingStreamDecorator<T>(
+    private val stream: StreamObserver<T>,
+    private val sleep: Long = 1
+) : StreamObserver<T> by StreamObserverDecorator(
     stream,
     onNextBlock = {
       LOGGER.info("throttling")
