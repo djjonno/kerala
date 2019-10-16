@@ -5,15 +5,13 @@ import org.apache.log4j.Logger
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.OpCategory
 import org.elkd.core.consensus.messages.KV
-import org.elkd.core.runtime.TopicModule
+import org.elkd.core.runtime.topic.TopicModule
 import org.elkd.core.runtime.client.producer.ProducerACK
 import org.elkd.core.runtime.client.producer.ProducerRecord
 import org.elkd.core.server.client.RpcKV
 import org.elkd.core.server.client.RpcProducerAck
 import org.elkd.core.server.client.RpcProducerRecord
 import org.elkd.core.server.converters.Converter
-import org.elkd.core.server.converters.ConverterRegistry
-import org.elkd.core.server.converters.KVConverters
 
 class ProducerRecordEnrichmentStreamDecorator(
     private val next: StreamObserver<ProducerRecord>,
@@ -35,7 +33,7 @@ class ProducerRecordEnrichmentStreamDecorator(
       } ?: responseObserver.onNext(ProducerACK.Rpcs.UNKNOWN_TOPIC)
 
     } else {
-      responseObserver.onNext(ProducerACK.Rpcs.INVALID_OPERATION)
+      responseObserver.onNext(ProducerACK.Rpcs.OPERATION_INVALID)
     }
   }
 

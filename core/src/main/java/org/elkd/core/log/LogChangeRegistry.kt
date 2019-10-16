@@ -1,56 +1,95 @@
 package org.elkd.core.log
 
-import java.lang.Exception
-import java.util.concurrent.ExecutorService
 import org.apache.log4j.Logger
 import org.elkd.core.log.LogChangeEvent.APPEND
 import org.elkd.core.log.LogChangeEvent.COMMIT
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 class LogChangeRegistry<E : LogEntry> constructor(
-    log: LogInvoker<E>,
-    private val threadPool: ExecutorService
+    log: LogInvoker<E>
 ) {
   private val listener: Listener<E> = Listener()
-
-  private val scopedOnCommitRegistrations: MutableMap<String, MutableList<Runnable>> = mutableMapOf()
-  private val scopedOnAppendRegistrations: MutableMap<String, MutableList<Runnable>> = mutableMapOf()
+  private val scopedOnCommitRegistrations: MutableMap<String, MutableList<CompletionHandler>> = mutableMapOf()
+  private val scopedOnAppendRegistrations: MutableMap<String, MutableList<CompletionHandler>> = mutableMapOf()
 
   init {
     log.registerListener(listener)
   }
 
-  fun register(e: LogEntry, event: LogChangeEvent, onComplete: () -> Unit) {
-    when (event) {
-      COMMIT -> register(scopedOnCommitRegistrations, e.uuid, Runnable(onComplete))
-      APPEND -> register(scopedOnAppendRegistrations, e.uuid, Runnable(onComplete))
+  fun onConsensusChange() {
+    LOGGER.info("notifying consensus change")
+    scopedOnCommitRegistrations.forEach {
+      it.value.forEach { handler ->
+        deregister(handler, COMMIT)
+        handler.onFailure(ChangeFailure.CANNOT_COMMIT)
+      }
     }
   }
 
-  private fun register(map: MutableMap<String, MutableList<Runnable>>, key: String, value: Runnable) {
+  fun register(e: LogEntry, event: LogChangeEvent, onComplete: () -> Unit, onFailure: (f: ChangeFailure) -> Unit): CompletionHandler {
+    val handler = CompletionHandler(e, event, onComplete, onFailure)
+    when (event) {
+      COMMIT -> register(scopedOnCommitRegistrations, e.uuid, handler)
+      APPEND -> register(scopedOnAppendRegistrations, e.uuid, handler)
+    }
+    return handler
+  }
+
+  private fun register(map: MutableMap<String, MutableList<CompletionHandler>>, key: String, value: CompletionHandler) {
     if (!map.containsKey(key)) {
       map[key] = mutableListOf()
     }
     map[key]?.add(value)
   }
 
+  private fun deregister(value: CompletionHandler, event: LogChangeEvent) {
+    when (event) {
+      COMMIT -> deregister(scopedOnCommitRegistrations, value)
+      APPEND -> deregister(scopedOnAppendRegistrations, value)
+    }
+  }
+
+  private fun deregister(map: MutableMap<String, MutableList<CompletionHandler>>, value: CompletionHandler) {
+    map[value.entry.uuid]?.remove(value)
+  }
+
   private inner class Listener<E : LogEntry> : LogChangeListener<E> {
     override fun onCommit(index: Long, entry: E) {
-      scopedOnCommitRegistrations[entry.uuid]?.forEach { it -> safelyExecute(it) }
+      scopedOnCommitRegistrations[entry.uuid]?.forEach { it.done() }
       scopedOnCommitRegistrations.remove(entry.uuid)
     }
 
     override fun onAppend(index: Long, entry: E) {
-      scopedOnAppendRegistrations[entry.uuid]?.forEach { it -> safelyExecute(it) }
+      scopedOnAppendRegistrations[entry.uuid]?.forEach { it.done() }
       scopedOnAppendRegistrations.remove(entry.uuid)
     }
+  }
 
-    private fun safelyExecute(runnable: Runnable) {
+  inner class CompletionHandler(internal val entry: LogEntry,
+                                internal val event: LogChangeEvent,
+                                internal val onComplete: () -> Unit,
+                                internal val onFailure: (f: ChangeFailure) -> Unit) {
+    private val latch = CountDownLatch(1)
+    fun get(timeout: Long, unit: TimeUnit) {
       try {
-        threadPool.execute(runnable)
+        latch.await(timeout, unit)
       } catch (e: Exception) {
-        LOGGER.error("Change registry failed to execute listener", e)
+        deregister(this, event)
       }
     }
+
+    internal fun done() {
+      onComplete()
+      latch.countDown()
+    }
+  }
+
+  enum class ChangeFailure {
+    /**
+     * LogChangeEvent.COMMIT event cannot occur on this node state.
+     */
+    CANNOT_COMMIT
   }
 
   private companion object {

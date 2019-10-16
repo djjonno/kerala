@@ -1,7 +1,7 @@
 package org.elkd.core.consensus
 
 import org.elkd.core.config.Config
-import org.elkd.core.runtime.TopicModule
+import org.elkd.core.runtime.topic.TopicModule
 import org.elkd.core.server.cluster.ClusterMessenger
 
 object RaftFactory {

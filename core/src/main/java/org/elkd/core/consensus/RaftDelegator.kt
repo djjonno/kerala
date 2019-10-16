@@ -2,7 +2,6 @@ package org.elkd.core.consensus
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
-import java.util.concurrent.ExecutorService
 import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -13,8 +12,9 @@ import org.elkd.core.consensus.messages.RequestVoteResponse
 import org.elkd.core.consensus.states.RaftState
 import org.elkd.core.consensus.states.RaftStateFactory
 import org.elkd.core.consensus.states.State
-import org.elkd.core.runtime.NotificationCenter
+import org.elkd.core.runtime.NotificationsHub
 import org.elkd.shared.annotations.Mockable
+import java.util.concurrent.ExecutorService
 
 /**
  * RaftDelegator delegates model to the correct internal raft state [follower, candidate, leader]
@@ -76,13 +76,15 @@ class RaftDelegator(
       preHook: () -> Unit = {},
       postHook: () -> Unit = {}
   ) {
+    val oldDelegate = delegate
     val newDelegate = stateFactory.getState(state)
     delegate?.off()
     preHook()
     delegate = newDelegate.apply { on() }
     postHook()
     LOGGER.info("state activated: $delegate")
-    NotificationCenter.pub(NotificationCenter.Channel.CONSENSUS_CHANGE)
+
+    if (oldDelegate != newDelegate) NotificationsHub.pub(NotificationsHub.Channel.CONSENSUS_CHANGE)
   }
 
   override val supportedOps: Set<OpCategory>

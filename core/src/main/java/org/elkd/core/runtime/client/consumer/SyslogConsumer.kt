@@ -2,7 +2,7 @@ package org.elkd.core.runtime.client.consumer
 
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.messages.Entry
-import org.elkd.core.runtime.TopicModule
+import org.elkd.core.runtime.topic.TopicModule
 import org.elkd.core.runtime.client.command.ClientCommand
 import org.elkd.core.runtime.client.command.ClientCommandType
 import org.elkd.core.runtime.client.command.asCommand

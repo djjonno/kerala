@@ -3,9 +3,8 @@ package org.elkd.core.runtime.client.command
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.consensus.OpCategory
-import org.elkd.core.log.LogChangeReason
-import org.elkd.core.runtime.NotificationCenter
-import org.elkd.core.runtime.TopicModule
+import org.elkd.core.runtime.NotificationsHub
+import org.elkd.core.runtime.topic.TopicModule
 
 class ClientCommandExecutor(
     private val consensusFacade: ConsensusFacade,
@@ -15,8 +14,8 @@ class ClientCommandExecutor(
 
   init {
     /* listen to consensus state changes */
-    NotificationCenter.sub(
-        NotificationCenter.Channel.CONSENSUS_CHANGE,
+    NotificationsHub.sub(
+        NotificationsHub.Channel.CONSENSUS_CHANGE,
         Pools.clientRequestPool
     ) {
       cleanupUnsupportedBundles(consensusFacade.supportedOperations)
@@ -44,10 +43,13 @@ class ClientCommandExecutor(
 
   private fun writeCommandToSyslog(bundle: ClientCommandPack) {
     bundleRegistry.add(bundle)
-    consensusFacade.writeToTopic(topicModule.syslog, bundle.command.kvs) {
+    consensusFacade.writeToTopic(topicModule.syslog, bundle.command.kvs, {
       bundleRegistry.remove(bundle)
       bundle.onComplete("")
-    }
+    }, {
+      bundleRegistry.remove(bundle)
+      handleUnsupportedBundleOp(bundle)
+    })
   }
 
   private fun handleUnsupportedBundleOp(bundle: ClientCommandPack) {

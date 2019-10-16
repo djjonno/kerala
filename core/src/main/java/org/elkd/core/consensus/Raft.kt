@@ -4,7 +4,7 @@ import org.elkd.core.config.Config
 import org.elkd.core.consensus.messages.Request
 import org.elkd.core.consensus.states.RaftStateFactory
 import org.elkd.core.consensus.states.State
-import org.elkd.core.runtime.TopicModule
+import org.elkd.core.runtime.topic.TopicModule
 import org.elkd.core.server.cluster.ClusterMessenger
 import org.elkd.core.server.cluster.ClusterSet
 import org.elkd.shared.annotations.Mockable

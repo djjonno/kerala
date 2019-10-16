@@ -1,10 +1,10 @@
 package org.elkd.core.log
 
-import java.util.concurrent.ExecutorService
 import org.apache.log4j.Logger
 import org.elkd.core.log.commands.LogCommand
 import org.elkd.core.log.ds.Log
 import org.elkd.shared.annotations.Mockable
+import java.util.concurrent.ExecutorService
 
 @Mockable
 class LogCommandExecutor<E : LogEntry> constructor(
@@ -15,7 +15,7 @@ class LogCommandExecutor<E : LogEntry> constructor(
     threadPool.submit {
       LOGGER.info("executing $command")
       command.execute(log)
-    }.get() /* wait for execution */
+    }
   }
 
   private companion object {

@@ -6,13 +6,13 @@ import org.apache.log4j.Logger
 private val LOGGER = Logger.getLogger(ThrottlingStreamDecorator::class.java)
 
 class ThrottlingStreamDecorator<T>(
-    private val stream: StreamObserver<T>,
+    stream: StreamObserver<T>,
     private val sleep: Long = 1
 ) : StreamObserver<T> by StreamObserverDecorator(
     stream,
-    onNextBlock = {
+    onNextBlock = { _, value ->
       LOGGER.info("throttling")
       Thread.sleep(sleep)
-      stream.onNext(it)
+      stream.onNext(value)
     }
 )

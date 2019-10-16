@@ -6,7 +6,8 @@ import org.apache.log4j.Logger
 
 class MetricStreamDecorator<T>(private val next: StreamObserver<T>) : StreamObserver<T> {
   override fun onNext(value: T) {
-    LOGGER.info("stream process time ${measureTimeMillis { next.onNext(value) }}ms")
+    val time = measureTimeMillis { next.onNext(value) }
+    LOGGER.info("stream process time ${time}ms")
   }
 
   override fun onError(t: Throwable?) {

@@ -51,7 +51,7 @@ message RpcClientResponse {
 
 // @Experimental
 //
-// ProducerVM Acknowledgement configurations:
+// Producer Acknowledgement configurations:
 // 1. fire-and-forget
 // 2. all
 message RpcProducerAck {
