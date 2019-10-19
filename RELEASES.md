@@ -40,13 +40,11 @@
 
 - `file` log storage engine
 
-#### 0.4.0-alpha
+#### 0.5.0-alpha
 
 - Dynamic cluster configuration
     - clients will have the ability to add/remove nodes from the cluster at runtime
 
-#### backlog
+#### 0.6.0-alpha
 
 - Auth
-- Additional support for Dynamic cluster configuration
-    - discover service – bootstrap cluster via `https://discovery.elkd.io/new?size=3`
