@@ -58,7 +58,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
   private fun broadcastConsensusInformation() {
     raft.topicModule.syslog.logFacade.commandExecutor.execute(AppendCommand.build(
         ClientCommand.builder(ClientCommandType.CONSENSUS_CHANGE) {
-          arg("leaderNode", raft.clusterSet.localNode.id)
+          arg("leaderNode", raft.clusterSet.selfNode.id)
         }.asEntry(raft.raftContext.currentTerm),
         LogChangeReason.REPLICATION
     ))

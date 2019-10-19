@@ -49,7 +49,7 @@ class ConfigPropertiesFileSource implements Source {
         }
       }
     } catch (final Exception e) {
-      LOG.error("Using default elkd.properties");
+      LOG.error("using default elkd.properties");
       LOG.debug(e.getMessage());
     }
 

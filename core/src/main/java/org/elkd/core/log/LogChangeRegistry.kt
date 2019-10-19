@@ -1,6 +1,5 @@
 package org.elkd.core.log
 
-import org.apache.log4j.Logger
 import org.elkd.core.log.LogChangeEvent.APPEND
 import org.elkd.core.log.LogChangeEvent.COMMIT
 import java.util.concurrent.CountDownLatch
@@ -17,17 +16,16 @@ class LogChangeRegistry<E : LogEntry> constructor(
     log.registerListener(listener)
   }
 
-  fun onConsensusChange() {
-    LOGGER.info("notifying consensus change")
+  fun cancelCommitRegistrations(reason: CancellationReason) {
     scopedOnCommitRegistrations.forEach {
       it.value.forEach { handler ->
         deregister(handler, COMMIT)
-        handler.onFailure(ChangeFailure.CANNOT_COMMIT)
+        handler.onFailure(reason)
       }
     }
   }
 
-  fun register(e: LogEntry, event: LogChangeEvent, onComplete: () -> Unit, onFailure: (f: ChangeFailure) -> Unit): CompletionHandler {
+  fun register(e: LogEntry, event: LogChangeEvent, onComplete: () -> Unit, onFailure: (f: CancellationReason) -> Unit): CompletionHandler {
     val handler = CompletionHandler(e, event, onComplete, onFailure)
     when (event) {
       COMMIT -> register(scopedOnCommitRegistrations, e.uuid, handler)
@@ -69,7 +67,7 @@ class LogChangeRegistry<E : LogEntry> constructor(
   inner class CompletionHandler(internal val entry: LogEntry,
                                 internal val event: LogChangeEvent,
                                 internal val onComplete: () -> Unit,
-                                internal val onFailure: (f: ChangeFailure) -> Unit) {
+                                internal val onFailure: (f: CancellationReason) -> Unit) {
     private val latch = CountDownLatch(1)
     fun get(timeout: Long, unit: TimeUnit) {
       try {
@@ -85,14 +83,10 @@ class LogChangeRegistry<E : LogEntry> constructor(
     }
   }
 
-  enum class ChangeFailure {
+  enum class CancellationReason {
     /**
      * LogChangeEvent.COMMIT event cannot occur on this node state.
      */
     CANNOT_COMMIT
-  }
-
-  private companion object {
-    val LOGGER = Logger.getLogger(this::class.java)
   }
 }

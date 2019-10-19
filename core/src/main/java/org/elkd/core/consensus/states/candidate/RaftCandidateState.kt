@@ -68,7 +68,7 @@ class RaftCandidateState(
 
   private fun startElection() {
     raft.raftContext.currentTerm = raft.raftContext.currentTerm + 1
-    raft.raftContext.votedFor = raft.clusterSet.localNode.id
+    raft.raftContext.votedFor = raft.clusterSet.selfNode.id
 
     val request = createVoteRequest()
     electionScheduler = ElectionScheduler.create(
@@ -86,7 +86,7 @@ class RaftCandidateState(
   private fun createVoteRequest(): RequestVoteRequest {
     return RequestVoteRequest(
         raft.raftContext.currentTerm,
-        raft.clusterSet.localNode.id,
+        raft.clusterSet.selfNode.id,
         topicTails = raft.topicModule.topicRegistry.topics.map {
           TopicTail(
               topicId = it.id,

@@ -26,7 +26,7 @@ class GroupedNodeReplicationController(
 ) : CoroutineScope by Pools.replicationPool.asCoroutineScope(context) {
 
   fun launchController() = launch {
-    LOGGER.info("Launching replication for $topic")
+    LOGGER.info("launching replication for $topic")
     val leaderContext = LeaderContext(clusterSet.nodes, topic.logFacade.log.lastIndex)
 
     clusterSet.nodes.forEach {
@@ -55,7 +55,7 @@ class GroupedNodeReplicationController(
 
     states.findMajority()?.apply {
       if (this > topic.logFacade.log.commitIndex && topic.logFacade.log.read(this)?.term == raft.raftContext.currentTerm) {
-        LOGGER.info("majority @ $this, performing commit($this)")
+        LOGGER.info("committing index=$this")
         topic.logFacade.commandExecutor.execute(CommitCommand.build(this, LogChangeReason.REPLICATION))
       }
     }

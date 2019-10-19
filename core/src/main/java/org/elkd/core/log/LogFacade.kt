@@ -22,7 +22,7 @@ class LogFacade(log: Log<Entry>) {
   init {
     /* Listen for consensus changes to notify log components. */
     NotificationsHub.sub(NotificationsHub.Channel.CONSENSUS_CHANGE, threadPool.asCoroutineDispatcher()) {
-      changeRegistry.onConsensusChange()
+      changeRegistry.cancelCommitRegistrations(LogChangeRegistry.CancellationReason.CANNOT_COMMIT)
     }
   }
 

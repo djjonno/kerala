@@ -82,9 +82,10 @@ class RaftDelegator(
     preHook()
     delegate = newDelegate.apply { on() }
     postHook()
-    LOGGER.info("state activated: $delegate")
-
-    if (oldDelegate != newDelegate) NotificationsHub.pub(NotificationsHub.Channel.CONSENSUS_CHANGE)
+    LOGGER.info("-> $state")
+    if (oldDelegate != newDelegate) {
+      NotificationsHub.pub(NotificationsHub.Channel.CONSENSUS_CHANGE)
+    }
   }
 
   override val supportedOps: Set<OpCategory>

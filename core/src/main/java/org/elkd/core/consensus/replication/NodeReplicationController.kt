@@ -28,7 +28,7 @@ class NodeReplicationController(
     private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(topic, raft)
 ) {
   init {
-    LOGGER.info("Replicating $topic -> $target")
+    LOGGER.info("replicating $topic -> $target")
   }
 
   suspend fun start() {
@@ -69,7 +69,7 @@ class NodeReplicationController(
           topicId = topic.id,
           prevLogTerm = log.lastEntry.term,
           prevLogIndex = log.lastIndex,
-          leaderId = raft.clusterSet.localNode.id,
+          leaderId = raft.clusterSet.selfNode.id,
           leaderCommit = log.commitIndex)
       raft.clusterMessenger.dispatchAppendEntries(target, message)
     }

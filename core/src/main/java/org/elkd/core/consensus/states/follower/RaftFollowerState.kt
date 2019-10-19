@@ -102,6 +102,7 @@ constructor(
       raft.raftContext.votedFor = request.candidateId
       raft.raftContext.currentTerm = request.term
       replyRequestVote(raft.raftContext, true, stream)
+      LOGGER.info("yes vote to ${raft.raftContext.votedFor}")
     } else {
       replyRequestVote(raft.raftContext, false, stream)
     }

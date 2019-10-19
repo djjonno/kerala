@@ -16,10 +16,10 @@ import java.util.Map;
 
 public class ConfigCliSource implements Source {
 
-  private static final Option CLUSTER_SET = Option.builder()
+  private static final Option CLUSTER = Option.builder()
       .required(false)
       .desc("nodes to be included in your static cluster.")
-      .longOpt("cluster-set")
+      .longOpt("cluster")
       .numberOfArgs(1)
       .build();
 
@@ -30,18 +30,18 @@ public class ConfigCliSource implements Source {
       .build();
 
   private static final Option HELP = Option.builder()
-      .desc("print this message")
+      .desc("print this menu")
       .longOpt("help")
       .build();
 
   private static final Option HOST = Option.builder()
-      .desc("host to bind server")
+      .desc("host to bind server (defaults: localhost/0.0.0.0)")
       .longOpt("host")
       .numberOfArgs(1)
       .build();
 
   private static final Option PORT = Option.builder()
-      .desc("port to bind server")
+      .desc("port to bind server (default: 9191")
       .longOpt("port")
       .numberOfArgs(1)
       .build();
@@ -51,7 +51,7 @@ public class ConfigCliSource implements Source {
 
   /* package */ ConfigCliSource(final String[] args) throws Exception {
     this(args, new Option[] {
-        CLUSTER_SET,
+        CLUSTER,
         DATA_DIR,
         HELP,
         HOST,

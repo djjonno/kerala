@@ -28,11 +28,11 @@ class Server(
         .build()
         .start()
 
-    LOG.info("Started server on ${InetAddress.getLoopbackAddress()}:$port")
+    LOGGER.info("started server on ${InetAddress.getLoopbackAddress()}:$port")
   }
 
   fun shutdown() {
-    LOG.info("stopping server")
+    LOGGER.info("stopping server")
     rpcClusterServer?.shutdown()
   }
 
@@ -42,6 +42,6 @@ class Server(
   }
 
   companion object {
-    private val LOG = Logger.getLogger(Server::class.java)
+    private val LOGGER = Logger.getLogger(Server::class.java)
   }
 }

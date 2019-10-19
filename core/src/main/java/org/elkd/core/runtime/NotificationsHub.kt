@@ -6,7 +6,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
-import org.apache.log4j.Logger
 
 typealias Block = (channel: NotificationsHub.Channel) -> Unit
 
@@ -14,8 +13,6 @@ typealias Block = (channel: NotificationsHub.Channel) -> Unit
  * Pub/Sub singleton for runtime events.
  */
 object NotificationsHub : CoroutineScope by GlobalScope {
-
-  private val LOGGER = Logger.getLogger(NotificationsHub::class.java)
 
   /**
    * Channels available for pub/sub.
@@ -27,7 +24,6 @@ object NotificationsHub : CoroutineScope by GlobalScope {
   private val subscriptions: MutableMap<Channel, MutableList<Pair<CoroutineDispatcher, Block>>> = mutableMapOf()
 
   fun pub(channel: Channel) {
-    LOGGER.info("pub/${channel.id}")
     subscriptions[channel]?.forEach {
       launch (it.first) { it.second(channel) }
     }

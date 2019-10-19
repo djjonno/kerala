@@ -21,7 +21,7 @@ public class StaticClusterSetTest {
   @Test
   public void should_create_cluster_config() {
     // Given / When
-    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet set = StaticClusterSet.Companion.builder(SELF_NODE)
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
@@ -40,7 +40,7 @@ public class StaticClusterSetTest {
         .build();
 
     // When
-    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet set = StaticClusterSet.Companion.builder(SELF_NODE)
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
@@ -52,7 +52,7 @@ public class StaticClusterSetTest {
   @Test
   public void should_not_add_member_to_static_config() {
     // Given
-    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet set = StaticClusterSet.Companion.builder(SELF_NODE)
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
@@ -69,7 +69,7 @@ public class StaticClusterSetTest {
   @Test
   public void should_not_remove_member_from_static_config() {
     // Given
-    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet set = StaticClusterSet.Companion.builder(SELF_NODE)
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
@@ -87,7 +87,7 @@ public class StaticClusterSetTest {
     final String clusterSet = NODE_1.getURI() + "," + NODE_2.getURI();
 
     // When
-    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet set = StaticClusterSet.Companion.builder(SELF_NODE)
         .withString(clusterSet)
         .build();
 
@@ -101,7 +101,7 @@ public class StaticClusterSetTest {
     final String clusterSet = NODE_1.getURI() + "," + NODE_2.getURI() + ",";
 
     // When
-    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet set = StaticClusterSet.Companion.builder(SELF_NODE)
         .withString(clusterSet)
         .build();
 
@@ -112,7 +112,7 @@ public class StaticClusterSetTest {
   @Test
   public void should_have_correct_size() {
     // Given / When
-    final StaticClusterSet set = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet set = StaticClusterSet.Companion.builder(SELF_NODE)
         .withNode(NODE_1)
         .withNode(NODE_2)
         .build();
@@ -127,7 +127,7 @@ public class StaticClusterSetTest {
     final Node duplicate = new Node(NODE_1.getURI());
 
     // When
-    StaticClusterSet.builder(SELF_NODE)
+    StaticClusterSet.Companion.builder(SELF_NODE)
         .withNode(NODE_1)
         .withNode(NODE_2)
         .withNode(duplicate)
@@ -139,7 +139,7 @@ public class StaticClusterSetTest {
   @Test
   public void should_throw_exception_when_adding_self_node() {
     // Given / When
-    final StaticClusterSet clusterSet = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet clusterSet = StaticClusterSet.Companion.builder(SELF_NODE)
         .withNode(SELF_NODE)
         .build();
 
@@ -150,7 +150,7 @@ public class StaticClusterSetTest {
   @Test
   public void should_not_add_to_cluster_set_if_self_node_as_string() {
     // Given / When
-    final StaticClusterSet clusterSet = StaticClusterSet.builder(SELF_NODE)
+    final StaticClusterSet clusterSet = StaticClusterSet.Companion.builder(SELF_NODE)
         .withString(SELF_NODE.getHost() + ":" + SELF_NODE.getPort())
         .build();
 

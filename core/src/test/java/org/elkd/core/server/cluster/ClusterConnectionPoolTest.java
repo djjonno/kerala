@@ -30,7 +30,7 @@ public class ClusterConnectionPoolTest {
         .getNodes();
     doReturn(SELF_NODE)
         .when(mClusterSet)
-        .getLocalNode();
+        .getSelfNode();
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")

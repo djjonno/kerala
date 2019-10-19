@@ -5,7 +5,7 @@ import org.elkd.core.consensus.messages.KV
 import org.elkd.core.log.LogChangeEvent
 import org.elkd.core.log.LogChangeReason
 import org.elkd.core.log.LogChangeRegistry
-import org.elkd.core.log.LogChangeRegistry.ChangeFailure
+import org.elkd.core.log.LogChangeRegistry.CancellationReason
 import org.elkd.core.log.commands.AppendCommand
 import org.elkd.core.runtime.topic.Topic
 import kotlin.coroutines.resume
@@ -27,7 +27,7 @@ class ConsensusFacade(private val raft: Raft) {
   fun writeToTopic(topic: Topic,
                    kvs: List<KV>,
                    onCommit: () -> Unit,
-                   onFailure: (ChangeFailure) -> Unit = {}): LogChangeRegistry<Entry>.CompletionHandler {
+                   onFailure: (CancellationReason) -> Unit = {}): LogChangeRegistry<Entry>.CompletionHandler {
     val entry = Entry.builder(raft.raftContext.currentTerm).addAllKV(kvs).build()
     val handler = topic.logFacade.changeRegistry.register(entry, LogChangeEvent.COMMIT, onCommit, onFailure)
     val command = AppendCommand.build(entry, LogChangeReason.CLIENT)

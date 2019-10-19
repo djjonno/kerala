@@ -14,7 +14,7 @@ class ClusterService(
 ) : ElkdClusterServiceGrpc.ElkdClusterServiceImplBase() {
 
   init {
-    LOGGER.info("Service ready to accept target connections")
+    LOGGER.info("cluster service ready")
   }
 
   override fun appendEntries(

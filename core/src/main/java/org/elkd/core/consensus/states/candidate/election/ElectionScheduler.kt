@@ -37,12 +37,11 @@ class ElectionScheduler private constructor(
 
   fun schedule() {
     if (scheduled) return
-    LOGGER.info("Scheduling a new election with $voteRequest")
 
     scheduled = true
 
     /* Vote for self */
-    handleVoteResponse(clusterMessenger.clusterSet.localNode, true)
+    handleVoteResponse(clusterMessenger.clusterSet.selfNode, true)
 
     /* dispatch votes across cluster */
     launch(coroutineContext) { dispatchVoteRequest() }
@@ -74,11 +73,11 @@ class ElectionScheduler private constructor(
     if (!finished && electionStrategy.isComplete(electionTally)) {
       when (electionStrategy.isSuccessful(electionTally)) {
         true -> {
-          LOGGER.info("Successful election $electionTally")
+          LOGGER.info("election won")
           onSuccess()
         }
         false -> {
-          LOGGER.info("Unsuccessful election $electionTally")
+          LOGGER.info("election lost")
           onFailure()
         }
       }

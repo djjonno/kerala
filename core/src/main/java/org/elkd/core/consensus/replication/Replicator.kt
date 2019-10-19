@@ -3,8 +3,6 @@ package org.elkd.core.consensus.replication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.concurrency.asCoroutineScope
 import org.elkd.core.config.Config
@@ -21,7 +19,6 @@ class Replicator(private val raft: Raft) : CoroutineScope by Pools.replicationPo
   private val launcher = Launcher()
 
   fun launch() {
-    LOGGER.info("Launching replicator")
     raft.topicModule.topicRegistry.registerListener(launcher, Pools.replicationPool, rewind = true)
   }
 
@@ -30,7 +27,6 @@ class Replicator(private val raft: Raft) : CoroutineScope by Pools.replicationPo
    */
   fun shutdown() {
     coroutineContext.cancel()
-    LOGGER.info("Replicator shutdown")
   }
 
   private inner class Launcher : Listener {
@@ -53,9 +49,5 @@ class Replicator(private val raft: Raft) : CoroutineScope by Pools.replicationPo
     private fun shutdown(topic: Topic) {
       jobs[topic]?.cancel()
     }
-  }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(Replicator::class.java)
   }
 }

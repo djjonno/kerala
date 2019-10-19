@@ -64,7 +64,7 @@ fun main(args: Array<String>) {
    * Currently only support for static cluster membership - no changes during runtime.
    */
   val clusterSet = StaticClusterSet.builder(ClusterUtils.buildSelfNode(config))
-      .withString(config.get(Config.KEY_CLUSTER_SET))
+      .withString(config.get(Config.KEY_CLUSTER))
       .build()
   val clusterConnectionPool = ClusterConnectionPool(clusterSet)
   clusterConnectionPool.initialize()

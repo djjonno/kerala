@@ -37,7 +37,7 @@ class ReplicatorStrategy(val topic: Topic, val raft: Raft) {
         topicId = topic.id,
         prevLogTerm = snapshot.prevLogTerm,
         prevLogIndex = snapshot.prevLogIndex,
-        leaderId = raft.clusterSet.localNode.id,
+        leaderId = raft.clusterSet.selfNode.id,
         leaderCommit = snapshot.commitIndex,
         entries = snapshot.entries
     )
@@ -49,7 +49,7 @@ class ReplicatorStrategy(val topic: Topic, val raft: Raft) {
         topicId = topic.id,
         prevLogTerm = log.lastEntry.term,
         prevLogIndex = log.lastIndex,
-        leaderId = raft.clusterSet.localNode.id,
+        leaderId = raft.clusterSet.selfNode.id,
         leaderCommit = log.commitIndex,
         entries = emptyList()
     )

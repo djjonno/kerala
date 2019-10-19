@@ -15,7 +15,7 @@ public class Config {
   /**
    * Cluster Set.
    */
-  @Key(defaultValue = "") public static final String KEY_CLUSTER_SET = "cluster.set";
+  @Key public static final String KEY_CLUSTER = "cluster";
 
   /**
    * Data storage location.
