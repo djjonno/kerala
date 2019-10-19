@@ -31,7 +31,7 @@ class Producer(
   fun streamObserver(responseObserver: StreamObserver<RpcProducerAck>): StreamObserver<ProducerRecord> =
       object : StreamObserver<ProducerRecord> {
         override fun onNext(value: ProducerRecord) {
-          LOGGER.info("ingesting ${value.kvs} -> ${value.topic}")
+          LOGGER.info("ingesting ${value.kvs.size} KVs -> ${value.topic}")
 
           /* Dispatching record to Topic is essentially guaranteed,
            * provided:

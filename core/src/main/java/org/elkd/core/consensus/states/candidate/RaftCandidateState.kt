@@ -42,7 +42,7 @@ class RaftCandidateState(
     stopElection()
   }
 
-  override val supportedOps = emptySet<OpCategory>()
+  override val supportedOps = setOf(OpCategory.READ)
 
   override fun delegateAppendEntries(
       request: AppendEntriesRequest,
