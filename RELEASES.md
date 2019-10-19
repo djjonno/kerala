@@ -1,6 +1,6 @@
-#### Release Roadmap 📦
+### Release Roadmap 📦
 
-##### 0.1.0-alpha
+#### 0.1.0-alpha
 
 - Distributed + Standalone deployment configurations
 - Topics (create-topic, read-topics)
@@ -8,7 +8,7 @@
 - Consume from Topics (consume-topic)
 - `in-memory` log storage engine
 
-##### 0.2.0-alpha
+#### 0.2.0-alpha
 
 - Broker service (describe-topics)
 - elkdctl tool *(this provides simple interaction with elkd node from the command line)*
@@ -18,7 +18,7 @@
     - `> elkdctl --broker <broker-host> produce <topic-namepsace> [--poll ms]`
     - `> elkdctl --broker <broker-host> consume`
 
-##### 0.3.0-alpha
+#### 0.3.0-alpha
 
 - Kotlin client
     - Establish benchmark for integrating with an elkd server
@@ -36,16 +36,16 @@
         - flexible api for functional processing (map/reduce/group/filter/etc)
         - produce to stream
 
-##### 0.4.0-alpha
+#### 0.4.0-alpha
 
 - `file` log storage engine
 
-##### 0.4.0-alpha
+#### 0.4.0-alpha
 
 - Dynamic cluster configuration
     - clients will have the ability to add/remove nodes from the cluster at runtime
 
-##### backlog
+#### backlog
 
 - Auth
 - Additional support for Dynamic cluster configuration
