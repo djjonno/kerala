@@ -6,7 +6,6 @@ import org.elkd.core.runtime.client.consumer.SyslogConsumer
 
 class TopicModule(
     val topicRegistry: TopicRegistry,
-    val consumerGateway: ConsumerGateway,
     private val topicFactory: TopicFactory
 ) {
 
@@ -15,13 +14,10 @@ class TopicModule(
   private fun bootstrapSyslog(): Topic {
     val topic = provisionTopic(SYSLOG_ID, SYSLOG_NAMESPACE)
 
-    consumerGateway.registerConsumer(topic, SyslogConsumer(this))
-
+    val syslogConsumer = SyslogConsumer(this)
     topic.logFacade.registerListener(object : LogChangeListener<Entry> {
       override fun onCommit(index: Long, entry: Entry) {
-        consumerGateway.consumersFor(topic).forEach {
-          it.consume(index, entry)
-        }
+        syslogConsumer.consume(index, entry)
       }
     })
 
