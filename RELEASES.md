@@ -1,14 +1,14 @@
-### Release Roadmap 📦
+### Releases Roadmap 📦
 
-#### 0.1.0-alpha
+#### 0.1.0-alpha (late October ‘19)
 
-- Distributed + Standalone deployment configurations
-- Topics (create-topic, read-topics)
-- Produce to Topics (produce-topic)
-- Consume from Topics (consume-topic)
-- `in-memory` log storage engine
+- Distributed + Standalone deployment configurations ✅
+- Topics (`create-topic`, `delete-topic`, `read-topics`) ✅
+- Produce to Topics (`produce-topic`) ✅
+- `in-memory` log storage engine ✅
+- Consume from Topics (`consume-topic`)
 
-#### 0.2.0-alpha
+#### 0.2.0-alpha (November ‘19)
 
 - Broker service (describe-topics)
 - elkdctl tool *(this provides simple interaction with elkd node from the command line)*
