@@ -2,7 +2,6 @@ package org.elkd.core.runtime.client.stream
 
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.Dispatchers
-import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.concurrency.asCoroutineScope
 import org.elkd.core.consensus.ConsensusFacade
@@ -65,17 +64,11 @@ class ClientStreamHandler(
   }
 
   private fun shutdownProducer(producer: Producer) {
-    LOGGER.info(">> de-registering $producer")
     producer.shutdown()
     producerRegistry.remove(producer)
   }
 
   private fun registerProducer(producer: Producer) {
-    LOGGER.info(">> registering $producer")
     producerRegistry.add(producer)
-  }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(ClientStreamHandler::class.java)
   }
 }

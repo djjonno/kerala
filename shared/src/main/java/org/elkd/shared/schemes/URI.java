@@ -11,8 +11,8 @@ import java.util.Objects;
  * e.g URI = elkd://<host>:<port>
  */
 public class URI {
-  public static final int HOST_INDEX = 0;
-  public static final int PORT_INDEX = 1;
+  private static final int HOST_INDEX = 0;
+  private static final int PORT_INDEX = 1;
 
   /**
    * Default Elkd URI scheme. Serves no real purpose apart from some
@@ -96,7 +96,7 @@ public class URI {
 
   private static String normalizeHost(final String host) {
     switch (host) {
-      case "127.0.0.1": case "0.0.0.0": case "localhost":
+      case "127.0.0.1": case "0.0.0.0": case "localhost": case "":
         return LOOPBACK_HOST;
       default:
         return host;

@@ -19,10 +19,10 @@ elkd is a distributed streaming platform built in the modern day, from absolute 
 We haven't setup our release pipeline yet so this is how you can run us for the time being.
 
 #### Run build (runs tests) and produce executable jar
+This will produce the `elkd-server` executable found here: `core/build/install/elkd-server/bin`
 ```bash
-$ gradlew build installDist
+$ gradlew installDist
 ```
-You will find the `elkd-server` executable here: `core/build/install/elkd-server/bin`
 
 #### Define a static cluster
 Configuring 3 nodes in this example.

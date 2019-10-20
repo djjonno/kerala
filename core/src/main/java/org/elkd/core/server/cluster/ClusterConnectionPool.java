@@ -26,13 +26,13 @@ public class ClusterConnectionPool {
   }
 
   public void initialize() {
+    logger.info("init channel(s) to " + mClusterSet);
     for (final Node node : mClusterSet.getNodes()) {
       final ManagedChannel channel = ManagedChannelBuilder
           .forTarget(node.getHost() + ":" + node.getPort())
           .usePlaintext() /* TODO: addKV cert auth */
           .build();
       mChannelMap.put(node, new Channel(channel));
-      logger.info("Initializing channel to instance " + node + " state " + channel.getState(true));
     }
   }
 

@@ -3,7 +3,7 @@ package org.elkd.core.concurrency
 import java.util.concurrent.ThreadFactory
 
 object ThreadFactoryProvider {
-  private const val THREAD_NAME = "threadPool-"
+  private const val THREAD_NAME = "pool-"
   private var globalPoolCount = 0
   private var globalThreadCount = 0
 

@@ -42,7 +42,7 @@ class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
       LOGGER.info("Ignoring, topic `${command.namespace}` already exists")
     } ?: run {
       val newTopic = topicModule.provisionTopic(command.id, command.namespace)
-      LOGGER.info("Provisioned new topic $newTopic")
+      LOGGER.info("provisioned new topic $newTopic")
     }
   }
 

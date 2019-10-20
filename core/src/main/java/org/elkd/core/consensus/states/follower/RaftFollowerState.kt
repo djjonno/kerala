@@ -105,6 +105,7 @@ constructor(
       LOGGER.info("yes vote to ${raft.raftContext.votedFor}")
     } else {
       replyRequestVote(raft.raftContext, false, stream)
+      LOGGER.info("no vote to ${raft.raftContext.votedFor}")
     }
   }
 

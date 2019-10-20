@@ -24,6 +24,10 @@ class StaticClusterSet private constructor(override val nodes: Set<Node>,
     return nodes.size
   }
 
+  override fun toString(): String {
+    return "StaticClusterSet(nodes=$nodes, self=$selfNode)"
+  }
+
   class Builder(private val selfNode: Node) {
     private val nodes = HashSet<Node>()
 

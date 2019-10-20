@@ -1,14 +1,11 @@
 package org.elkd.core.server.cluster
 
-import com.google.common.base.Preconditions
 import java.util.Objects
 import org.elkd.shared.annotations.Mockable
 import org.elkd.shared.schemes.URI
 
 @Mockable
-class Node(uri: URI) {
-  val uri: URI = Preconditions.checkNotNull(uri, "uri")
-
+class Node(val uri: URI) {
   val id: String
     get() = uri.toString()
 
