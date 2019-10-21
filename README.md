@@ -27,9 +27,9 @@ $ gradlew installDist
 #### Define a static cluster
 Configuring 3 nodes in this example.
 ```bash
-$ bin/elkd-server --cluster 0.0.0.0:9191,0.0.0.0:9292,0.0.0.0:9393 --port 9191
-$ bin/elkd-server --cluster 0.0.0.0:9191,0.0.0.0:9292,0.0.0.0:9393 --port 9292
-$ bin/elkd-server --cluster 0.0.0.0:9191,0.0.0.0:9292,0.0.0.0:9393 --port 9393
+$ bin/elkd-server --cluster :9191,:9292,:9393 --port 9191
+$ bin/elkd-server --cluster :9191,:9292,:9393 --port 9292
+$ bin/elkd-server --cluster :9191,:9292,:9393 --port 9393
 ```
 
 #### Run with Docker (recommended)
