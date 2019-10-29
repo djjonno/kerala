@@ -9,8 +9,8 @@ class LogChangeRegistry<E : LogEntry> constructor(
     log: LogInvoker<E>
 ) {
   private val listener: Listener<E> = Listener()
-  private val scopedOnCommitRegistrations: MutableMap<String, MutableList<CompletionHandler>> = mutableMapOf()
-  private val scopedOnAppendRegistrations: MutableMap<String, MutableList<CompletionHandler>> = mutableMapOf()
+  private val scopedOnCommitRegistrations: MutableMap<Key, MutableList<CompletionHandler>> = mutableMapOf()
+  private val scopedOnAppendRegistrations: MutableMap<Key, MutableList<CompletionHandler>> = mutableMapOf()
 
   init {
     log.registerListener(listener)
@@ -19,52 +19,82 @@ class LogChangeRegistry<E : LogEntry> constructor(
   fun cancelCommitRegistrations(reason: CancellationReason) {
     scopedOnCommitRegistrations.forEach {
       it.value.forEach { handler ->
-        deregister(handler, COMMIT)
+        unregister(handler, COMMIT)
         handler.onFailure(reason)
       }
     }
   }
 
   fun register(e: LogEntry, event: LogChangeEvent, onComplete: () -> Unit, onFailure: (f: CancellationReason) -> Unit): CompletionHandler {
-    val handler = CompletionHandler(e, event, onComplete, onFailure)
+    return register(Key(uuid = e.uuid), event, onComplete, onFailure)
+  }
+
+  fun register(index: Long, event: LogChangeEvent, onComplete: () -> Unit, onFailure: (f: CancellationReason) -> Unit): CompletionHandler {
+    return register(Key(index = index), event, onComplete, onFailure)
+  }
+
+  private fun register(key: Key, event: LogChangeEvent, onComplete: () -> Unit, onFailure: (f: CancellationReason) -> Unit): CompletionHandler {
+    val handler = CompletionHandler(key, event, onComplete, onFailure)
     when (event) {
-      COMMIT -> register(scopedOnCommitRegistrations, e.uuid, handler)
-      APPEND -> register(scopedOnAppendRegistrations, e.uuid, handler)
+      COMMIT -> registerToMap(scopedOnCommitRegistrations, handler)
+      APPEND -> registerToMap(scopedOnAppendRegistrations, handler)
     }
     return handler
   }
 
-  private fun register(map: MutableMap<String, MutableList<CompletionHandler>>, key: String, value: CompletionHandler) {
-    if (!map.containsKey(key)) {
-      map[key] = mutableListOf()
+  private fun registerToMap(map: MutableMap<Key, MutableList<CompletionHandler>>, handler: CompletionHandler) {
+    if (!map.containsKey(handler.key)) {
+      map[handler.key] = mutableListOf()
     }
-    map[key]?.add(value)
+    map[handler.key]?.add(handler)
   }
 
-  private fun deregister(value: CompletionHandler, event: LogChangeEvent) {
+  private fun unregister(value: CompletionHandler, event: LogChangeEvent) {
     when (event) {
-      COMMIT -> deregister(scopedOnCommitRegistrations, value)
-      APPEND -> deregister(scopedOnAppendRegistrations, value)
+      COMMIT -> unregister(scopedOnCommitRegistrations, value)
+      APPEND -> unregister(scopedOnAppendRegistrations, value)
     }
   }
 
-  private fun deregister(map: MutableMap<String, MutableList<CompletionHandler>>, value: CompletionHandler) {
-    map[value.entry.uuid]?.remove(value)
+  private fun unregister(map: MutableMap<Key, MutableList<CompletionHandler>>, value: CompletionHandler) {
+    map[value.key]?.remove(value)
   }
 
   private inner class Listener<E : LogEntry> : LogChangeListener<E> {
     override fun onCommit(index: Long, entry: E) {
-      scopedOnCommitRegistrations[entry.uuid]?.forEach { it.done() }
-      scopedOnCommitRegistrations.remove(entry.uuid)
+      withKeys(index, entry) { i, u ->
+        scopedOnCommitRegistrations[i]?.forEach { it.done() }
+        scopedOnCommitRegistrations.remove(i)
+        scopedOnCommitRegistrations[u]?.forEach { it.done() }
+        scopedOnCommitRegistrations.remove(u)
+      }
     }
 
     override fun onAppend(index: Long, entry: E) {
-      scopedOnAppendRegistrations[entry.uuid]?.forEach { it.done() }
-      scopedOnAppendRegistrations.remove(entry.uuid)
+      withKeys(index, entry) { i, u ->
+        scopedOnAppendRegistrations[i]?.forEach { it.done() }
+        scopedOnAppendRegistrations.remove(i)
+        scopedOnAppendRegistrations[u]?.forEach { it.done() }
+        scopedOnAppendRegistrations.remove(u)
+      }
+    }
+
+    private fun withKeys(index: Long, entry: E, block: (i: Key, u: Key) -> Unit) {
+      val indexKey = Key(index = index)
+      val uuidKey = Key(uuid = entry.uuid)
+      block(indexKey, uuidKey)
     }
   }
 
-  inner class CompletionHandler(internal val entry: LogEntry,
+  /**
+   * Key to scope index or uuid to CompletionHandler.
+   */
+  data class Key(val index: Long? = null, val uuid: String? = null)
+
+  /**
+   * CompletionHandler which contains contextual data of a given listener.
+   */
+  inner class CompletionHandler(internal val key: Key,
                                 internal val event: LogChangeEvent,
                                 internal val onComplete: () -> Unit,
                                 internal val onFailure: (f: CancellationReason) -> Unit) {
@@ -73,7 +103,7 @@ class LogChangeRegistry<E : LogEntry> constructor(
       try {
         latch.await(timeout, unit)
       } catch (e: Exception) {
-        deregister(this, event)
+        unregister(this, event)
       }
     }
 

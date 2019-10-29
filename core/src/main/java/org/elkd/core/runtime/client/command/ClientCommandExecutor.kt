@@ -18,12 +18,12 @@ class ClientCommandExecutor(
         NotificationsHub.Channel.CONSENSUS_CHANGE,
         Pools.clientRequestPool
     ) {
-      cleanupUnsupportedBundles(consensusFacade.supportedOperations)
+      cleanupUnsupportedBundles()
     }
   }
 
   fun execute(bundle: ClientCommandPack) {
-    if (bundle.opCategory !in consensusFacade.supportedOperations) {
+    if (!consensusFacade.supportsCategory(bundle.opCategory)) {
       handleUnsupportedBundleOp(bundle)
       return
     }
@@ -57,9 +57,9 @@ class ClientCommandExecutor(
     bundle.onError("node op ${bundle.opCategory} not supported")
   }
 
-  private fun cleanupUnsupportedBundles(supportedOps: Set<OpCategory>) {
+  private fun cleanupUnsupportedBundles() {
     bundleRegistry
-        .filter { e -> e.opCategory !in supportedOps }
+        .filter { e -> consensusFacade.supportsCategory(e.opCategory) }
         .forEach { b -> handleUnsupportedBundleOp(b) }
   }
 

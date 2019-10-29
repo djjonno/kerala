@@ -9,7 +9,7 @@ jdk:
   - openjdk10
 
 install:
-  - ./gradlew build
+  - ./gradlew assemble
 
 script:
   - ./gradlew test jacocoTestReport

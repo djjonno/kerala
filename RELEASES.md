@@ -6,7 +6,7 @@
 - Topics (`create-topic`, `delete-topic`, `read-topics`) ✅
 - Produce to Topics (`produce-topic`) ✅
 - `in-memory` log storage engine ✅
-- Consume from Topics (`consume-topic`)
+- Consume from Topics (`consume-topic`) ✅
 
 #### 0.2.0-alpha (November ‘19)
 

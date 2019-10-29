@@ -8,6 +8,7 @@ import org.elkd.core.log.LogChangeRegistry
 import org.elkd.core.log.LogChangeRegistry.CancellationReason
 import org.elkd.core.log.commands.AppendCommand
 import org.elkd.core.runtime.topic.Topic
+import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -17,12 +18,14 @@ class ConsensusFacade(private val raft: Raft) {
   val delegator: RaftDelegator
     get() = raft.delegator
 
-  val supportedOperations: Set<OpCategory>
-    get() = raft.supportedOps
+  val raftContext = raft.raftContext
 
   fun initialize() = raft.initialize()
 
-  val raftContext = raft.raftContext
+  /*
+   * Check if consensus state supports the given operation.
+   */
+  fun supportsCategory(category: OpCategory): Boolean = category in raft.supportedOps
 
   fun writeToTopic(topic: Topic,
                    kvs: List<KV>,
@@ -39,5 +42,44 @@ class ConsensusFacade(private val raft: Raft) {
     suspendCoroutine<Unit> { cont ->
       writeToTopic(topic, kvs, { cont.resume(Unit) }, { cont.resumeWithException(Exception()) })
     }
+  }
+
+  suspend fun readFromTopic(topic: Topic, index: Long?): List<Entry> {
+    return suspendCoroutine { cont ->
+      /**
+       * readBlock used to synchronize all external log activity,
+       * eliminating race conditions.
+       */
+      topic.logFacade.readBlock {
+        with(topic.logFacade.log) {
+          val i: Long = index ?: commitIndex + 1 // next entry
+
+          if (i <= commitIndex) {
+            read(i)?.let {
+              cont.resume(listOf(it))
+            } ?: cont.resumeWithException(Exception("wtf - log misread"))
+          } else {
+            /* If requested index is not yet committed, perform a readAhead */
+            readAhead(topic, i, cont)
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Allow client to make a readAhead request.
+   */
+  private fun readAhead(topic: Topic, i: Long, cont: Continuation<List<Entry>>) {
+    topic.logFacade.changeRegistry.register(i, LogChangeEvent.COMMIT,
+        {
+          topic.logFacade.log.read(i)?.let {
+            cont.resume(listOf(it))
+          } ?: cont.resumeWithException(Exception("wtf - log misread"))
+        },
+        {
+          cont.resumeWithException(Exception("wtf - log misread"))
+        }
+    )
   }
 }

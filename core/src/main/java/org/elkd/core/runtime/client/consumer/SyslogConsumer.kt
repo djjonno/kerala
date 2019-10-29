@@ -24,8 +24,8 @@ import org.elkd.core.runtime.client.command.asCommand
  * be some kind of systemic error as opposed to an invalid
  * state of some sorts.
  */
-class SyslogConsumer(private val topicModule: TopicModule) : Consumer {
-  override fun consume(index: Long, entry: Entry) {
+class SyslogConsumer(private val topicModule: TopicModule) {
+  fun consume(entry: Entry) {
     val command = entry.asCommand()
 
     when (ClientCommandType.fromId(command.command)) {

@@ -17,7 +17,7 @@ class TopicModule(
     val syslogConsumer = SyslogConsumer(this)
     topic.logFacade.registerListener(object : LogChangeListener<Entry> {
       override fun onCommit(index: Long, entry: Entry) {
-        syslogConsumer.consume(index, entry)
+        syslogConsumer.consume(entry)
       }
     })
 

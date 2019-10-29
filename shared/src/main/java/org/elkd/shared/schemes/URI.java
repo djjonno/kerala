@@ -11,8 +11,6 @@ import java.util.Objects;
  * e.g URI = elkd://<host>:<port>
  */
 public class URI {
-  private static final int HOST_INDEX = 0;
-  private static final int PORT_INDEX = 1;
 
   /**
    * Default Elkd URI scheme. Serves no real purpose apart from some
@@ -26,6 +24,9 @@ public class URI {
   public static final String LOOPBACK_HOST = InetAddress
       .getLoopbackAddress()
       .getHostName();
+
+  private static final int HOST_INDEX = 0;
+  private static final int PORT_INDEX = 1;
 
   private final String mHost;
   private final int mPort;

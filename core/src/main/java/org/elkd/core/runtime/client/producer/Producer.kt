@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.server.client.RpcProducerAck
+import java.io.Closeable
 
 /**
  * Producer
@@ -21,9 +22,9 @@ import org.elkd.core.server.client.RpcProducerAck
 class Producer(
     val consensusFacade: ConsensusFacade,
     val coroutineScope: CoroutineScope
-) : CoroutineScope by coroutineScope {
+) : CoroutineScope by coroutineScope, Closeable {
 
-  fun shutdown() {
+  override fun close() {
     LOGGER.info("shutting down producer vm")
     coroutineContext.cancel()
   }

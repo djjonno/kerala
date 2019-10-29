@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClusterConnectionPool {
-  private static final Logger logger = Logger.getLogger(ClusterConnectionPool.class);
+  private static final Logger LOGGER = Logger.getLogger(ClusterConnectionPool.class);
 
   private final Map<Node, Channel> mChannelMap = new HashMap<>();
   private final ClusterSet mClusterSet;
@@ -26,7 +26,7 @@ public class ClusterConnectionPool {
   }
 
   public void initialize() {
-    logger.info("init channel(s) to " + mClusterSet);
+    LOGGER.info("init channel(s) to " + mClusterSet);
     for (final Node node : mClusterSet.getNodes()) {
       final ManagedChannel channel = ManagedChannelBuilder
           .forTarget(node.getHost() + ":" + node.getPort())

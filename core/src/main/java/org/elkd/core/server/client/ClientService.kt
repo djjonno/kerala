@@ -20,6 +20,10 @@ class ClientService(
     clientCommandHandler.handle(request, responseObserver)
   }
 
+  override fun consumeTopic(responseObserver: StreamObserver<RpcConsumerResponse>): StreamObserver<RpcConsumerRequest> {
+    return clientStreamHandler.establishConsumerStream(responseObserver)
+  }
+
   override fun produceTopic(responseObserver: StreamObserver<RpcProducerAck>): StreamObserver<RpcProducerRecord> {
     return clientStreamHandler.establishProducerStream(responseObserver)
   }

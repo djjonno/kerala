@@ -17,7 +17,7 @@ service ElkdClientService {
     // @EvolvingApi
     //
     // Provide a stream for clients to consume a topic.
-    rpc ConsumeTopic (RpcConsumerRequest) returns (stream ConsumerRecord) {}
+    rpc ConsumeTopic (stream RpcConsumerRequest) returns (stream RpcConsumerResponse) {}
 }
 
 // @EvolvingApi
@@ -51,9 +51,8 @@ message RpcClientResponse {
 
 // @Experimental
 //
-// Producer Acknowledgement configurations:
-// 1. fire-and-forget
-// 2. all
+// Producer Acknowledgement
+// @property notification unsigned int - see ProducerACK.Codes
 message RpcProducerAck {
     uint32 notification = 1;
 }
@@ -80,14 +79,21 @@ message RpcKV {
 // @EvolvingApi
 //
 // Client specifies the topic it wishes to consume from.
+// @property topic byte string  - Topic, by namespace, to consume from.
+// @property index unsigned int - Topic index position consumer is at, specifies position in Topic to consume from.
+//                                If not specified, server will assume consumer is requesting the log end e.g
+//                                the entry that does not yet exist.
 message RpcConsumerRequest {
     string topic = 1;
-    // Likely to have partition related information in future.
-    // e.g ConsumerGroup
+    uint64 index = 2;
 }
 
-message ConsumerRecord {
+message RpcConsumerResponse {
     string topic = 1;
     uint64 offset = 2;
-    RpcKV kv = 3;
+    repeated RpcKV kvs = 3;
+
+    // Error states will be communicated via this field.
+    // @see ConsumerACK
+    uint32 status = 4;
 }
