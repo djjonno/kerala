@@ -1,6 +1,6 @@
 ### Releases Roadmap 📦
 
-#### 0.1.0-alpha (late October ‘19)
+#### [0.1.0-alpha](https://github.com/djjonno/elkd/releases/tag/0.1.0-alpha)
 
 - Distributed + Standalone cluster configurations ✅
 - Topics (`create-topic`, `delete-topic`, `read-topics`) ✅
