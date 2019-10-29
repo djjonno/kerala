@@ -2,7 +2,7 @@
 
 #### 0.1.0-alpha (late October ‘19)
 
-- Distributed + Standalone deployment configurations ✅
+- Distributed + Standalone cluster configurations ✅
 - Topics (`create-topic`, `delete-topic`, `read-topics`) ✅
 - Produce to Topics (`produce-topic`) ✅
 - `in-memory` log storage engine ✅
@@ -10,6 +10,7 @@
 
 #### 0.2.0-alpha (November ‘19)
 
+- Client-Service contracts
 - Broker service (describe-topics)
 - elkdctl tool *(this provides simple interaction with elkd node from the command line)*
     - `> elkdctl --broker <broker-host> cluster-info`
@@ -42,9 +43,10 @@
 
 #### 0.5.0-alpha
 
-- Dynamic cluster configuration
-    - clients will have the ability to add/remove nodes from the cluster at runtime
+- `snapshot` log compaction
 
 #### 0.6.0-alpha
 
 - Auth
+- Dynamic cluster configuration
+    - clients will have the ability to add/remove nodes from the cluster at runtime
