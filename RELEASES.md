@@ -11,13 +11,13 @@
 #### 0.2.0-alpha (November ‘19)
 
 - Client-Service contracts
-- Broker service (describe-topics)
+- Broker service (expose `cluster-info` to clients)
 - elkdctl tool *(this provides simple interaction with elkd node from the command line)*
     - `> elkdctl --broker <broker-host> cluster-info`
-    - `> elkdctl --broker <broker-host> create-topic <topic-namespace> [--log-engine <engine>]`
-    - `> elkdctl --broker <broker-host> read-topics`
-    - `> elkdctl --broker <broker-host> produce <topic-namepsace> [--poll ms]`
-    - `> elkdctl --broker <broker-host> consume`
+    - `> elkdctl --broker <broker-host> create-topic <topic> [--storage-engine <engine>]`
+    - `> elkdctl --broker <broker-host> topic-info [<topic>]`
+    - `> elkdctl --broker <broker-host> produce-topic <topic> [--timeout ms]`
+    - `> elkdctl --broker <broker-host> consume-topic <topic> [--poll ms] [--timeout ms]`
 
 #### 0.3.0-alpha
 
@@ -47,6 +47,7 @@
 
 #### 0.6.0-alpha
 
-- Auth
+- TLS authentication
+    - server can be configured to use certificate pair(s) for authentication between clients and elkd nodes. 
 - Dynamic cluster configuration
     - clients will have the ability to add/remove nodes from the cluster at runtime
