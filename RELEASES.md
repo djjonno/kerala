@@ -1,6 +1,6 @@
 ### Releases Roadmap 📦
 
-#### [0.1.0-alpha](https://github.com/djjonno/elkd/releases/tag/0.1.0-alpha)
+#### [0.1.0-alpha](https://github.com/djjonno/elkd/releases/tag/0.1.0-alpha) Released
 
 - Distributed + Standalone cluster configurations ✅
 - Topics (`create-topic`, `delete-topic`, `read-topics`) ✅
@@ -36,6 +36,7 @@
         - process streams
         - flexible api for functional processing (map/reduce/group/filter/etc)
         - produce to stream
+- Docs
 
 #### 0.4.0-alpha
 
@@ -50,4 +51,4 @@
 - TLS authentication
     - server can be configured to use certificate pair(s) for authentication between clients and elkd nodes. 
 - Dynamic cluster configuration
-    - clients will have the ability to add/remove nodes from the cluster at runtime
+    - clients will have the ability to add/remove nodes from the cluster at runtime   
