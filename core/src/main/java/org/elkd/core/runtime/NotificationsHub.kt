@@ -1,11 +1,11 @@
 package org.elkd.core.runtime
 
+import java.util.concurrent.Executor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import java.util.concurrent.Executor
 
 typealias Block = (channel: NotificationsHub.Channel) -> Unit
 
@@ -25,7 +25,7 @@ object NotificationsHub : CoroutineScope by GlobalScope {
 
   fun pub(channel: Channel) {
     subscriptions[channel]?.forEach {
-      launch (it.first) { it.second(channel) }
+      launch(it.first) { it.second(channel) }
     }
   }
 

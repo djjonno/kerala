@@ -1,7 +1,6 @@
 package org.elkd.core.runtime.client.stream
 
 import io.grpc.stub.StreamObserver
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch

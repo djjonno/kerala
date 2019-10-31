@@ -1,6 +1,8 @@
 package org.elkd.core.runtime.client.consumer
 
 import io.grpc.stub.StreamObserver
+import java.io.Closeable
+import java.lang.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
@@ -8,8 +10,6 @@ import org.apache.log4j.Logger
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.server.client.RpcConsumerResponse
 import org.elkd.core.server.converters.KVConverters
-import java.io.Closeable
-import java.lang.Exception
 
 class Consumer(
     val consensusFacade: ConsensusFacade,
@@ -46,7 +46,6 @@ class Consumer(
               responseObserver.onNext(RpcConsumerResponse.newBuilder()
                   .addAllKvs(kvs)
                   .setStatus(ConsumerACK.Codes.OK.id).build())
-
             } catch (e: Exception) {
               responseObserver.onNext(RpcConsumerResponse.newBuilder()
                   .setStatus(ConsumerACK.Codes.OPERATION_INVALID.id).build())

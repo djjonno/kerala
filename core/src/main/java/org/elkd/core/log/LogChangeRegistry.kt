@@ -1,9 +1,9 @@
 package org.elkd.core.log
 
-import org.elkd.core.log.LogChangeEvent.APPEND
-import org.elkd.core.log.LogChangeEvent.COMMIT
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import org.elkd.core.log.LogChangeEvent.APPEND
+import org.elkd.core.log.LogChangeEvent.COMMIT
 
 class LogChangeRegistry<E : LogEntry> constructor(
     log: LogInvoker<E>
@@ -94,10 +94,12 @@ class LogChangeRegistry<E : LogEntry> constructor(
   /**
    * CompletionHandler which contains contextual data of a given listener.
    */
-  inner class CompletionHandler(internal val key: Key,
-                                internal val event: LogChangeEvent,
-                                internal val onComplete: () -> Unit,
-                                internal val onFailure: (f: CancellationReason) -> Unit) {
+  inner class CompletionHandler(
+      internal val key: Key,
+      internal val event: LogChangeEvent,
+      internal val onComplete: () -> Unit,
+      internal val onFailure: (f: CancellationReason) -> Unit
+  ) {
     private val latch = CountDownLatch(1)
     fun get(timeout: Long, unit: TimeUnit) {
       try {

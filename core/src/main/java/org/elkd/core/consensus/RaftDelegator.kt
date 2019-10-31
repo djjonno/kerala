@@ -2,6 +2,7 @@ package org.elkd.core.consensus
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
+import java.util.concurrent.ExecutorService
 import org.apache.log4j.Logger
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.consensus.messages.AppendEntriesRequest
@@ -14,7 +15,6 @@ import org.elkd.core.consensus.states.RaftStateFactory
 import org.elkd.core.consensus.states.State
 import org.elkd.core.runtime.NotificationsHub
 import org.elkd.shared.annotations.Mockable
-import java.util.concurrent.ExecutorService
 
 /**
  * RaftDelegator delegates model to the correct internal raft state [follower, candidate, leader]

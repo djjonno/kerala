@@ -1,12 +1,13 @@
 package org.elkd.core.server.cluster
 
+import java.util.HashSet
 import org.elkd.core.ElkdRuntimeException
 import org.elkd.shared.schemes.URI
 
-import java.util.HashSet
-
-class StaticClusterSet private constructor(override val nodes: Set<Node>,
-                                           override val selfNode: Node) : ClusterSet {
+class StaticClusterSet private constructor(
+    override val nodes: Set<Node>,
+    override val selfNode: Node
+) : ClusterSet {
   override val allNodes: Set<Node> = setOf(elements = *nodes.toTypedArray() + selfNode)
 
   override val isEmpty: Boolean

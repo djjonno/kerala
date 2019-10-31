@@ -1,9 +1,9 @@
 package org.elkd.core.log
 
+import java.util.concurrent.ExecutorService
 import org.elkd.core.log.commands.LogCommand
 import org.elkd.core.log.ds.Log
 import org.elkd.shared.annotations.Mockable
-import java.util.concurrent.ExecutorService
 
 @Mockable
 class LogCommandExecutor<E : LogEntry> constructor(

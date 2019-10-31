@@ -1,6 +1,7 @@
 package org.elkd.core.runtime.client.stream
 
 import io.grpc.stub.StreamObserver
+import java.io.Closeable
 import kotlinx.coroutines.Dispatchers
 import org.elkd.core.concurrency.Pools
 import org.elkd.core.concurrency.asCoroutineScope
@@ -17,7 +18,6 @@ import org.elkd.core.server.client.RpcConsumerResponse
 import org.elkd.core.server.client.RpcProducerAck
 import org.elkd.core.server.client.RpcProducerRecord
 import org.elkd.core.server.converters.KVConverters
-import java.io.Closeable
 
 class ClientStreamHandler(
     private val consensusFacade: ConsensusFacade,

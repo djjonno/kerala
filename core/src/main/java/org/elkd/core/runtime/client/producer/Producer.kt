@@ -1,13 +1,13 @@
 package org.elkd.core.runtime.client.producer
 
 import io.grpc.stub.StreamObserver
+import java.io.Closeable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
 import org.apache.log4j.Logger
 import org.elkd.core.consensus.ConsensusFacade
 import org.elkd.core.server.client.RpcProducerAck
-import java.io.Closeable
 
 /**
  * Producer
