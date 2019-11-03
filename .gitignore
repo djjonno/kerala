@@ -4,8 +4,7 @@ build/
 coverage/
 out/
 *.iml
-cc-test-reporter
-elkd.properties
+ravine.properties
 
 # playground dir
-core/src/main/java/org/elkd/core/playground/
+core/src/main/java/org/ravine/core/playground/

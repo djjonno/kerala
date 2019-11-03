@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.ravine.core.server.client";
+
+// --------------------------------------------------------------------------------------
+// Service Definition
+//
+// @see CLIENTSPEC.md for contract details.
+
+service ClientService {
+    rpc ClientCommand (RpcCommandRequest) returns (RpcCommandResponse) {}
+    rpc TopicProducer (stream RpcProducerRequest) returns (stream RpcProducerResponse) {}
+    rpc TopicConsumer (stream RpcConsumerRequest) returns (stream RpcConsumerResponse) {}
+}
+
+// --------------------------------------------------------------------------------------
+// Command Contract
+
+message RpcCommandRequest {
+    string command = 1;
+    repeated RpcArgPair args = 3;
+}
+
+message RpcArgPair {
+    string param = 1;
+    string arg = 2;
+}
+
+message RpcCommandResponse {
+    string response = 1;
+    uint32 status = 2;
+}
+
+// --------------------------------------------------------------------------------------
+// Producer Contract
+
+message RpcProducerResponse {
+    uint32 status = 1;
+}
+
+message RpcProducerRequest {
+    string topic = 1;
+    repeated RpcKV kvs = 2;
+}
+
+message RpcKV {
+    string key = 1;
+    string value = 2;
+}
+
+// --------------------------------------------------------------------------------------
+// Consumer Contract
+
+message RpcConsumerRequest {
+    string topic = 1;
+    uint64 index = 2;
+}
+
+message RpcConsumerResponse {
+    string topic = 1;
+    uint64 offset = 2;
+    repeated RpcKV kvs = 3;
+    uint32 status = 4;
+}

@@ -16,7 +16,6 @@ subprojects {
     apply plugin: "kotlin"
     apply plugin: "kotlin-allopen"
     apply plugin: "jacoco"
-    apply plugin: "checkstyle"
 
     repositories {
         mavenCentral()
@@ -41,23 +40,12 @@ subprojects {
         implementation "org.jetbrains.kotlin:kotlin-stdlib"
         implementation "org.jetbrains.kotlin:kotlin-reflect"
         implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0"
-        implementation "com.google.code.gson:gson:2.8.5"
+        implementation "com.google.code.gson:gson:2.8.6"
 
         testCompile "junit:junit:4.11"
         testCompile "org.mockito:mockito-core:2.+"
         testImplementation "org.jetbrains.kotlin:kotlin-test"
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
-    }
-
-    tasks.withType(Checkstyle) {
-        reports {
-            xml.enabled true
-            html.enabled true
-        }
-    }
-
-    checkstyle {
-        toolVersion = "8.21"
     }
 
     test {
@@ -67,6 +55,6 @@ subprojects {
     }
 
     allOpen {
-        annotation("org.elkd.shared.annotations.Mockable")
+        annotation("org.ravine.shared.annotations.Mockable")
     }
 }

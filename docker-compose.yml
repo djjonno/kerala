@@ -1,29 +1,29 @@
 version: "2"
 
-# Define several elkd nodes as a cluster configuration.
+# Define several ravine nodes as a cluster configuration.
 #
 # Invoke the cluster with `$ docker-compose up`
 services:
-  elkd-1:
+  ravine-1:
     build: ./
-    command: ./bin/elkd-server --cluster elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9001 --host elkd-1
+    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9001 --host ravine-1
     ports:
       - 9001:9001
 
-  elkd-2:
+  ravine-2:
     build: ./
-    command: ./bin/elkd-server --cluster elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9002 --host elkd-2
+    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9002 --host ravine-2
     ports:
       - 9002:9002
 
-  elkd-3:
+  ravine-3:
     build: ./
-    command: ./bin/elkd-server --cluster elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9003 --host elkd-3
+    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9003 --host ravine-3
     ports:
       - 9003:9003
 
-  elkd-4:
+  ravine-4:
     build: ./
-    command: ./bin/elkd-server --cluster elkd-1:9001,elkd-2:9002,elkd-3:9003,elkd-4:9004 --port 9004 --host elkd-4
+    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9004 --host ravine-4
     ports:
       - 9004:9004

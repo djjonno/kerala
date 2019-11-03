@@ -1,7 +1,7 @@
 # Ravine
 
-[![Actions Status](https://github.com/djjonno/elkd/workflows/Java%20CI/badge.svg)](https://github.com/djjonno/elkd/actions)
-[![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/djjonno/elkd/blob/master/LICENSE)
+[![Actions Status](https://github.com/djjonno/ravine/workflows/Java%20CI/badge.svg)](https://github.com/djjonno/ravine/actions)
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/djjonno/ravine/blob/master/LICENSE)
 
 **Ravine** is a distributed event-streaming server built for the modern day.  It is robust, lightweight and super fast!
 - **Produce/Consume** - create Topics, then produce and consume them.
@@ -19,10 +19,34 @@
 Using the gradle wrapper, you can now run.
 
 ```bash
-./gradlew installDist
+$ ./gradlew installDist
 ```
 
-This will produce a bin file `ravine` under `./core/build/install/ravine/bin`
+This will produce the **Ravine** daemon binary `ravine-d` under `./core/build/install/ravine-d/bin`
+
+#### Run as `Standalone`
+
+```bash
+$ ./ravine-d
+```
+
+#### Run as `Cluster`
+
+```bash
+$ ./ravine-d --cluster :9191,:9292,:9393 --port :9191
+$ ./ravine-d --cluster :9191,:9292,:9393 --port :9292
+$ ./ravine-d --cluster :9191,:9292,:9393 --port :9393
+```
+
+#### Run with `Docker`
+
+You can use the [Dockerfile](Dockerfile) OR run via [docker-compose](docker-compose.yml):
+
+```bash
+$ docker-compose up
+```
+
+That will deploy a cluster containing 4 ravine nodes.
 
 ## Running Tests
 
@@ -31,13 +55,13 @@ This will produce a bin file `ravine` under `./core/build/install/ravine/bin`
 You can run unit tests as part of a build:
 
 ```bash
-./gradlew build
+$ ./gradlew build
 ```
 
 Or, you can run them specifically:
 
 ```bash
-./gradlew test [--tests <some-package>|<regex>|<class-name>]
+$ ./gradlew test [--tests <package>|<regex>|<class-name>]
 ```
 
 It is just vanilla Gradle so you can refer to the docs for more usages.  If you use Jetbrains IDEA, you can also run the tests within the editor.
@@ -46,23 +70,23 @@ It is just vanilla Gradle so you can refer to the docs for more usages.  If you 
 
 Kotlin is our core language and we currently enforce styling via `ktlint`.  `ktlint` will run automatically on a build task.
 
-Andz can also run it directly:
+And can also run it directly:
 
 ```bash
-./gradlew ktlint
+$ ./gradlew ktlint
 ```
 
 And have the formatting done for you:
 
 ```bash
-./gradlew ktlintFormat
+$ ./gradlew ktlintFormat
 ```
 
 ## Built With
 
-* [Kotlin](https://kotlinlang.org/)
-* [gRPC](https://grpc.io/docs/quickstart/java/) - Server Communication
-* [Raft Consensus](https://raft.github.io) - Distributed Consensus
+* [Kotlin](https://kotlinlang.org/) - Structured concurrency w/ coroutines
+* [gRPC](https://grpc.io/docs/quickstart/java/) - Server-Server communication
+* [Raft Consensus](https://raft.github.io) - Distributed consensus
 
 ## Contributing
 
@@ -81,7 +105,7 @@ We use [SemVer](https://semver.org).  For the versions available, see the [tags 
 
 This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) file for details.
 
-## Use Cases
+## Ravine Use-Cases
 
 There are numerous uses for event-streaming, here are just a few thing you could use **Ravine** for:
 
@@ -89,12 +113,9 @@ There are numerous uses for event-streaming, here are just a few thing you could
 - Perform time-series analysis on all kinds of application event streams.
 - Create app/system audit streams for retrospective analysis for fraud or unauthorized access use-cases.
 - Natively supports [CQRS](https://martinfowler.com/bliki/CQRS.html) Architectures
+- ...
 
 ## Other things to checkout
 
 - [Release Roadmap](RELEASES.md)
 - [Docs]() - Coming Soon
-
----
-
-*a project by [@djjonno](https://github.com/djjonno)*
