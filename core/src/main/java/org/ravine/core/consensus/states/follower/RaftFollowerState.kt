@@ -2,8 +2,9 @@ package org.ravine.core.consensus.states.follower
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
-import kotlin.math.min
 import org.apache.log4j.Logger
+import org.ravine.core.Environment
+import org.ravine.core.config.Config
 import org.ravine.core.consensus.OpCategory
 import org.ravine.core.consensus.Raft
 import org.ravine.core.consensus.RaftException
@@ -22,6 +23,7 @@ import org.ravine.core.log.commands.CommitCommand
 import org.ravine.core.runtime.topic.Topic
 import org.ravine.shared.annotations.Mockable
 import org.ravine.shared.math.randomizeNumberPoint
+import kotlin.math.min
 
 @Mockable
 class RaftFollowerState @VisibleForTesting
@@ -29,7 +31,7 @@ constructor(
     private val raft: Raft,
     @VisibleForTesting private val timeoutAlarm: org.ravine.core.consensus.TimeoutAlarm
 ) : RaftState {
-  private val timeout = raft.config.getAsInteger(org.ravine.core.config.Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS)
+  private val timeout: Int = Environment.config[Config.KEY_RAFT_FOLLOWER_TIMEOUT_MS]
 
   constructor(raft: Raft) : this(
       raft,

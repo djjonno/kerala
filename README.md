@@ -1,6 +1,7 @@
 # Ravine
 
 [![Actions Status](https://github.com/djjonno/ravine/workflows/Java%20CI/badge.svg)](https://github.com/djjonno/ravine/actions)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/djjonno/ravine?include_prereleases)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/djjonno/ravine/blob/master/LICENSE)
 
 **Ravine** is a distributed event-streaming server built for the modern day.  It is robust, lightweight and super fast!

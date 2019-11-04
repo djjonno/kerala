@@ -1,6 +1,7 @@
 package org.ravine.core
 
 import org.apache.log4j.Logger
+import org.ravine.core.config.Config
 import org.ravine.core.consensus.ConsensusFacade
 import org.ravine.core.consensus.RaftFactory
 import org.ravine.core.log.LogFactory
@@ -11,7 +12,9 @@ import org.ravine.core.runtime.topic.TopicFactory
 import org.ravine.core.runtime.topic.TopicModule
 import org.ravine.core.runtime.topic.TopicRegistry
 import org.ravine.core.server.Server
+import org.ravine.core.server.cluster.ClusterConnectionPool
 import org.ravine.core.server.cluster.ClusterMessenger
+import org.ravine.core.server.cluster.ClusterUtils
 import org.ravine.core.server.cluster.StaticClusterSet
 
 /**
@@ -20,13 +23,12 @@ import org.ravine.core.server.cluster.StaticClusterSet
  * Bootstrapping module - configure all runtime dependencies.
  */
 internal class Boot(
-    private val config: org.ravine.core.config.Config,
     private val consensusFacade: ConsensusFacade,
     private val server: Server
 ) {
 
   fun start() {
-    val port = config.getAsInteger(org.ravine.core.config.Config.KEY_PORT)
+    val port: Int = Environment.config[Config.KEY_PORT]
     server.start(port)
     consensusFacade.initialize()
   }
@@ -40,7 +42,7 @@ internal class Boot(
   }
 
   /**
-   * A blocking call, awaiting runtime resource deallocation.  Call this prior to shutdown.
+   * A blocking call, awaiting runtime resource de-allocation.  Call this prior to shutdown.
    */
   fun awaitTermination() {
     server.awaitTermination()
@@ -52,18 +54,21 @@ internal class Boot(
  */
 fun main(args: Array<String>) {
   val logger = Logger.getLogger(Boot::class.java)
-  val config = getConfig(args) ?: return
+  try {
+    /* Config is lazy loaded, access to initialize */
+    Environment.args = args
+    Environment.config
+  } catch (e: Exception) { return }
 
   /*
    * Cluster Set
    *
    * Currently only support for static cluster membership - no changes during runtime.
    */
-  val clusterSet = StaticClusterSet.builder(org.ravine.core.server.cluster.ClusterUtils.buildSelfNode(config))
-      .withString(config.get(org.ravine.core.config.Config.KEY_CLUSTER))
+  val clusterSet = StaticClusterSet.builder(ClusterUtils.buildSelfNode())
+      .withString(Environment.config[Config.KEY_CLUSTER])
       .build()
-  val clusterConnectionPool = org.ravine.core.server.cluster.ClusterConnectionPool(clusterSet)
-  clusterConnectionPool.initialize()
+  val clusterConnectionPool = ClusterConnectionPool(clusterSet).apply { initialize() }
 
   /*
    * ClusterMessenger
@@ -76,27 +81,17 @@ fun main(args: Array<String>) {
    * Configure client systems.
    */
   val topicModule = TopicModule(TopicRegistry(), TopicFactory(LogFactory()))
-  val consensusFacade = ConsensusFacade(RaftFactory.create(config, topicModule, clusterMessenger))
+  val consensusFacade = ConsensusFacade(RaftFactory.create(topicModule, clusterMessenger))
   val clientStreamHandler = ClientStreamHandler(consensusFacade, topicModule)
   val clientCommandHandler = ClientCommandHandler(ClientCommandExecutor(consensusFacade, topicModule))
 
-  val boot = Boot(config, consensusFacade, Server(consensusFacade.delegator, clientCommandHandler, clientStreamHandler))
-
   try {
-    with(boot) {
+    with(Boot(consensusFacade, Server(consensusFacade.delegator, clientCommandHandler, clientStreamHandler))) {
       Runtime.getRuntime().addShutdownHook(Thread(Runnable { shutdown() }))
       start()
       awaitTermination()
     }
   } catch (e: Exception) {
     logger.error("0_o, shutting down: ${e.message}")
-  }
-}
-
-private fun getConfig(args: Array<String>): org.ravine.core.config.Config? {
-  return try {
-    org.ravine.core.config.ConfigProvider.compileConfig(args)
-  } catch (e: Exception) {
-    null
   }
 }

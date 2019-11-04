@@ -2,6 +2,8 @@ package org.ravine.core.consensus.states.candidate
 
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
+import org.ravine.core.Environment
+import org.ravine.core.config.Config
 import org.ravine.core.consensus.OpCategory
 import org.ravine.core.consensus.Raft
 import org.ravine.core.consensus.messages.AppendEntriesRequest
@@ -19,7 +21,7 @@ class RaftCandidateState(
     private val raft: Raft,
     private val timeoutAlarm: org.ravine.core.consensus.TimeoutAlarm
 ) : RaftState {
-  private val timeout = raft.config.getAsInteger(org.ravine.core.config.Config.KEY_RAFT_ELECTION_TIMEOUT_MS)
+  private val timeout: Int = Environment.config[Config.KEY_RAFT_ELECTION_TIMEOUT_MS]
   private var electionScheduler: ElectionScheduler? = null
 
   constructor(raft: Raft) : this(

@@ -21,7 +21,6 @@ import org.ravine.shared.annotations.Mockable
 @Mockable
 class Raft
 internal constructor(
-    val config: org.ravine.core.config.Config,
     val clusterMessenger: ClusterMessenger,
     val raftContext: RaftContext,
     val topicModule: TopicModule

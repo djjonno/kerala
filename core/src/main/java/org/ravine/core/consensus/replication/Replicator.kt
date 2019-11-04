@@ -3,8 +3,10 @@ package org.ravine.core.consensus.replication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.ravine.core.Environment
 import org.ravine.core.concurrency.Pools
 import org.ravine.core.concurrency.asCoroutineScope
+import org.ravine.core.config.Config
 import org.ravine.core.consensus.Raft
 import org.ravine.core.runtime.topic.Topic
 import org.ravine.core.runtime.topic.TopicRegistry.Listener
@@ -13,7 +15,7 @@ import org.ravine.core.runtime.topic.TopicRegistry.Listener
  * Replicator schedules replication of the raft context over the cluster.
  */
 class Replicator(private val raft: Raft) : CoroutineScope by Pools.replicationPool.asCoroutineScope() {
-  private val broadcastInterval = raft.config.getAsLong(org.ravine.core.config.Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS)
+  private val broadcastInterval: Long = Environment.config[Config.KEY_RAFT_LEADER_BROADCAST_INTERVAL_MS]
 
   private val launcher = Launcher()
 
