@@ -28,6 +28,7 @@ message RpcArgPair {
 }
 
 message RpcCommandResponse {
+    /* response string contains a json object that the client can parse */
     string response = 1;
     uint32 status = 2;
 }

@@ -2,6 +2,8 @@ package org.kerala.shared.json;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -108,19 +110,9 @@ public class GsonUtils {
     }
   }
 
-  public static GsonBuilder registerSerializers(final GsonBuilder builder, final ImmutableMap<Type, JsonSerializer> serializers) {
-    for (final Map.Entry<Type, JsonSerializer> typeAdapter : serializers.entrySet()) {
-      builder.registerTypeAdapter(typeAdapter.getKey(), typeAdapter.getValue());
-    }
-
-    return builder;
-  }
-
-  public static GsonBuilder registerDeserializers(final GsonBuilder builder, final ImmutableMap<Type, JsonDeserializer> deserializers) {
-    for (final Map.Entry<Type, JsonDeserializer> typeAdapter : deserializers.entrySet()) {
-      builder.registerTypeAdapter(typeAdapter.getKey(), typeAdapter.getValue());
-    }
-
-    return builder;
+  public static Gson buildGson() {
+    final GsonBuilder builder = new GsonBuilder();
+    builder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+    return builder.create();
   }
 }

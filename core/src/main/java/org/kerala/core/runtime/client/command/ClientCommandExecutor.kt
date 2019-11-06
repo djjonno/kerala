@@ -1,5 +1,6 @@
 package org.kerala.core.runtime.client.command
 
+import com.google.gson.Gson
 import org.kerala.core.Environment
 import org.kerala.core.concurrency.Pools
 import org.kerala.core.config.Config
@@ -7,6 +8,7 @@ import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.consensus.OpCategory
 import org.kerala.core.runtime.NotificationsHub
 import org.kerala.core.runtime.topic.TopicModule
+import org.kerala.shared.json.GsonUtils
 import java.time.Duration
 
 class ClientCommandExecutor(
@@ -14,6 +16,7 @@ class ClientCommandExecutor(
     private val topicModule: TopicModule
 ) {
   private val bundleRegistry: MutableSet<ClientCommandPack> = mutableSetOf()
+  private val gson = GsonUtils.buildGson()
 
   init {
     /* listen to consensus state changes */
@@ -48,7 +51,7 @@ class ClientCommandExecutor(
     bundleRegistry.add(bundle)
     consensusFacade.writeToTopic(topicModule.syslog, bundle.command.kvs, {
       bundleRegistry.remove(bundle)
-      bundle.onComplete("")
+      bundle.onComplete(gson.toJson(ClientSuccessResponse("command committed")))
     }, {
       bundleRegistry.remove(bundle)
       handleUnsupportedBundleOp(bundle)
@@ -67,11 +70,7 @@ class ClientCommandExecutor(
   }
 
   private fun handleReadTopics(bundle: ClientCommandPack) {
-    val response = topicModule.topicRegistry.topics.map {
-      "$it - index=${it.logFacade.log.lastIndex}"
-    }.joinToString(System.lineSeparator())
-
-    bundle.onComplete(response)
+    bundle.onComplete(gson.toJson(ReadTopics(topicModule.topicRegistry.topics)))
   }
 
   companion object {
