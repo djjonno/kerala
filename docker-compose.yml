@@ -1,29 +1,29 @@
 version: "2"
 
-# Define several ravine nodes as a cluster configuration.
+# Define several kerala nodes as a cluster configuration.
 #
 # Invoke the cluster with `$ docker-compose up`
 services:
-  ravine-1:
+  kerala-1:
     build: ./
-    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9001 --host ravine-1
+    command: ./bin/kerala-server --cluster kerala-1:9001,kerala-2:9002,kerala-3:9003,kerala-4:9004 --port 9001 --host kerala-1
     ports:
       - 9001:9001
 
-  ravine-2:
+  kerala-2:
     build: ./
-    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9002 --host ravine-2
+    command: ./bin/kerala-server --cluster kerala-1:9001,kerala-2:9002,kerala-3:9003,kerala-4:9004 --port 9002 --host kerala-2
     ports:
       - 9002:9002
 
-  ravine-3:
+  kerala-3:
     build: ./
-    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9003 --host ravine-3
+    command: ./bin/kerala-server --cluster kerala-1:9001,kerala-2:9002,kerala-3:9003,kerala-4:9004 --port 9003 --host kerala-3
     ports:
       - 9003:9003
 
-  ravine-4:
+  kerala-4:
     build: ./
-    command: ./bin/ravine-d --cluster ravine-1:9001,ravine-2:9002,ravine-3:9003,ravine-4:9004 --port 9004 --host ravine-4
+    command: ./bin/kerala-server --cluster kerala-1:9001,kerala-2:9002,kerala-3:9003,kerala-4:9004 --port 9004 --host kerala-4
     ports:
       - 9004:9004

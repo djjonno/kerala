@@ -1,10 +1,10 @@
-# Ravine
+# Kerala
 
-[![Actions Status](https://github.com/djjonno/ravine/workflows/Java%20CI/badge.svg)](https://github.com/djjonno/ravine/actions)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/djjonno/ravine?include_prereleases)
-[![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/djjonno/ravine/blob/master/LICENSE)
+[![Actions Status](https://github.com/djjonno/kerala/workflows/Java%20CI/badge.svg)](https://github.com/djjonno/kerala/actions)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/djjonno/kerala?include_prereleases)
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/djjonno/kerala/blob/master/LICENSE)
 
-**Ravine** is a distributed event-streaming server built for the modern day.  It is robust, lightweight and super fast!
+**Kerala** is a distributed event-streaming server built for the modern day.  It is robust, lightweight and super fast!
 - **Produce/Consume** - create Topics, then produce and consume them.
 - **Process** - create processors that transform or aggregate event data, and project new Streams with the outputs.
 - **Distribute** - scale & balance your event processors across your cluster.
@@ -23,20 +23,20 @@ Using the gradle wrapper, you can now run.
 $ ./gradlew installDist
 ```
 
-This will produce the **Ravine** daemon binary `ravine-d` under `./core/build/install/ravine-d/bin`
+This will produce the **Kerala** daemon binary `kerala-server` under `./core/build/install/kerala-server/bin`
 
 #### Run as `Standalone`
 
 ```bash
-$ ./ravine-d
+$ ./kerala-d
 ```
 
 #### Run as `Cluster`
 
 ```bash
-$ ./ravine-d --cluster :9191,:9292,:9393 --port :9191
-$ ./ravine-d --cluster :9191,:9292,:9393 --port :9292
-$ ./ravine-d --cluster :9191,:9292,:9393 --port :9393
+$ ./kerala-d --cluster :9191,:9292,:9393 --port :9191
+$ ./kerala-d --cluster :9191,:9292,:9393 --port :9292
+$ ./kerala-d --cluster :9191,:9292,:9393 --port :9393
 ```
 
 #### Run with `Docker`
@@ -47,7 +47,7 @@ You can use the [Dockerfile](Dockerfile) OR run via [docker-compose](docker-comp
 $ docker-compose up
 ```
 
-That will deploy a cluster containing 4 ravine nodes.
+That will deploy a cluster containing 4 kerala nodes.
 
 ## Running Tests
 
@@ -95,7 +95,7 @@ Get on board by reading [CONTRIBUTING.md]() guidelines for details on our code o
 
 ## Versioning
 
-We use [SemVer](https://semver.org).  For the versions available, see the [tags on this repository](https://github.com/djjonno/ravine/tags). 
+We use [SemVer](https://semver.org).  For the versions available, see the [tags on this repository](https://github.com/djjonno/kerala/tags). 
 
 ## Authors
 
@@ -104,11 +104,11 @@ We use [SemVer](https://semver.org).  For the versions available, see the [tags 
 
 ## License
 
-This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
 
-## Ravine Use-Cases
+## Kerala Use-Cases
 
-There are numerous uses for event-streaming, here are just a few thing you could use **Ravine** for:
+There are numerous uses for event-streaming, here are just a few thing you could use **Kerala** for:
 
 - Define a Topic of UI Events (PageView, PageScroll, PageSwipe, ButtonClick, TextInput, etc) to analyze customer interaction with your product, to gain insights and optimize your critical customer flows.
 - Perform time-series analysis on all kinds of application event streams.

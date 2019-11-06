@@ -1,6 +1,6 @@
 ### Releases Roadmap 📦
 
-#### [0.1.0-alpha](https://github.com/djjonno/ravine/releases/tag/0.1.0-alpha) Released
+#### [0.1.0-alpha](https://github.com/djjonno/kerala/releases/tag/0.1.0-alpha) Released
 
 - Distributed + Standalone cluster configurations ✅
 - Topics (`create-topic`, `delete-topic`, `read-topics`) ✅
@@ -12,12 +12,12 @@
 
 - Client-Service contracts
 - Broker service (expose `cluster-info` to clients)
-- `ravine` cli tool *(provides interaction with **Ravine** node from a command-line)*
-    - `> ravine --broker <broker-host> cluster-info`
-    - `> ravine --broker <broker-host> create-topic <topic> [--storage-engine <engine>]`
-    - `> ravine --broker <broker-host> topic-info [<topic>]`
-    - `> ravine --broker <broker-host> produce-topic <topic> [--timeout ms]`
-    - `> ravine --broker <broker-host> consume-topic <topic> [--poll ms] [--timeout ms]`
+- `kerala` cli tool *(provides interaction with **Kerala** node from a command-line)*
+    - `> kerala --broker <broker-host> cluster-info`
+    - `> kerala --broker <broker-host> create-topic <topic> [--storage-engine <engine>]`
+    - `> kerala --broker <broker-host> topic-info [<topic>]`
+    - `> kerala --broker <broker-host> produce-topic <topic> [--timeout ms]`
+    - `> kerala --broker <broker-host> consume-topic <topic> [--poll ms] [--timeout ms]`
 
 #### 0.3.0-alpha
 
@@ -33,7 +33,7 @@
             - support for producing your own objects
     - Consumer
         - process streams
-        - flexible api for functional processing (map/reduce/group/filter/etc)
+        - basic api for stateless functional processing (map/reduce/group/filter/etc)
         - produce to stream
 - Docs
 
@@ -44,10 +44,21 @@
 #### 0.5.0-alpha
 
 - `snapshot` log compaction
+- Production strategies
+    - `full` - ensures KV is committed and replicated. 
+    - `partial` - ensures KV is appended but not committed (could be replaced).  This provides more production throughput where the data is not as critical.
 
 #### 0.6.0-alpha
 
 - TLS authentication
-    - server can be configured to use certificate pair(s) for authentication between clients and **Ravine** nodes. 
+    - server can be configured to use certificate pair(s) for authentication between clients and **Kerala** nodes. 
 - Dynamic cluster configuration
     - clients will have the ability to add/remove nodes from the cluster at runtime   
+
+#### Future Roadmap Items
+
+- `Consumer` Groups
+- stateful `Consumer` operations
+    - windowing
+    - joining
+    - aggregations

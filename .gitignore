@@ -4,7 +4,7 @@ build/
 coverage/
 out/
 *.iml
-ravine.properties
+kerala.properties
 
 # playground dir
-core/src/main/java/org/ravine/core/playground/
+core/src/main/java/org/kerala/core/playground/

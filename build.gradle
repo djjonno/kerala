@@ -55,6 +55,6 @@ subprojects {
     }
 
     allOpen {
-        annotation("org.ravine.shared.annotations.Mockable")
+        annotation("org.kerala.shared.annotations.Mockable")
     }
 }

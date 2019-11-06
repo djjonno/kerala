@@ -1,7 +1,7 @@
 apply plugin: "application"
 apply plugin: "com.google.protobuf"
 
-applicationName = "ravine-d"
+applicationName = "kerala-server"
 
 buildscript {
     repositories {
@@ -65,7 +65,7 @@ sourceSets {
     }
 }
 
-mainClassName = "org.ravine.core.BootKt"
+mainClassName = "org.kerala.core.BootKt"
 
 task copyLicense {
     outputs.file new File("$buildDir/LICENSE")
