@@ -2,10 +2,13 @@ package org.kerala.core.runtime.client.consumer
 
 import org.apache.log4j.Logger
 import org.kerala.core.consensus.messages.Entry
+import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.client.command.ClientCommand
 import org.kerala.core.runtime.client.command.ClientCommandType
 import org.kerala.core.runtime.client.command.asCommand
 import org.kerala.core.runtime.topic.TopicModule
+import org.kerala.core.server.cluster.Node
+import org.kerala.shared.schemes.URI
 
 /**
  * SyslogConsumer consumes all entries on the @system Topic.
@@ -24,16 +27,17 @@ import org.kerala.core.runtime.topic.TopicModule
  * be some kind of systemic error as opposed to an invalid
  * state of some sorts.
  */
-class SyslogConsumer(private val topicModule: TopicModule) {
+class SyslogConsumer(private val topicModule: TopicModule,
+                     private val clusterSetInfo: ClusterSetInfo) {
   fun consume(entry: Entry) {
     val command = entry.asCommand()
 
     when (ClientCommandType.fromId(command.command)) {
       ClientCommandType.CREATE_TOPIC -> createTopic(command.CreateTopicClientCommand())
       ClientCommandType.DELETE_TOPIC -> deleteTopic(command.DeleteTopicClientCommand())
-      ClientCommandType.CONSENSUS_CHANGE -> {
-        /* no-op for now */ LOGGER.info("leader changed -> ${command.LeaderChangeClientCommand().leaderNode}")
-      }
+      ClientCommandType.CONSENSUS_CHANGE -> try {
+        clusterSetInfo.leader = Node(URI.parseURIString(command.LeaderChangeClientCommand().leaderNode))
+      } catch (e: Exception) { }
     }
   }
 

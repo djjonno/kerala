@@ -1,5 +1,6 @@
 package org.kerala.core.runtime.client.command
 
+import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.topic.Topic
 
 /**
@@ -25,15 +26,24 @@ data class TopicMeta(
  *
  * Describes a list of TopicMeta's to a client.
  */
-class ReadTopics constructor(topics: List<Topic>) : ClientResponse() {
+class ReadTopics(topics: List<Topic>) : ClientResponse() {
   val topics = topics.map { TopicMeta(it.namespace, it.logFacade.log.commitIndex) }
 }
 
+/**
+ * ClusterInfo
+ *
+ * Describes state of cluster to a client.
+ */
+class Node(val host: String, val port: Int, val leader: Boolean = false) : ClientResponse()
+class ClusterInfo(clusterSetInfo: ClusterSetInfo) : ClientResponse() {
+  val nodes = clusterSetInfo.describe().map { Node(it.host, it.port, it == clusterSetInfo.leader) }
+}
 
 /**
  * ClientSuccessResponse, ClientErrorResponse
  *
  * Accompany a code with a response message.
  */
-class ClientSuccessResponse constructor(val message: String) : ClientResponse()
-class ClientErrorResponse constructor(val message: String) : ClientResponse()
+class ClientSuccessResponse(val message: String) : ClientResponse()
+class ClientErrorResponse(val message: String) : ClientResponse()

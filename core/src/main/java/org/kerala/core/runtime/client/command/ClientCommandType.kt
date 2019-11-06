@@ -31,7 +31,12 @@ enum class ClientCommandType(
   /**
    * Read available Topics.
    */
-  READ_TOPICS("read-topics", DefaultCommandParser(), OpCategory.READ)
+  READ_TOPICS("read-topics", DefaultCommandParser(), OpCategory.READ),
+
+  /**
+   * Read Cluster Info.
+   */
+  CLUSTER_INFO("cluster-info", DefaultCommandParser(), OpCategory.READ)
 
   ;
 
@@ -48,6 +53,5 @@ enum class ClientCommandType(
      * Get writeCommands
      */
     val writeCommands = values().filter { it.category == OpCategory.WRITE }.map { it.id }
-    val readCommands = values().filter { it.category == OpCategory.READ }.map { it.id }
   }
 }

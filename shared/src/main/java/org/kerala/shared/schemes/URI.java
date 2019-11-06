@@ -31,7 +31,7 @@ public class URI {
   private final String mHost;
   private final int mPort;
 
-  public URI(final String host, final int port) {
+  URI(final String host, final int port) {
     Preconditions.checkState(host != null || !host.isEmpty());
     Preconditions.checkState(port > 0, "port");
 

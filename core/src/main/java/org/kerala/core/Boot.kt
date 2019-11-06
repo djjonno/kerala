@@ -5,6 +5,7 @@ import org.kerala.core.config.Config
 import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.consensus.RaftFactory
 import org.kerala.core.log.LogFactory
+import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.client.command.ClientCommandExecutor
 import org.kerala.core.runtime.client.command.ClientCommandHandler
 import org.kerala.core.runtime.client.stream.ClientStreamHandler
@@ -69,6 +70,7 @@ fun main(args: Array<String>) {
       .withString(Environment.config[Config.KEY_CLUSTER])
       .build()
   val clusterConnectionPool = ClusterConnectionPool(clusterSet).apply { initialize() }
+  val clusterInfo = ClusterSetInfo(clusterSet)
 
   /*
    * ClusterMessenger
@@ -80,10 +82,10 @@ fun main(args: Array<String>) {
   /*
    * Configure client systems.
    */
-  val topicModule = TopicModule(TopicRegistry(), TopicFactory(LogFactory()))
+  val topicModule = TopicModule(TopicRegistry(), TopicFactory(LogFactory()), clusterInfo)
   val consensusFacade = ConsensusFacade(RaftFactory.create(topicModule, clusterMessenger))
   val clientStreamHandler = ClientStreamHandler(consensusFacade, topicModule)
-  val clientCommandHandler = ClientCommandHandler(ClientCommandExecutor(consensusFacade, topicModule))
+  val clientCommandHandler = ClientCommandHandler(ClientCommandExecutor(consensusFacade, topicModule, clusterInfo))
 
   try {
     with(Boot(consensusFacade, Server(consensusFacade.delegator, clientCommandHandler, clientStreamHandler))) {

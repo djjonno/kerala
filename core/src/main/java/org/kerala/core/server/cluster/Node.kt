@@ -1,11 +1,9 @@
 package org.kerala.core.server.cluster
 
-import java.util.Objects
-import org.kerala.shared.annotations.Mockable
 import org.kerala.shared.schemes.URI
+import java.util.Objects
 
-@Mockable
-class Node(val uri: URI) {
+class Node(private val uri: URI) {
   val id: String
     get() = uri.toString()
 
