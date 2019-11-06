@@ -45,13 +45,14 @@ class AppendEntriesConverters {
       return RpcAppendEntriesResponse.newBuilder()
           .setTerm(source.term)
           .setSuccess(source.isSuccessful)
+          .setPrevLogIndex(source.prevLogIndex ?: 0)
           .build()
     }
   }
 
   class FromRpcResponse : Converter<RpcAppendEntriesResponse, AppendEntriesResponse> {
     override fun convert(source: RpcAppendEntriesResponse): AppendEntriesResponse {
-        return AppendEntriesResponse(source.term, source.success)
+        return AppendEntriesResponse(source.term, source.success, source.prevLogIndex)
     }
   }
 }

@@ -5,9 +5,13 @@ import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.kerala.core.Environment
 import org.kerala.core.config.Config
+import org.kerala.core.consensus.EntryTermMismatch
+import org.kerala.core.consensus.NoPreviousEntryException
+import org.kerala.core.consensus.ObsoleteTermException
 import org.kerala.core.consensus.OpCategory
 import org.kerala.core.consensus.Raft
 import org.kerala.core.consensus.RaftException
+import org.kerala.core.consensus.UnknownTopicException
 import org.kerala.core.consensus.messages.AppendEntriesRequest
 import org.kerala.core.consensus.messages.AppendEntriesResponse
 import org.kerala.core.consensus.messages.RequestVoteRequest
@@ -21,11 +25,9 @@ import org.kerala.core.log.LogChangeReason
 import org.kerala.core.log.commands.AppendFromCommand
 import org.kerala.core.log.commands.CommitCommand
 import org.kerala.core.runtime.topic.Topic
-import org.kerala.shared.annotations.Mockable
 import org.kerala.shared.math.randomizeNumberPoint
 import kotlin.math.min
 
-@Mockable
 class RaftFollowerState @VisibleForTesting
 constructor(
     private val raft: Raft,
@@ -62,7 +64,7 @@ constructor(
         val topic = raft.topicModule.topicRegistry.getById(topicId)!!
         if (entries.isNotEmpty()) {
           /**
-           * Timeout Alarm is 'paused' here whilst the entries are appended to the LOGGER,
+           * Timeout Alarm is 'paused' here whilst the entries are appended to the log,
            * as there could be many, we don't want to respond to the sender node until
            * the logs have been appended.  While performing this lengthy category, it
            * it does not attribute to a leader node being absent.
@@ -73,10 +75,12 @@ constructor(
           resetTimeout()
         }
         commitIfNecessary(topic, this)
-        replyAppendEntries(raft.raftContext, true, stream)
+        replyAppendEntries(raft.raftContext, true, topic.logFacade.log.lastIndex, stream)
       }
-    } catch (e: Exception) {
-      replyAppendEntries(raft.raftContext, false, stream)
+    } catch (e: RaftException) {
+      /* Attempt to retrieve prevLogIndex, otherwise default to 0 */
+      val prevLogIndex = raft.topicModule.topicRegistry.getById(request.topicId)?.logFacade?.log?.lastIndex ?: 0
+      replyAppendEntries(raft.raftContext, false, prevLogIndex, stream)
     }
   }
 
@@ -135,25 +139,25 @@ constructor(
     /*
      * Does topic exist?
      */
-    val topic = raft.topicModule.topicRegistry.getById(request.topicId) ?: throw RaftException("Topic ${request.topicId} does not exist")
+    val topic = raft.topicModule.topicRegistry.getById(request.topicId) ?: throw UnknownTopicException()
 
     /*
      * Request term must equal to or greater than raftContext.currentTerm, invalid.
      */
     if (request.term < raft.raftContext.currentTerm) {
-      throw RaftException("Term mismatch (requestTerm: ${request.term}, currentTerm:${raft.raftContext.currentTerm})")
+      throw ObsoleteTermException()
     }
 
     /*
      * If no entry at previous index, we are missing an entry and this is invalid.
      */
-    val prevEntry = topic.logFacade.log.read(request.prevLogIndex) ?: throw RaftException("No entry @ ${request.prevLogIndex}")
+    val prevEntry = topic.logFacade.log.read(request.prevLogIndex) ?: throw NoPreviousEntryException()
 
     /*
-     * If previous entry of command term does not match this LOGGER previous LOGGER entry term, invalid.
+     * If previous entry of command term does not match this logs' previous entry term, invalid.
      */
     if (request.prevLogTerm != prevEntry.term) {
-      throw RaftException("Entry.term mismatch (prevLogIndex: ${request.prevLogIndex}, command: ${request.prevLogTerm}, prevEntry: ${prevEntry.term})")
+      throw EntryTermMismatch()
     }
   }
 

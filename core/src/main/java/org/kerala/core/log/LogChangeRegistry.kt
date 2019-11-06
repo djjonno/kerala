@@ -74,7 +74,7 @@ class LogChangeRegistry<E : LogEntry> constructor(
             .map { it.value }
             .union(scopedOnAppendRegistrations.map { it.value })
             .flatten()
-            .filter { it.expiry != null && it.expiry <= currentTime }
+            .filter { it.expiry != null && it.expiry <= currentTime && !it.isComplete() }
             .forEach { handler ->
               handler.onFailure(LogChangeException(Event.TIMEOUT))
               unregister(handler, handler.event)
@@ -141,5 +141,7 @@ class LogChangeRegistry<E : LogEntry> constructor(
       onComplete()
       latch.countDown()
     }
+
+    internal fun isComplete() = latch.count == 0L
   }
 }

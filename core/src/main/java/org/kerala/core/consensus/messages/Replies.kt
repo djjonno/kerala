@@ -4,8 +4,8 @@ package org.kerala.core.consensus.messages
 import io.grpc.stub.StreamObserver
 import org.kerala.core.consensus.RaftContext
 
-fun replyAppendEntries(raftContext: RaftContext, success: Boolean, observer: StreamObserver<AppendEntriesResponse>) {
-  observer.onNext(AppendEntriesResponse(raftContext.currentTerm, success))
+fun replyAppendEntries(raftContext: RaftContext, success: Boolean, prevLogIndex: Long, observer: StreamObserver<AppendEntriesResponse>) {
+  observer.onNext(AppendEntriesResponse(raftContext.currentTerm, success, prevLogIndex))
   observer.onCompleted()
 }
 

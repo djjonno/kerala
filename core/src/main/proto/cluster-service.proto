@@ -23,6 +23,7 @@ message RpcAppendEntriesRequest {
 message RpcAppendEntriesResponse {
     uint32 term = 1;
     bool success = 2;
+    uint64 prevLogIndex = 3;
 }
 
 message RpcEntry {

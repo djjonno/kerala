@@ -58,7 +58,7 @@ class NodeReplicationController(
         updateNextIndex(target, request.prevLogIndex + request.entries.size + 1)
       }
     } else {
-      leaderContext.updateNextIndex(target, max(nextIndex - 1, 0))
+      leaderContext.updateNextIndex(target, response.prevLogIndex + 1)
     }
   }
 
