@@ -17,6 +17,10 @@ subprojects {
     apply plugin: "kotlin-allopen"
     apply plugin: "jacoco"
 
+    configurations {
+        ktlint
+    }
+
     repositories {
         mavenCentral()
         mavenLocal()
@@ -39,22 +43,20 @@ subprojects {
 
         implementation "org.jetbrains.kotlin:kotlin-stdlib"
         implementation "org.jetbrains.kotlin:kotlin-reflect"
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
         implementation "com.google.code.gson:gson:2.8.6"
 
         testCompile "junit:junit:4.11"
         testCompile "org.mockito:mockito-core:2.+"
         testImplementation "org.jetbrains.kotlin:kotlin-test"
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
+
+        ktlint "com.pinterest:ktlint:0.35.0"
     }
 
     test {
         afterTest { desc, result ->
             logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
         }
-    }
-
-    allOpen {
-        annotation("org.kerala.shared.annotations.Mockable")
     }
 }

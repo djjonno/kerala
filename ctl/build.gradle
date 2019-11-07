@@ -1,0 +1,13 @@
+apply plugin: "application"
+
+applicationName = "keralactl"
+
+dependencies {
+    compile project(":proto")
+}
+
+mainClassName = "org.kerala.ctl.KeralaCtlKt"
+
+applicationDistribution.into("bin") {
+    fileMode = 0755
+}
