@@ -28,15 +28,15 @@ This will produce the **Kerala** daemon binary `kerala-server` under `./core/bui
 #### Run as `Standalone`
 
 ```bash
-$ ./kerala-d
+$ ./kerala-server
 ```
 
 #### Run as `Cluster`
 
 ```bash
-$ ./kerala-d --cluster :9191,:9292,:9393 --port :9191
-$ ./kerala-d --cluster :9191,:9292,:9393 --port :9292
-$ ./kerala-d --cluster :9191,:9292,:9393 --port :9393
+$ ./kerala-server --cluster :9191,:9292,:9393 --port :9191
+$ ./kerala-server --cluster :9191,:9292,:9393 --port :9292
+$ ./kerala-server --cluster :9191,:9292,:9393 --port :9393
 ```
 
 #### Run with `Docker`
