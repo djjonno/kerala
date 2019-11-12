@@ -22,7 +22,7 @@ class GroupedNodeReplicationController(
     private val topic: Topic,
     private val clusterSet: ClusterSet,
     private val broadcastInterval: Long,
-    private val context: CoroutineContext
+    context: CoroutineContext
 ) : CoroutineScope by Pools.replicationPool.asCoroutineScope(context) {
 
   fun launchController() = launch {

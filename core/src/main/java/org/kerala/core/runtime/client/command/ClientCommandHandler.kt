@@ -3,9 +3,10 @@ package org.kerala.core.runtime.client.command
 import io.grpc.stub.StreamObserver
 import org.kerala.core.concurrency.Pools
 import org.kerala.core.consensus.OpCategory
-import org.kerala.core.runtime.client.ack.ClientACK
+import org.kerala.shared.client.ClientACK
 import org.kerala.core.server.client.RpcCommandRequest
 import org.kerala.core.server.client.RpcCommandResponse
+import org.kerala.shared.client.ClientErrorResponse
 import org.kerala.shared.json.GsonUtils
 
 /**

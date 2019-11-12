@@ -1,4 +1,4 @@
-package org.kerala.core.runtime.client.ack
+package org.kerala.shared.client
 
 import org.kerala.core.server.client.RpcCommandResponse
 

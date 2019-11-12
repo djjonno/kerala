@@ -1,4 +1,3 @@
 include "core"
 include "shared"
-include "proto"
 include "ctl"

@@ -41,7 +41,6 @@ class Replicator(private val raft: Raft) : CoroutineScope by Pools.replicationPo
     }
 
     private fun launch(topic: Topic) {
-      // if command already exists, kill it
       GroupedNodeReplicationController(raft, topic, raft.clusterSet, broadcastInterval, coroutineContext).also {
         jobs[topic] = it.launchController()
       }

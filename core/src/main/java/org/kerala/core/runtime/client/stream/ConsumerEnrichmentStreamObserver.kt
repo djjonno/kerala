@@ -1,7 +1,7 @@
 package org.kerala.core.runtime.client.stream
 
 import io.grpc.stub.StreamObserver
-import org.kerala.core.runtime.client.ack.ConsumerACK
+import org.kerala.shared.client.ConsumerACK
 import org.kerala.core.runtime.client.consumer.ConsumerRequest
 import org.kerala.core.runtime.topic.TopicModule
 import org.kerala.core.server.client.RpcConsumerRequest

@@ -1,9 +1,10 @@
 apply plugin: "application"
 
-applicationName = "keralactl"
+applicationName = "kerala-ctl"
 
 dependencies {
-    compile project(":proto")
+    compile project(":shared")
+    implementation("com.github.ajalt:clikt:2.3.0")
 }
 
 mainClassName = "org.kerala.ctl.KeralaCtlKt"

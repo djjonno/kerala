@@ -9,7 +9,7 @@ import org.apache.log4j.Logger
 import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.log.exceptions.Event
 import org.kerala.core.log.exceptions.LogChangeException
-import org.kerala.core.runtime.client.ack.ProducerACK
+import org.kerala.shared.client.ProducerACK
 import org.kerala.core.server.client.RpcProducerResponse
 import java.lang.Exception
 import java.time.Duration

@@ -45,7 +45,7 @@ class AppendEntriesConverters {
       return RpcAppendEntriesResponse.newBuilder()
           .setTerm(source.term)
           .setSuccess(source.isSuccessful)
-          .setPrevLogIndex(source.prevLogIndex ?: 0)
+          .setPrevLogIndex(source.prevLogIndex)
           .build()
     }
   }

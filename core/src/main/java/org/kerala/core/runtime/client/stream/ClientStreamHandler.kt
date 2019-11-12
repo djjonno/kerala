@@ -9,7 +9,7 @@ import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.consensus.OpCategory
 import org.kerala.core.runtime.NotificationsHub
 import org.kerala.core.runtime.NotificationsHub.Channel
-import org.kerala.core.runtime.client.ack.ProducerACK
+import org.kerala.shared.client.ProducerACK
 import org.kerala.core.runtime.client.consumer.Consumer
 import org.kerala.core.runtime.client.producer.Producer
 import org.kerala.core.runtime.topic.TopicModule

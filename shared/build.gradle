@@ -1,3 +1,43 @@
+apply plugin: "com.google.protobuf"
+
+def grpcVersion = "1.18.0"
+def protobufVersion = "3.7.1"
+def protocVersion = "3.7.1"
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"
+    }
+}
+
 dependencies {
-    compile 'com.google.guava:guava:26.0-jre'
+    compile "com.google.api.grpc:proto-google-common-protos:1.0.0"
+    compile "io.grpc:grpc-alts:${grpcVersion}"
+    compile "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    compile "io.grpc:grpc-protobuf:${grpcVersion}"
+    compile "io.grpc:grpc-stub:${grpcVersion}"
+    compile "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    compile "com.google.guava:guava:26.0-jre"
+    compileOnly "javax.annotation:javax.annotation-api:1.2"
+
+    testCompile "io.grpc:grpc-testing:${grpcVersion}"
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
 }

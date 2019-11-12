@@ -8,6 +8,11 @@ import org.kerala.core.consensus.OpCategory
 import org.kerala.core.runtime.NotificationsHub
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.topic.TopicModule
+import org.kerala.shared.client.ClientSuccessResponse
+import org.kerala.shared.client.ClusterInfo
+import org.kerala.shared.client.Node
+import org.kerala.shared.client.ReadTopics
+import org.kerala.shared.client.TopicMeta
 import org.kerala.shared.json.GsonUtils
 import java.time.Duration
 
@@ -72,11 +77,15 @@ class ClientCommandExecutor(
   }
 
   private fun handleReadTopics(pack: ClientCommandPack) {
-    pack.onComplete(gson.toJson(ReadTopics(topicModule.topicRegistry.topics)))
+    pack.onComplete(gson.toJson(ReadTopics(topicModule.topicRegistry.topics.map {
+      TopicMeta(it.namespace, it.logFacade.log.commitIndex)
+    })))
   }
 
   private fun handleClusterInfo(pack: ClientCommandPack) {
-    pack.onComplete(gson.toJson(ClusterInfo(clusterSetInfo)))
+    pack.onComplete(gson.toJson(ClusterInfo(clusterSetInfo.clusterSet.allNodes.map {
+      Node(it.id, it.host, it.port, it == clusterSetInfo.leader)
+    })))
   }
 
   companion object {

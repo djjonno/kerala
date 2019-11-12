@@ -8,7 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
 import org.apache.log4j.Logger
 import org.kerala.core.consensus.ConsensusFacade
-import org.kerala.core.runtime.client.ack.ConsumerACK
+import org.kerala.shared.client.ConsumerACK
 import org.kerala.core.server.client.RpcConsumerResponse
 import org.kerala.core.server.converters.KVConverters
 

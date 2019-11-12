@@ -3,7 +3,7 @@ package org.kerala.core.runtime.client.stream
 import io.grpc.stub.StreamObserver
 import org.apache.log4j.Logger
 import org.kerala.core.consensus.messages.KV
-import org.kerala.core.runtime.client.ack.ProducerACK
+import org.kerala.shared.client.ProducerACK
 import org.kerala.core.runtime.client.producer.ProducerRecord
 import org.kerala.core.runtime.topic.TopicModule
 import org.kerala.core.server.client.RpcKV
