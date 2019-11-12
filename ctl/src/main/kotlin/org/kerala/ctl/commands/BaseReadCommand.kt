@@ -6,30 +6,32 @@ import com.github.ajalt.clikt.parameters.options.option
 import org.kerala.ctl.Context
 import org.kerala.ctl.sendCommand
 import org.kerala.shared.client.ClientACK
-import org.kerala.shared.client.ClusterDescription
-import org.kerala.shared.json.GsonUtils
 
-class DescribeClusterCommand : CliktCommand(name = "describe-cluster") {
+typealias JsonTransformer<T> = (jsonString: String) -> T
+
+class BaseReadCommand<T>(val command: String,
+                         val jsonTransformer: JsonTransformer<T>) : CliktCommand(name = command) {
+  /* Describe response in json */
   val json by option("--json", help = "display response in json").flag()
 
   override fun run() {
     try {
-      val response = sendCommand(Context.channel!!, "describe-cluster", emptyList())
+      val response = sendCommand(Context.channel!!, command, emptyList())
       when (response.status) {
         ClientACK.Codes.OK.id -> display(response.response)
-        ClientACK.Codes.ERROR.id -> throw Exception("cluster-info call failed: ${response.response}")
+        ClientACK.Codes.ERROR.id -> throw Exception("`$command` call failed -> ${response.response}")
       }
     } catch (e: Exception) {
-      echo("${e.message}", err = true)
+      echo(e.message, err = true)
     }
   }
 
-  private fun display(response: String) {
+  fun display(response: String) {
     if (json) {
       echo(response)
     } else {
-      val clusterInfo = GsonUtils.buildGson().fromJson(response, ClusterDescription::class.java)
-      echo(clusterInfo)
+      val readTopics: T = jsonTransformer(response)
+      echo(readTopics)
     }
   }
 }

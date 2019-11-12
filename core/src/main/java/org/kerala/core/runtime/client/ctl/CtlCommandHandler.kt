@@ -6,7 +6,7 @@ import org.kerala.core.consensus.OpCategory
 import org.kerala.shared.client.ClientACK
 import org.kerala.core.server.client.RpcCommandRequest
 import org.kerala.core.server.client.RpcCommandResponse
-import org.kerala.shared.client.ClientErrorResponse
+import org.kerala.shared.client.CtlErrorResponse
 import org.kerala.shared.json.GsonUtils
 
 /**
@@ -45,7 +45,7 @@ class CtlCommandHandler(
   }
 
   private fun returnError(response: StreamObserver<RpcCommandResponse>, message: String) {
-    response.onNext(ClientACK.Rpcs.error(GsonUtils.buildGson().toJson(ClientErrorResponse(message))))
+    response.onNext(ClientACK.Rpcs.error(GsonUtils.buildGson().toJson(CtlErrorResponse(message))))
     response.onCompleted()
   }
 

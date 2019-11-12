@@ -8,7 +8,7 @@ import org.kerala.core.consensus.OpCategory
 import org.kerala.core.runtime.NotificationsHub
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.topic.TopicModule
-import org.kerala.shared.client.ClientSuccessResponse
+import org.kerala.shared.client.CtlSuccessResponse
 import org.kerala.shared.client.ClusterDescription
 import org.kerala.shared.client.Node
 import org.kerala.shared.client.ReadTopics
@@ -58,7 +58,7 @@ class CtlCommandExecutor(
     packRegistry.add(pack)
     consensusFacade.writeToTopic(topicModule.syslog, pack.command.kvs, {
       packRegistry.remove(pack)
-      pack.onComplete(gson.toJson(ClientSuccessResponse("command committed")))
+      pack.onComplete(gson.toJson(CtlSuccessResponse("command committed")))
     }, {
       packRegistry.remove(pack)
       handleUnsupportedBundleOp(pack)
@@ -78,7 +78,7 @@ class CtlCommandExecutor(
 
   private fun handleReadTopics(pack: CtlCommandPack) {
     pack.onComplete(gson.toJson(ReadTopics(topicModule.topicRegistry.topics.map {
-      TopicMeta(it.namespace, it.logFacade.log.commitIndex)
+      TopicMeta(it.id, it.namespace, it.logFacade.log.commitIndex)
     })))
   }
 
