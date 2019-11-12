@@ -12,7 +12,7 @@ buildscript {
 }
 
 dependencies {
-    compile project(":shared")
+    compile project(":lib")
 
     compile group: "commons-cli", name: "commons-cli", version: "1.4"
     compile "log4j:log4j:1.2.17"

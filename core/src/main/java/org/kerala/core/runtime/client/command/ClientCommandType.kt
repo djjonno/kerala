@@ -34,9 +34,9 @@ enum class ClientCommandType(
   READ_TOPICS("read-topics", DefaultCommandParser(), OpCategory.READ),
 
   /**
-   * Read Cluster Info.
+   * Describe the cluster state.
    */
-  CLUSTER_INFO("cluster-info", DefaultCommandParser(), OpCategory.READ)
+  DESCRIBE_CLUSTER("describe-cluster", DefaultCommandParser(), OpCategory.READ)
 
   ;
 

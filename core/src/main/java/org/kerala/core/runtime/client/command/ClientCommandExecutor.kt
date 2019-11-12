@@ -9,7 +9,7 @@ import org.kerala.core.runtime.NotificationsHub
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.topic.TopicModule
 import org.kerala.shared.client.ClientSuccessResponse
-import org.kerala.shared.client.ClusterInfo
+import org.kerala.shared.client.ClusterDescription
 import org.kerala.shared.client.Node
 import org.kerala.shared.client.ReadTopics
 import org.kerala.shared.client.TopicMeta
@@ -49,7 +49,7 @@ class ClientCommandExecutor(
   private fun executeReadCommand(pack: ClientCommandPack) {
     when (pack.command.command) {
       ClientCommandType.READ_TOPICS.id -> handleReadTopics(pack)
-      ClientCommandType.CLUSTER_INFO.id -> handleClusterInfo(pack)
+      ClientCommandType.DESCRIBE_CLUSTER.id -> handleClusterInfo(pack)
       else -> pack.onError("command `${pack.command}` unknown")
     }
   }
@@ -83,7 +83,7 @@ class ClientCommandExecutor(
   }
 
   private fun handleClusterInfo(pack: ClientCommandPack) {
-    pack.onComplete(gson.toJson(ClusterInfo(clusterSetInfo.clusterSet.allNodes.map {
+    pack.onComplete(gson.toJson(ClusterDescription(clusterSetInfo.clusterSet.allNodes.map {
       Node(it.id, it.host, it.port, it == clusterSetInfo.leader)
     })))
   }

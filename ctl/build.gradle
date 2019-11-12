@@ -3,7 +3,7 @@ apply plugin: "application"
 applicationName = "kerala-ctl"
 
 dependencies {
-    compile project(":shared")
+    compile project(":lib")
     implementation("com.github.ajalt:clikt:2.3.0")
 }
 
