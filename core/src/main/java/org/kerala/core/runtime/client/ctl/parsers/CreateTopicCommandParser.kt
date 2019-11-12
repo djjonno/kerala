@@ -1,19 +1,19 @@
-package org.kerala.core.runtime.client.command.parsers
+package org.kerala.core.runtime.client.ctl.parsers
 
-import org.kerala.core.runtime.client.command.ClientCommand
-import org.kerala.core.runtime.client.command.ClientCommandType
+import org.kerala.core.runtime.client.ctl.CtlCommand
+import org.kerala.core.runtime.client.ctl.CtlCommandType
 import org.kerala.core.runtime.topic.Topic
 import org.kerala.core.server.client.RpcCommandRequest
 
 class CreateTopicCommandParser : CommandParser() {
-  override fun parse(type: ClientCommandType, request: RpcCommandRequest): ClientCommand {
-    return ClientCommand.builder(type) {
+  override fun parse(type: CtlCommandType, request: RpcCommandRequest): CtlCommand {
+    return CtlCommand.builder(type) {
       request.argsList.forEach { pair ->
         arg(pair.arg, pair.param)
       }
       /* A topic requires a UUID */
       arg("id", Topic.generateId())
-    }.CreateTopicClientCommand()
+    }.CreateTopicCtlCommand()
   }
 
   override fun rules() = listOf(

@@ -1,12 +1,12 @@
-package org.kerala.core.runtime.client.command
+package org.kerala.core.runtime.client.ctl
 
 import org.kerala.core.consensus.OpCategory
-import org.kerala.core.runtime.client.command.parsers.CommandParser
-import org.kerala.core.runtime.client.command.parsers.CreateTopicCommandParser
-import org.kerala.core.runtime.client.command.parsers.DefaultCommandParser
-import org.kerala.core.runtime.client.command.parsers.DeleteTopicCommandParser
+import org.kerala.core.runtime.client.ctl.parsers.CommandParser
+import org.kerala.core.runtime.client.ctl.parsers.CreateTopicCommandParser
+import org.kerala.core.runtime.client.ctl.parsers.DefaultCommandParser
+import org.kerala.core.runtime.client.ctl.parsers.DeleteTopicCommandParser
 
-enum class ClientCommandType(
+enum class CtlCommandType(
     val id: String,
     val parser: CommandParser,
     val category: OpCategory
@@ -45,7 +45,7 @@ enum class ClientCommandType(
      * Commands are received from clients in string form, this helper method maps
      * a string to its enum counterpart.
      */
-    fun fromId(string: String): ClientCommandType {
+    fun fromId(string: String): CtlCommandType {
       return values().first { it.id == string }
     }
 

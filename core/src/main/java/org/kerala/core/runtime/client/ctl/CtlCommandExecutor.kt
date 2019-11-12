@@ -1,4 +1,4 @@
-package org.kerala.core.runtime.client.command
+package org.kerala.core.runtime.client.ctl
 
 import org.kerala.core.Environment
 import org.kerala.core.concurrency.Pools
@@ -16,12 +16,12 @@ import org.kerala.shared.client.TopicMeta
 import org.kerala.shared.json.GsonUtils
 import java.time.Duration
 
-class ClientCommandExecutor(
+class CtlCommandExecutor(
     private val consensusFacade: ConsensusFacade,
     private val topicModule: TopicModule,
     private val clusterSetInfo: ClusterSetInfo
 ) {
-  private val packRegistry: MutableSet<ClientCommandPack> = mutableSetOf()
+  private val packRegistry: MutableSet<CtlCommandPack> = mutableSetOf()
   private val gson = GsonUtils.buildGson()
 
   init {
@@ -34,7 +34,7 @@ class ClientCommandExecutor(
     }
   }
 
-  fun execute(pack: ClientCommandPack) {
+  fun execute(pack: CtlCommandPack) {
     if (!consensusFacade.supportsCategory(pack.opCategory)) {
       handleUnsupportedBundleOp(pack)
       return
@@ -46,15 +46,15 @@ class ClientCommandExecutor(
     }
   }
 
-  private fun executeReadCommand(pack: ClientCommandPack) {
+  private fun executeReadCommand(pack: CtlCommandPack) {
     when (pack.command.command) {
-      ClientCommandType.READ_TOPICS.id -> handleReadTopics(pack)
-      ClientCommandType.DESCRIBE_CLUSTER.id -> handleClusterInfo(pack)
+      CtlCommandType.READ_TOPICS.id -> handleReadTopics(pack)
+      CtlCommandType.DESCRIBE_CLUSTER.id -> handleClusterInfo(pack)
       else -> pack.onError("command `${pack.command}` unknown")
     }
   }
 
-  private fun writeCommandToSyslog(pack: ClientCommandPack) {
+  private fun writeCommandToSyslog(pack: CtlCommandPack) {
     packRegistry.add(pack)
     consensusFacade.writeToTopic(topicModule.syslog, pack.command.kvs, {
       packRegistry.remove(pack)
@@ -65,7 +65,7 @@ class ClientCommandExecutor(
     }, CLIENT_COMMAND_TIMEOUT)
   }
 
-  private fun handleUnsupportedBundleOp(pack: ClientCommandPack) {
+  private fun handleUnsupportedBundleOp(pack: CtlCommandPack) {
     packRegistry.remove(pack)
     pack.onError("node op ${pack.opCategory} not supported")
   }
@@ -76,13 +76,13 @@ class ClientCommandExecutor(
         .forEach { b -> handleUnsupportedBundleOp(b) }
   }
 
-  private fun handleReadTopics(pack: ClientCommandPack) {
+  private fun handleReadTopics(pack: CtlCommandPack) {
     pack.onComplete(gson.toJson(ReadTopics(topicModule.topicRegistry.topics.map {
       TopicMeta(it.namespace, it.logFacade.log.commitIndex)
     })))
   }
 
-  private fun handleClusterInfo(pack: ClientCommandPack) {
+  private fun handleClusterInfo(pack: CtlCommandPack) {
     pack.onComplete(gson.toJson(ClusterDescription(clusterSetInfo.clusterSet.allNodes.map {
       Node(it.id, it.host, it.port, it == clusterSetInfo.leader)
     })))

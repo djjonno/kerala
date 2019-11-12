@@ -5,7 +5,7 @@ import java.io.IOException
 import java.net.InetAddress
 import org.apache.log4j.Logger
 import org.kerala.core.consensus.RaftDelegate
-import org.kerala.core.runtime.client.command.ClientCommandHandler
+import org.kerala.core.runtime.client.ctl.CtlCommandHandler
 import org.kerala.core.runtime.client.stream.ClientStreamHandler
 import org.kerala.core.server.client.ClientService
 import org.kerala.core.server.cluster.ClusterService
@@ -13,7 +13,7 @@ import org.kerala.core.server.converters.ConverterRegistry
 
 class Server(
     private val raftDelegate: RaftDelegate,
-    private val clientCommandHandler: ClientCommandHandler,
+    private val ctlCommandHandler: CtlCommandHandler,
     private val clientStreamHandler: ClientStreamHandler
 ) {
 
@@ -24,7 +24,7 @@ class Server(
   fun start(port: Int) {
     rpcClusterServer = ServerBuilder.forPort(port)
         .addService(ClusterService(raftDelegate, converterRegistry))
-        .addService(ClientService(clientCommandHandler, clientStreamHandler))
+        .addService(ClientService(ctlCommandHandler, clientStreamHandler))
         .build()
         .start()
 

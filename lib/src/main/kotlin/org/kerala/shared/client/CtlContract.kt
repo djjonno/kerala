@@ -32,7 +32,7 @@ data class ReadTopics(val topics: List<TopicMeta>) : ClientResponse()
  *
  * Describes state of cluster to a client.
  */
-data class Node(val id: String, val host: String, val port: Int, val leader: Boolean = false) : ClientResponse()
+data class Node(val id: String, val host: String, val port: Int, val leader: Boolean = false)
 data class ClusterDescription(val nodes: List<Node>) : ClientResponse() {
   override fun toString() = nodes.map { node ->
     "host \t${node.id}\t${if (node.leader) "leader" else ""}\n"

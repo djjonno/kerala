@@ -1,7 +1,7 @@
 package org.kerala.core.server.client
 
 import io.grpc.stub.StreamObserver
-import org.kerala.core.runtime.client.command.ClientCommandHandler
+import org.kerala.core.runtime.client.ctl.CtlCommandHandler
 import org.kerala.core.runtime.client.stream.ClientStreamHandler
 
 /**
@@ -9,7 +9,7 @@ import org.kerala.core.runtime.client.stream.ClientStreamHandler
  * to the appropriate component.
  */
 class ClientService(
-    private val clientCommandHandler: ClientCommandHandler,
+    private val ctlCommandHandler: CtlCommandHandler,
     private val clientStreamHandler: ClientStreamHandler
 ) : ClientServiceGrpc.ClientServiceImplBase() {
   override fun clientCommand(request: RpcCommandRequest, responseObserver: StreamObserver<RpcCommandResponse>) {
@@ -17,7 +17,7 @@ class ClientService(
      * Client commands are executed in-serial to ensure appropriate
      * execution order, preventing race conditions.
      */
-    clientCommandHandler.handle(request, responseObserver)
+    ctlCommandHandler.handle(request, responseObserver)
   }
 
   override fun topicConsumer(responseObserver: StreamObserver<RpcConsumerResponse>): StreamObserver<RpcConsumerRequest> {

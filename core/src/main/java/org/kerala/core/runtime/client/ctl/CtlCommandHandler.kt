@@ -1,4 +1,4 @@
-package org.kerala.core.runtime.client.command
+package org.kerala.core.runtime.client.ctl
 
 import io.grpc.stub.StreamObserver
 import org.kerala.core.concurrency.Pools
@@ -12,13 +12,13 @@ import org.kerala.shared.json.GsonUtils
 /**
  * Executes client writeCommands received from client connections
  */
-class ClientCommandHandler(
-    private val clientCommandExecutor: ClientCommandExecutor
+class CtlCommandHandler(
+    private val ctlCommandExecutor: CtlCommandExecutor
 ) {
 
   fun handle(request: RpcCommandRequest, response: StreamObserver<RpcCommandResponse>) =
       Pools.clientRequestPool.execute {
-        val opCategory = if (request.command in ClientCommandType.writeCommands) OpCategory.WRITE else OpCategory.READ
+        val opCategory = if (request.command in CtlCommandType.writeCommands) OpCategory.WRITE else OpCategory.READ
         commandHandler(opCategory, request, response)
       }
 
@@ -27,7 +27,7 @@ class ClientCommandHandler(
    */
   private fun commandHandler(opCategory: OpCategory, request: RpcCommandRequest, response: StreamObserver<RpcCommandResponse>) {
     try {
-      clientCommandExecutor.execute(ClientCommandPack(
+      ctlCommandExecutor.execute(CtlCommandPack(
           opCategory = opCategory,
           command = parseCommand(request),
           onComplete = { message ->
@@ -49,8 +49,8 @@ class ClientCommandHandler(
     response.onCompleted()
   }
 
-  private fun parseCommand(request: RpcCommandRequest): ClientCommand {
-    val type = ClientCommandType.fromId(request.command)
+  private fun parseCommand(request: RpcCommandRequest): CtlCommand {
+    val type = CtlCommandType.fromId(request.command)
     return type.parser(type, request)
   }
 }

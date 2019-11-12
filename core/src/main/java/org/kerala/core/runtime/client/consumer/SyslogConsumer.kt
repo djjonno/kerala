@@ -3,9 +3,9 @@ package org.kerala.core.runtime.client.consumer
 import org.apache.log4j.Logger
 import org.kerala.core.consensus.messages.Entry
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
-import org.kerala.core.runtime.client.command.ClientCommand
-import org.kerala.core.runtime.client.command.ClientCommandType
-import org.kerala.core.runtime.client.command.asCommand
+import org.kerala.core.runtime.client.ctl.CtlCommand
+import org.kerala.core.runtime.client.ctl.CtlCommandType
+import org.kerala.core.runtime.client.ctl.asCommand
 import org.kerala.core.runtime.topic.TopicModule
 import org.kerala.core.server.cluster.Node
 import org.kerala.shared.schemes.URI
@@ -32,16 +32,16 @@ class SyslogConsumer(private val topicModule: TopicModule,
   fun consume(entry: Entry) {
     val command = entry.asCommand()
 
-    when (ClientCommandType.fromId(command.command)) {
-      ClientCommandType.CREATE_TOPIC -> createTopic(command.CreateTopicClientCommand())
-      ClientCommandType.DELETE_TOPIC -> deleteTopic(command.DeleteTopicClientCommand())
-      ClientCommandType.CONSENSUS_CHANGE -> try {
-        clusterSetInfo.leader = Node(URI.parseURIString(command.LeaderChangeClientCommand().leaderNode))
+    when (CtlCommandType.fromId(command.command)) {
+      CtlCommandType.CREATE_TOPIC -> createTopic(command.CreateTopicCtlCommand())
+      CtlCommandType.DELETE_TOPIC -> deleteTopic(command.DeleteTopicCtlCommand())
+      CtlCommandType.CONSENSUS_CHANGE -> try {
+        clusterSetInfo.leader = Node(URI.parseURIString(command.LeaderChangeCtlCommand().leaderNode))
       } catch (e: Exception) { }
     }
   }
 
-  private fun createTopic(command: ClientCommand.CreateTopicClientCommand) {
+  private fun createTopic(command: CtlCommand.CreateTopicCtlCommand) {
     topicModule.topicRegistry.getByNamespace(command.namespace)?.let {
       LOGGER.info("topic creation ignored `${command.namespace}` already exists")
     } ?: run {
@@ -50,7 +50,7 @@ class SyslogConsumer(private val topicModule: TopicModule,
     }
   }
 
-  private fun deleteTopic(command: ClientCommand.DeleteTopicClientCommand) {
+  private fun deleteTopic(command: CtlCommand.DeleteTopicCtlCommand) {
     topicModule.topicRegistry.getByNamespace(command.namespace)?.let {
       topicModule.topicRegistry.remove(it)
     } ?: LOGGER.info("topic deletion ignored `${command.namespace}` does not exist.")

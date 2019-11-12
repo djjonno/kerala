@@ -11,8 +11,8 @@ import org.kerala.core.consensus.replication.Replicator
 import org.kerala.core.consensus.states.RaftState
 import org.kerala.core.log.LogChangeReason
 import org.kerala.core.log.commands.AppendCommand
-import org.kerala.core.runtime.client.command.ClientCommand
-import org.kerala.core.runtime.client.command.ClientCommandType
+import org.kerala.core.runtime.client.ctl.CtlCommand
+import org.kerala.core.runtime.client.ctl.CtlCommandType
 
 class RaftLeaderState(private val raft: Raft) : RaftState {
   private var replicator: Replicator? = null
@@ -57,7 +57,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
 
   private fun broadcastConsensusInformation() {
     raft.topicModule.syslog.logFacade.commandExecutor.execute(AppendCommand.build(
-        ClientCommand.builder(ClientCommandType.CONSENSUS_CHANGE) {
+        CtlCommand.builder(CtlCommandType.CONSENSUS_CHANGE) {
           arg("leaderNode", raft.clusterSet.selfNode.id)
         }.asEntry(raft.raftContext.currentTerm),
         LogChangeReason.REPLICATION

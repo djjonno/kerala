@@ -6,8 +6,8 @@ import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.consensus.RaftFactory
 import org.kerala.core.log.LogFactory
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
-import org.kerala.core.runtime.client.command.ClientCommandExecutor
-import org.kerala.core.runtime.client.command.ClientCommandHandler
+import org.kerala.core.runtime.client.ctl.CtlCommandExecutor
+import org.kerala.core.runtime.client.ctl.CtlCommandHandler
 import org.kerala.core.runtime.client.stream.ClientStreamHandler
 import org.kerala.core.runtime.topic.TopicFactory
 import org.kerala.core.runtime.topic.TopicModule
@@ -85,7 +85,7 @@ fun main(args: Array<String>) {
   val topicModule = TopicModule(TopicRegistry(), TopicFactory(LogFactory()), clusterInfo)
   val consensusFacade = ConsensusFacade(RaftFactory.create(topicModule, clusterMessenger))
   val clientStreamHandler = ClientStreamHandler(consensusFacade, topicModule)
-  val clientCommandHandler = ClientCommandHandler(ClientCommandExecutor(consensusFacade, topicModule, clusterInfo))
+  val clientCommandHandler = CtlCommandHandler(CtlCommandExecutor(consensusFacade, topicModule, clusterInfo))
 
   try {
     with(Boot(consensusFacade, Server(consensusFacade.delegator, clientCommandHandler, clientStreamHandler))) {
