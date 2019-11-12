@@ -29,9 +29,9 @@ enum class CtlCommandType(
   DELETE_TOPIC("delete-topic", DeleteTopicCommandParser(), OpCategory.WRITE),
 
   /**
-   * Read available Topics.
+   * Describe topics detailing meta data.
    */
-  READ_TOPICS("read-topics", DefaultCommandParser(), OpCategory.READ),
+  DESCRIBE_TOPICS("describe-topics", DefaultCommandParser(), OpCategory.READ),
 
   /**
    * Describe the cluster state.

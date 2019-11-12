@@ -48,7 +48,7 @@ class CtlCommandExecutor(
 
   private fun executeReadCommand(pack: CtlCommandPack) {
     when (pack.command.command) {
-      CtlCommandType.READ_TOPICS.id -> handleReadTopics(pack)
+      CtlCommandType.DESCRIBE_TOPICS.id -> handleReadTopics(pack)
       CtlCommandType.DESCRIBE_CLUSTER.id -> handleClusterInfo(pack)
       else -> pack.onError("command `${pack.command}` unknown")
     }

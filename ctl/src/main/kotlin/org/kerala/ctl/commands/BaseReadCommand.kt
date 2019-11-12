@@ -19,10 +19,10 @@ class BaseReadCommand<T>(val command: String,
       val response = sendCommand(Context.channel!!, command, emptyList())
       when (response.status) {
         ClientACK.Codes.OK.id -> display(response.response)
-        ClientACK.Codes.ERROR.id -> throw Exception("`$command` call failed -> ${response.response}")
+        ClientACK.Codes.ERROR.id -> throw Exception("`$command` invalid -> ${response.response}")
       }
     } catch (e: Exception) {
-      echo(e.message, err = true)
+      echo("command failed, please retry -> error=\"${e.message}\"", err = true)
     }
   }
 

@@ -18,8 +18,7 @@ data class TopicMeta(
     val namespace: String,
     val index: Long
 ) : CtlResponse() {
-  private val fqn = "$namespace/$id"
-  override fun toString() = "topic(${id})\tnamespace=${namespace}\tfqn=${fqn}\tindex=${index}"
+  override fun toString() = "topic(${id})\t${namespace}/$index"
 }
 
 /**
@@ -28,8 +27,8 @@ data class TopicMeta(
  * Describes a list of TopicMeta's to a client.
  */
 data class ReadTopics(val topics: List<TopicMeta>) : CtlResponse() {
-  override fun toString() = "${topics.size} topic(s)\n\n" + topics.map {
-    it.toString()
+  override fun toString() = "${topics.size} topic(s)\n-\n" + topics.map { topic ->
+    "$topic ${if (topic === topics.last()) "" else "\n"}"
   }.reduce { acc, s -> acc + s }
 }
 
@@ -44,8 +43,8 @@ data class ClusterDescription(val nodes: List<Node>) : CtlResponse() {
   /**
    * toString() defines the way this is printed in the console.
    */
-  override fun toString() = "${nodes.size} nodes\n\n" + nodes.map { node ->
-    "host\t${node.id}\t${if (node.leader) "leader" else ""}\n"
+  override fun toString() = "${nodes.size} nodes\n-\n" + nodes.mapIndexed { index, node ->
+    "host\t${node.id}${if (node.leader) "/leader" else ""} ${if (node === nodes.last()) "" else "\n"}"
   }.reduce { acc, s -> acc + s }
 }
 
