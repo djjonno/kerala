@@ -7,6 +7,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
 import io.grpc.ManagedChannelBuilder
 import org.kerala.ctl.commands.BaseReadCommand
+import org.kerala.ctl.commands.consumer.ConsoleConsumerCommand
 import org.kerala.ctl.commands.CreateTopicCommand
 import org.kerala.ctl.commands.DeleteTopicCommand
 import org.kerala.shared.client.ClusterDescription
@@ -37,9 +38,11 @@ class Tool : CliktCommand(name = "kerala-ctl") {
 fun main(args: Array<String>) = Tool()
     .subcommands(
         BaseReadCommand<ClusterDescription>("describe-cluster") { GsonUtils.buildGson().fromJson(it, ClusterDescription::class.java) },
-        BaseReadCommand<ReadTopics>("describe-topics", { GsonUtils.buildGson().fromJson(it, ReadTopics::class.java) }),
+        BaseReadCommand<ReadTopics>("describe-topics") { GsonUtils.buildGson().fromJson(it, ReadTopics::class.java) },
 
         CreateTopicCommand(),
-        DeleteTopicCommand()
+        DeleteTopicCommand(),
+
+        ConsoleConsumerCommand()
     )
     .main(args)

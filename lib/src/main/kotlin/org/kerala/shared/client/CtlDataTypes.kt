@@ -43,7 +43,7 @@ data class ClusterDescription(val nodes: List<Node>) : CtlResponse() {
   /**
    * toString() defines the way this is printed in the console.
    */
-  override fun toString() = "${nodes.size} nodes\n-\n" + nodes.mapIndexed { index, node ->
+  override fun toString() = "${nodes.size} node(s)\n-\n" + nodes.mapIndexed { index, node ->
     "host\t${node.id}${if (node.leader) "/leader" else ""} ${if (node === nodes.last()) "" else "\n"}"
   }.reduce { acc, s -> acc + s }
 }
