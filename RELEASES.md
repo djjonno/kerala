@@ -11,13 +11,13 @@
 #### 0.2.0-alpha (November ‘19)
 
 - Client-Service contracts
-- Broker service (expose `cluster-info` to clients)
+- Broker service (expose `describe-cluster` to clients) ✅
 - `keralactl` cli tool *(provides interaction with **Kerala** node from a command-line)*
-    - `> kerala-ctl --broker <broker-host> cluster-info`
-    - `> kerala-ctl --broker <broker-host> create-topic <topic> [--storage-engine <engine>]`
-    - `> kerala-ctl --broker <broker-host> topic-info [<topic>]`
-    - `> kerala-ctl --broker <broker-host> produce-topic <topic> [--timeout ms]`
-    - `> kerala-ctl --broker <broker-host> consume-topic <topic> [--poll ms] [--timeout ms]`
+    - `> kerala-ctl --broker <broker-host> describe-cluster` ✅
+    - `> kerala-ctl --broker <broker-host> describe-topics` ✅
+    - `> kerala-ctl --broker <broker-host> create-topic <topic>` ✅
+    - `> kerala-ctl --broker <broker-host> console-producer <topic>` ✅
+    - `> kerala-ctl --broker <broker-host> console-consumer <topic> [-i,--index <index>]` ✅
 
 #### 0.3.0-alpha
 
