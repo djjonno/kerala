@@ -17,14 +17,15 @@ class ConsoleConsumerCommand : CliktCommand(name = "console-consumer"),
     CoroutineScope by MainScope() {
 
   val index: Long by option("-i", "--index").long().default(0)
-  val topic: String by argument(name = "topic", help = "namespace of Topic to consume from")
+  val topic: String by argument(name = "namespace", help = "namespace of topic to consume from")
 
   override fun run() = runBlocking {
+    echo("consuming <- Topic($topic) @ $index")
+    echo("-")
+
     val pollingConsumer = PollingConsumer(ClientServiceGrpc.newStub(Context.channel))
     var increment = index
     var poll = true
-    echo("consuming Topic($topic) from $index")
-    echo("-")
     do {
       pollingConsumer.batch(topic, increment)
       with(pollingConsumer.channel.receive()) {

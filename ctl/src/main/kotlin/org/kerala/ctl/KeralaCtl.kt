@@ -10,6 +10,7 @@ import org.kerala.ctl.commands.BaseReadCommand
 import org.kerala.ctl.commands.consumer.ConsoleConsumerCommand
 import org.kerala.ctl.commands.CreateTopicCommand
 import org.kerala.ctl.commands.DeleteTopicCommand
+import org.kerala.ctl.commands.producer.ConsoleProducerCommand
 import org.kerala.shared.client.ClusterDescription
 import org.kerala.shared.client.ReadTopics
 import org.kerala.shared.json.GsonUtils
@@ -43,6 +44,7 @@ fun main(args: Array<String>) = Tool()
         CreateTopicCommand(),
         DeleteTopicCommand(),
 
-        ConsoleConsumerCommand()
+        ConsoleConsumerCommand(),
+        ConsoleProducerCommand()
     )
     .main(args)
