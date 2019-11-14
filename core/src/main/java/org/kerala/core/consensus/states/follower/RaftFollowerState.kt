@@ -11,6 +11,7 @@ import org.kerala.core.consensus.ObsoleteTermException
 import org.kerala.core.consensus.OpCategory
 import org.kerala.core.consensus.Raft
 import org.kerala.core.consensus.RaftException
+import org.kerala.core.consensus.TimeoutAlarm
 import org.kerala.core.consensus.UnknownTopicException
 import org.kerala.core.consensus.messages.AppendEntriesRequest
 import org.kerala.core.consensus.messages.AppendEntriesResponse
@@ -26,6 +27,7 @@ import org.kerala.core.log.commands.AppendFromCommand
 import org.kerala.core.log.commands.CommitCommand
 import org.kerala.core.runtime.topic.Topic
 import org.kerala.shared.math.randomizeNumberPoint
+import kotlin.concurrent.timerTask
 import kotlin.math.min
 
 class RaftFollowerState @VisibleForTesting
@@ -37,7 +39,7 @@ constructor(
 
   constructor(raft: Raft) : this(
       raft,
-      org.kerala.core.consensus.TimeoutAlarm {
+      TimeoutAlarm {
         LOGGER.info("follower timeout reached.")
         raft.delegator.transitionRequest(State.CANDIDATE)
       }
@@ -166,8 +168,8 @@ constructor(
   }
 
   private fun resetTimeout() {
-    val newTimeout = randomizeNumberPoint(timeout, 0.4)
-    timeoutAlarm.reset(newTimeout.toLong())
+    val newTimeout = randomizeNumberPoint(timeout, 0.4).toULong()
+    timeoutAlarm.reset(newTimeout)
   }
 
   companion object {

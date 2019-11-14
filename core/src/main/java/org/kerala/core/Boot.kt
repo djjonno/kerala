@@ -55,11 +55,7 @@ internal class Boot(
  */
 fun main(args: Array<String>) {
   val logger = Logger.getLogger(Boot::class.java)
-  try {
-    /* Config is lazy loaded, access to initialize */
-    Environment.args = args
-    Environment.config
-  } catch (e: Exception) { return }
+  if (!bootstrapConfig(args)) return
 
   /*
    * Cluster Set
@@ -69,7 +65,7 @@ fun main(args: Array<String>) {
   val clusterSet = StaticClusterSet.builder(ClusterUtils.buildSelfNode())
       .withString(Environment.config[Config.KEY_CLUSTER])
       .build()
-  val clusterConnectionPool = ClusterConnectionPool(clusterSet).apply { initialize() }
+  val clusterConnectionPool = ClusterConnectionPool(clusterSet)
   val clusterInfo = ClusterSetInfo(clusterSet)
 
   /*
@@ -96,4 +92,20 @@ fun main(args: Array<String>) {
   } catch (e: Exception) {
     logger.error("0_o, shutting down: ${e.message}")
   }
+}
+
+/**
+ * Bootstrap the Environment config w/ program args.
+ *
+ * @return true if successful
+ */
+private fun bootstrapConfig(args: Array<String>): Boolean {
+  try {
+    /* Config is lazy loaded, access to initialize */
+    Environment.args = args
+    Environment.config
+  } catch (e: Exception) {
+    return false
+  }
+  return true
 }

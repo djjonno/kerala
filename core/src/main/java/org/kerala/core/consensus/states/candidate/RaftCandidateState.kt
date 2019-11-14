@@ -6,6 +6,7 @@ import org.kerala.core.Environment
 import org.kerala.core.config.Config
 import org.kerala.core.consensus.OpCategory
 import org.kerala.core.consensus.Raft
+import org.kerala.core.consensus.TimeoutAlarm
 import org.kerala.core.consensus.messages.AppendEntriesRequest
 import org.kerala.core.consensus.messages.AppendEntriesResponse
 import org.kerala.core.consensus.messages.RequestVoteRequest
@@ -19,21 +20,21 @@ import org.kerala.shared.annotations.Mockable
 @Mockable
 class RaftCandidateState(
     private val raft: Raft,
-    private val timeoutAlarm: org.kerala.core.consensus.TimeoutAlarm
+    private val timeoutAlarm: TimeoutAlarm
 ) : RaftState {
-  private val timeout: Int = Environment.config[Config.KEY_RAFT_ELECTION_TIMEOUT_MS]
+  private val timeout: ULong = Environment.config[Config.KEY_RAFT_ELECTION_TIMEOUT_MS]
   private var electionScheduler: ElectionScheduler? = null
 
   constructor(raft: Raft) : this(
       raft,
-      org.kerala.core.consensus.TimeoutAlarm {
+      TimeoutAlarm {
         LOGGER.info("election timeout reached. restarting election.")
         raft.delegator.transitionRequest(State.CANDIDATE)
       }
   )
 
   override fun on() {
-    timeoutAlarm.reset(timeout.toLong())
+    timeoutAlarm.reset(timeout)
     startElection()
   }
 

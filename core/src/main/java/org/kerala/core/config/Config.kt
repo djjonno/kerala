@@ -2,10 +2,13 @@ package org.kerala.core.config
 
 class Config internal constructor(val config: Map<String, String>) {
 
+  @ExperimentalUnsignedTypes
   inline operator fun <reified T> get(key: String): T {
     return when (T::class) {
       Int::class -> config[key]?.toInt() as T
+      UInt::class -> config[key]?.toUInt() as T
       Long::class -> config[key]?.toLong() as T
+      ULong::class -> config[key]?.toULong() as T
       else -> config[key].toString() as T
     }
   }

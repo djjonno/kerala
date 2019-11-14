@@ -14,6 +14,7 @@ import org.kerala.ctl.commands.producer.ConsoleProducerCommand
 import org.kerala.shared.client.ClusterDescription
 import org.kerala.shared.client.ReadTopics
 import org.kerala.shared.json.GsonUtils
+import org.kerala.shared.schemes.URI
 
 class Tool : CliktCommand(name = "kerala-ctl") {
   val quiet by option("--quiet", "-q", help = "run command w/out ceremony").flag()
@@ -28,9 +29,9 @@ class Tool : CliktCommand(name = "kerala-ctl") {
       echo("")
     }
 
-    val parts = broker!!.split(":")
+    val uri = URI.parseURIString(broker)
     Context.channel = ManagedChannelBuilder
-        .forAddress(parts.first(), parts.last().toInt())
+        .forAddress(uri.host, uri.port)
         .usePlaintext()
         .build()
   }
