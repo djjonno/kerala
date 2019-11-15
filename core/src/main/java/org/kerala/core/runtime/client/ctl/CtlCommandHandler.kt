@@ -33,24 +33,22 @@ class CtlCommandHandler(
           onComplete = { message ->
             response.onNext(ClientACK.Rpcs.ok(message))
             response.onCompleted()
-          },
-          onError = { error ->
-            response.onNext(ClientACK.Rpcs.error(error))
-            response.onCompleted()
           }
       ))
+    } catch (e: CtlCommandExecutionException) {
+      returnError(response, e.message, e.status)
     } catch (e: Exception) {
       returnError(response, e.message ?: "unknown error")
     }
   }
 
-  private fun returnError(response: StreamObserver<RpcCommandResponse>, message: String) {
-    response.onNext(ClientACK.Rpcs.error(GsonUtils.buildGson().toJson(CtlErrorResponse(message))))
+  private fun returnError(response: StreamObserver<RpcCommandResponse>, message: String, status: Int = ClientACK.Codes.ERROR.id) {
+    response.onNext(ClientACK.Rpcs.error(GsonUtils.buildGson().toJson(CtlErrorResponse(message)), status))
     response.onCompleted()
   }
 
   private fun parseCommand(request: RpcCommandRequest): CtlCommand {
-    val type = CtlCommandType.fromId(request.command)
+    val type = CtlCommandType.fromId(request.command) ?: throw CtlCommandUnknownException(request.command)
     return type.parser(type, request)
   }
 }

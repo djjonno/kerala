@@ -39,8 +39,8 @@ class Tool : CliktCommand(name = "kerala-ctl") {
 
 fun main(args: Array<String>) = Tool()
     .subcommands(
-        BaseReadCommand<ClusterDescription>("describe-cluster") { GsonUtils.buildGson().fromJson(it, ClusterDescription::class.java) },
-        BaseReadCommand<ReadTopics>("describe-topics") { GsonUtils.buildGson().fromJson(it, ReadTopics::class.java) },
+        BaseReadCommand<ClusterDescription>("cluster") { GsonUtils.buildGson().fromJson(it, ClusterDescription::class.java) },
+        BaseReadCommand<ReadTopics>("topics") { GsonUtils.buildGson().fromJson(it, ReadTopics::class.java) },
 
         CreateTopicCommand(),
         DeleteTopicCommand(),

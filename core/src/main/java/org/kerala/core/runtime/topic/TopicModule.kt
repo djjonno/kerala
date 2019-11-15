@@ -8,7 +8,7 @@ import org.kerala.core.runtime.client.consumer.SyslogConsumer
 class TopicModule(
     val topicRegistry: TopicRegistry,
     private val topicFactory: TopicFactory,
-    val clusterSetInfo: ClusterSetInfo
+    private val clusterSetInfo: ClusterSetInfo
 ) {
 
   val syslog: Topic = bootstrapSyslog()

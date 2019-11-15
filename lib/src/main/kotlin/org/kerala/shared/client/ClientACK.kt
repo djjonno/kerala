@@ -10,6 +10,6 @@ object ClientACK {
 
   object Rpcs {
     fun ok(message: String): RpcCommandResponse = RpcCommandResponse.newBuilder().setStatus(Codes.OK.id).setResponse(message).build()
-    fun error(message: String): RpcCommandResponse = RpcCommandResponse.newBuilder().setStatus(Codes.ERROR.id).setResponse(message).build()
+    fun error(message: String, status: Int): RpcCommandResponse = RpcCommandResponse.newBuilder().setStatus(status).setResponse(message).build()
   }
 }

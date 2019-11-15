@@ -31,12 +31,12 @@ enum class CtlCommandType(
   /**
    * Describe topics detailing meta data.
    */
-  DESCRIBE_TOPICS("describe-topics", DefaultCommandParser(), OpCategory.READ),
+  DESCRIBE_TOPICS("topics", DefaultCommandParser(), OpCategory.READ),
 
   /**
    * Describe the cluster state.
    */
-  DESCRIBE_CLUSTER("describe-cluster", DefaultCommandParser(), OpCategory.READ)
+  DESCRIBE_CLUSTER("cluster", DefaultCommandParser(), OpCategory.READ)
 
   ;
 
@@ -45,8 +45,8 @@ enum class CtlCommandType(
      * Commands are received from clients in string form, this helper method maps
      * a string to its enum counterpart.
      */
-    fun fromId(string: String): CtlCommandType {
-      return values().first { it.id == string }
+    fun fromId(string: String): CtlCommandType? {
+      return values().firstOrNull { it.id == string }
     }
 
     /**

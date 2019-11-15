@@ -12,7 +12,6 @@ import org.kerala.core.consensus.messages.KV
 open class CtlCommand(val args: Map<String, String>) {
 
   val command: String by args
-
   val kvs by lazy {
     args.map { KV(it.key, it.value) }.toList()
   }
@@ -47,7 +46,7 @@ open class CtlCommand(val args: Map<String, String>) {
   }
 
   /**
-   * Create Topic ClientCommand
+   * Create Topic Ctl Command
    *
    * Encapsulates parameters for provisioning a new Topic.
    */
@@ -56,6 +55,11 @@ open class CtlCommand(val args: Map<String, String>) {
     val namespace: String by args
   }
 
+  /**
+   * Delete Topic Ctl Command
+   *
+   * Encapsulates parameters for Topic deletion.
+   */
   inner class DeleteTopicCtlCommand : CtlCommand(args) {
     val namespace: String by args
   }
@@ -70,6 +74,12 @@ open class CtlCommand(val args: Map<String, String>) {
   }
 }
 
+/**
+ * Convert Entry to a CtlCommand.
+ *
+ * Concrete CtlCommandType not guaranteed unless Entry as originally
+ * created via `asEntry(term: Int)`.
+ */
 fun Entry.asCommand(): CtlCommand {
-  return CtlCommand(this.kvs.map { it.key to it.`val` }.toMap())
+  return CtlCommand(kvs.map { it.key to it.`val` }.toMap())
 }

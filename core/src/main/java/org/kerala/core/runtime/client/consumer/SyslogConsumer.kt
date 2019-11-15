@@ -38,6 +38,7 @@ class SyslogConsumer(private val topicModule: TopicModule,
       CtlCommandType.CONSENSUS_CHANGE -> try {
         clusterSetInfo.leader = Node(URI.parseURIString(command.LeaderChangeCtlCommand().leaderNode))
       } catch (e: Exception) { }
+      else -> LOGGER.info("Nothing to do for $command")
     }
   }
 

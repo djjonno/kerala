@@ -8,8 +8,8 @@ import org.kerala.core.consensus.OpCategory
 import org.kerala.core.runtime.NotificationsHub
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.topic.TopicModule
-import org.kerala.shared.client.CtlSuccessResponse
 import org.kerala.shared.client.ClusterDescription
+import org.kerala.shared.client.CtlSuccessResponse
 import org.kerala.shared.client.Node
 import org.kerala.shared.client.ReadTopics
 import org.kerala.shared.client.TopicMeta
@@ -50,7 +50,7 @@ class CtlCommandExecutor(
     when (pack.command.command) {
       CtlCommandType.DESCRIBE_TOPICS.id -> handleReadTopics(pack)
       CtlCommandType.DESCRIBE_CLUSTER.id -> handleClusterInfo(pack)
-      else -> pack.onError("command `${pack.command}` unknown")
+      else -> throw CtlCommandUnknownException(pack.command.command)
     }
   }
 
@@ -58,16 +58,17 @@ class CtlCommandExecutor(
     packRegistry.add(pack)
     consensusFacade.writeToTopic(topicModule.syslog, pack.command.kvs, {
       packRegistry.remove(pack)
-      pack.onComplete(gson.toJson(CtlSuccessResponse("command committed")))
+      pack.onComplete(gson.toJson(CtlSuccessResponse("committed ✓")))
     }, {
       packRegistry.remove(pack)
+      /* TODO: Need to handle exceptions appropriately here has log change may have just timed-out. */
       handleUnsupportedBundleOp(pack)
     }, CLIENT_COMMAND_TIMEOUT)
   }
 
   private fun handleUnsupportedBundleOp(pack: CtlCommandPack) {
     packRegistry.remove(pack)
-    pack.onError("node op ${pack.opCategory} not supported")
+    throw CtlCommandOperationException(pack.opCategory)
   }
 
   private fun cleanupUnsupportedBundles() {
