@@ -24,8 +24,7 @@ class ConsoleProducerCommand : CliktCommand(name = "console-producer"),
     var produce = true
     do {
       val prompt = TermUi.prompt("> ")
-      val status = producer.batch(topic, listOf(RpcKV.newBuilder().setValue(prompt).build()))
-      when (status) {
+      when (val status = producer.batch(topic, listOf(RpcKV.newBuilder().setValue(prompt).build()))) {
         ProducerACK.Codes.OK.id -> echo("committed ✓")
         else -> {
           produce = false

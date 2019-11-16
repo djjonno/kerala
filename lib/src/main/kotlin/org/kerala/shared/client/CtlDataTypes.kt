@@ -13,7 +13,7 @@ sealed class CtlResponse(val api: String = "v1")
  *
  * Describes a topic to a client.
  */
-data class TopicMeta(
+data class CtlTopicMeta(
     val id: String,
     val namespace: String,
     val index: Long
@@ -26,7 +26,7 @@ data class TopicMeta(
  *
  * Describes a list of TopicMeta's to a client.
  */
-data class ReadTopics(val topics: List<TopicMeta>) : CtlResponse() {
+data class CtlReadTopics(val topics: List<CtlTopicMeta>) : CtlResponse() {
   override fun toString() = "${topics.size} topic(s)\n-\n" + topics.map { topic ->
     "$topic ${if (topic === topics.last()) "" else "\n"}"
   }.reduce { acc, s -> acc + s }
@@ -37,14 +37,14 @@ data class ReadTopics(val topics: List<TopicMeta>) : CtlResponse() {
  *
  * Describes state of cluster to a client.
  */
-data class Node(val id: String, val host: String, val port: Int, val leader: Boolean = false)
-data class ClusterDescription(val nodes: List<Node>) : CtlResponse() {
+data class CtlNode(val id: String, val host: String, val port: Int, val leader: Boolean = false)
+data class CtlClusterDescription(val ctlNodes: List<CtlNode>) : CtlResponse() {
 
   /**
    * toString() defines the way this is printed in the console.
    */
-  override fun toString() = "${nodes.size} node(s)\n-\n" + nodes.mapIndexed { index, node ->
-    "host\t${node.id}${if (node.leader) "/leader" else ""} ${if (node === nodes.last()) "" else "\n"}"
+  override fun toString() = "${ctlNodes.size} node(s)\n-\n" + ctlNodes.mapIndexed { index, node ->
+    "host\t${node.id}${if (node.leader) "/leader" else ""} ${if (node === ctlNodes.last()) "" else "\n"}"
   }.reduce { acc, s -> acc + s }
 }
 

@@ -11,8 +11,8 @@ import org.kerala.ctl.commands.consumer.ConsoleConsumerCommand
 import org.kerala.ctl.commands.CreateTopicCommand
 import org.kerala.ctl.commands.DeleteTopicCommand
 import org.kerala.ctl.commands.producer.ConsoleProducerCommand
-import org.kerala.shared.client.ClusterDescription
-import org.kerala.shared.client.ReadTopics
+import org.kerala.shared.client.CtlClusterDescription
+import org.kerala.shared.client.CtlReadTopics
 import org.kerala.shared.json.GsonUtils
 import org.kerala.shared.schemes.URI
 
@@ -39,8 +39,8 @@ class Tool : CliktCommand(name = "kerala-ctl") {
 
 fun main(args: Array<String>) = Tool()
     .subcommands(
-        BaseReadCommand<ClusterDescription>("cluster") { GsonUtils.buildGson().fromJson(it, ClusterDescription::class.java) },
-        BaseReadCommand<ReadTopics>("topics") { GsonUtils.buildGson().fromJson(it, ReadTopics::class.java) },
+        BaseReadCommand<CtlClusterDescription>("cluster") { GsonUtils.buildGson().fromJson(it, CtlClusterDescription::class.java) },
+        BaseReadCommand<CtlReadTopics>("topics") { GsonUtils.buildGson().fromJson(it, CtlReadTopics::class.java) },
 
         CreateTopicCommand(),
         DeleteTopicCommand(),

@@ -8,11 +8,11 @@ import org.kerala.core.consensus.OpCategory
 import org.kerala.core.runtime.NotificationsHub
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.topic.TopicModule
-import org.kerala.shared.client.ClusterDescription
+import org.kerala.shared.client.CtlClusterDescription
 import org.kerala.shared.client.CtlSuccessResponse
-import org.kerala.shared.client.Node
-import org.kerala.shared.client.ReadTopics
-import org.kerala.shared.client.TopicMeta
+import org.kerala.shared.client.CtlNode
+import org.kerala.shared.client.CtlReadTopics
+import org.kerala.shared.client.CtlTopicMeta
 import org.kerala.shared.json.GsonUtils
 import java.time.Duration
 
@@ -78,14 +78,14 @@ class CtlCommandExecutor(
   }
 
   private fun handleReadTopics(pack: CtlCommandPack) {
-    pack.onComplete(gson.toJson(ReadTopics(topicModule.topicRegistry.topics.map {
-      TopicMeta(it.id, it.namespace, it.logFacade.log.commitIndex)
+    pack.onComplete(gson.toJson(CtlReadTopics(topicModule.topicRegistry.topics.map {
+      CtlTopicMeta(it.id, it.namespace, it.logFacade.log.commitIndex)
     })))
   }
 
   private fun handleClusterInfo(pack: CtlCommandPack) {
-    pack.onComplete(gson.toJson(ClusterDescription(clusterSetInfo.clusterSet.allNodes.map {
-      Node(it.id, it.host, it.port, it == clusterSetInfo.leader)
+    pack.onComplete(gson.toJson(CtlClusterDescription(clusterSetInfo.clusterSet.allNodes.map {
+      CtlNode(it.id, it.host, it.port, it == clusterSetInfo.leader)
     })))
   }
 
