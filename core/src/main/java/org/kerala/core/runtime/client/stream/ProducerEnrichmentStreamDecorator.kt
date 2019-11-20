@@ -24,7 +24,7 @@ class ProducerEnrichmentStreamDecorator(
     topicModule.topicRegistry.getByNamespace(value.topic)?.apply {
       val record = ProducerRecord(this, value.kvsList.map(kvConverter::convert))
       next.onNext(record)
-    } ?: responseObserver.onNext(ProducerACK.Rpcs.UNKNOWN_TOPIC)
+    } ?: responseObserver.onNext(ProducerACK.Rpcs.TOPIC_UNKNOWN)
   }
 
   override fun onError(t: Throwable) {

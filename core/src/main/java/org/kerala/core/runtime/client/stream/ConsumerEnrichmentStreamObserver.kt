@@ -18,7 +18,7 @@ class ConsumerEnrichmentStreamObserver(
       /* Construct ConsumerRequest */
       val field = RpcConsumerRequest.getDescriptor().findFieldByName("index")
       next.onNext(ConsumerRequest(this, if (value.hasField(field)) value.index else null))
-    } ?: back.onNext(ConsumerACK.Rpcs.UNKNOWN_TOPIC)
+    } ?: back.onNext(ConsumerACK.Rpcs.TOPIC_UNKNOWN)
   }
 
   override fun onError(t: Throwable?) {

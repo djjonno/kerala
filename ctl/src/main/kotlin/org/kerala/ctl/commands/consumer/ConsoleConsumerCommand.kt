@@ -23,26 +23,23 @@ class ConsoleConsumerCommand : CliktCommand(name = "console-consumer"),
     echo("consuming <- Topic($topic) @ $index")
     echo("-")
 
-    val pollingConsumer = PollingConsumer(ClientServiceGrpc.newStub(Context.channel))
+    val streamConsumer = StreamConsumer(ClientServiceGrpc.newStub(Context.channel))
     var increment = index
-    var poll = true
-    do {
-      pollingConsumer.batch(topic, increment)
-      with(pollingConsumer.channel.receive()) {
-        when (status) {
-          ConsumerACK.Codes.OK.id -> {
-            kvsList.forEach {
-              echo("${it.key}/${it.value}")
-            }
-            increment++
-            delay(100)
+    loop@do {
+      streamConsumer.batch(topic, increment)
+      val response = streamConsumer.channel.receive()
+      when (response.status) {
+        ConsumerACK.Codes.OK.id -> {
+          response.kvsList.forEach {
+            echo("${it.key}/${it.value}")
           }
-          else -> {
-            echo("error status=$status")
-            poll = false
-          }
+          increment++
+        }
+        else -> {
+          echo("error status=${response.status}")
+          break@loop
         }
       }
-    } while (poll)
+    } while (true)
   }
 }

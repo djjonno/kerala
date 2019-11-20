@@ -20,17 +20,18 @@ class ConsoleProducerCommand : CliktCommand(name = "console-producer"),
     echo("producing -> Topic($topic)")
     echo("-")
 
-    val producer = ProducerChannel(ClientServiceGrpc.newStub(Context.channel))
-    var produce = true
-    do {
+    val producer = StreamProducer(ClientServiceGrpc.newStub(Context.channel))
+    loop@do {
       val prompt = TermUi.prompt("> ")
-      when (val status = producer.batch(topic, listOf(RpcKV.newBuilder().setValue(prompt).build()))) {
+      val response = producer.batch(topic, listOf(RpcKV.newBuilder().setValue(prompt).build()))
+      when (response.status) {
         ProducerACK.Codes.OK.id -> echo("committed ✓")
         else -> {
-          produce = false
-          echo("error status=$status")
+          echo("error status=$response")
+          break@loop
         }
       }
-    } while (produce)
+    } while (true)
+    producer.complete()
   }
 }

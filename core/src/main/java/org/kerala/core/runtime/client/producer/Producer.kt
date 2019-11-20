@@ -1,7 +1,6 @@
 package org.kerala.core.runtime.client.producer
 
 import io.grpc.stub.StreamObserver
-import java.io.Closeable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
@@ -9,9 +8,9 @@ import org.apache.log4j.Logger
 import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.log.exceptions.Event
 import org.kerala.core.log.exceptions.LogChangeException
-import org.kerala.shared.client.ProducerACK
 import org.kerala.core.server.client.RpcProducerResponse
-import java.lang.Exception
+import org.kerala.shared.client.ProducerACK
+import java.io.Closeable
 import java.time.Duration
 
 /**
@@ -60,7 +59,7 @@ class Producer(
                 Event.TIMEOUT -> ProducerACK.Rpcs.OPERATION_TIMEOUT
               })
             } catch (e: Exception) {
-              responseObserver.onNext(ProducerACK.Rpcs.SERVER_ERROR)
+              responseObserver.onNext(ProducerACK.Rpcs.GENERIC_ERROR)
             }
           }
         }

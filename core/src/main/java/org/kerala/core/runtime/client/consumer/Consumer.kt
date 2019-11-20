@@ -49,7 +49,7 @@ class Consumer(
                   .setStatus(ConsumerACK.Codes.OK.id).build())
             } catch (e: Exception) {
               responseObserver.onNext(RpcConsumerResponse.newBuilder()
-                  .setStatus(ConsumerACK.Codes.OPERATION_INVALID.id).build())
+                  .setStatus(ConsumerACK.Codes.INVALID_OPERATION.id).build())
             }
           }
         }

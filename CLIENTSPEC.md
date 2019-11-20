@@ -1,4 +1,4 @@
-### Client Spec (evolving wip)
+### Client Spec (evolving API)
 
 #### Producer
 
@@ -26,20 +26,21 @@ The `notification` property corresponds to a Producer ACK code and has a specifi
 
 > Note: If a client were to continue producing records w/out checking the ACK, the ordering guarantee of the KVs is lost.
 
-Base the logic for the 
-
 ##### Consumer ACK Codes
 | Code | Reason | Behavior |
 |---|---|---|
-| 0 | ok | Success, send next production. |
-| 1 | operation invalid | Operation is invalid. Server can return this if requests causes an internal server exception. |
-| 2 | unknown topic | Create the topic via `create-topic` command prior to consumption. |
+| 0 | ok | Success. |
+| 1 | generic error | Retry operation. |
+| 2 | network error | Server crashed or network failed. Try again. |
+| 3 | invalid operation | Operation is invalid. Server can return this on an internal server exception. |
+| 4 | topic unknown | Create the topic via `create-topic` command prior to consumption. |
 
 ##### Producer ACK Codes
 | Code | Reason | Behavior |
 |---|---|---|
-| 0 | ok | Success, send next production. |
-| 1 | client error | Retry production. |
-| 2 | operation invalid | Contact broker for capable production node and continue production to that node. |
-| 3 | operation timeout | Retry last message. |
-| 4 | unknown topic | Create the topic via `create-topic` command prior to production. |
+| 0 | ok | Success. |
+| 1 | generic error | Retry operation. |
+| 2 | network error | Retry operation. |
+| 3 | invalid operation | Contact broker for capable production node and continue production to that node. |
+| 4 | topic unknown | Create the topic via `create-topic` command prior to production. |
+| 5 | operation timeout | Retry last message. |
