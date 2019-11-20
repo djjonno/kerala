@@ -1,14 +1,15 @@
 package org.kerala.core.consensus.states.candidate.election
 
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.apache.log4j.Logger
+import org.kerala.core.concurrency.Pools
+import org.kerala.core.concurrency.asCoroutineScope
 import org.kerala.core.consensus.messages.RequestVoteRequest
 import org.kerala.core.server.cluster.ClusterMessenger
 import org.kerala.core.server.cluster.Node
+import java.util.concurrent.ExecutorService
 
 /**
  * Performs an election across the cluster, requesting votes and tallying responses.
@@ -22,14 +23,12 @@ import org.kerala.core.server.cluster.Node
 class ElectionScheduler private constructor(
     private val voteRequest: RequestVoteRequest,
     private val electionStrategy: ElectionStrategy,
+    private val clusterMessenger: ClusterMessenger,
     private var onSuccess: () -> Unit,
     private var onFailure: () -> Unit,
-    private val clusterMessenger: ClusterMessenger
-) : CoroutineScope {
-  val job: Job
-    get() = Job()
-  override val coroutineContext: CoroutineContext
-    get() = job + Dispatchers.IO
+    private var job: Job = Job(),
+    private var threadPool: ExecutorService = Pools.consensusPool
+) : CoroutineScope by threadPool.asCoroutineScope(job) {
 
   private var scheduled = false
   private var finished = false
@@ -44,11 +43,12 @@ class ElectionScheduler private constructor(
     handleVoteResponse(clusterMessenger.clusterSet.selfNode, true)
 
     /* dispatch votes across cluster */
-    launch(coroutineContext) { dispatchVoteRequest() }
+    launch { dispatchVoteRequest() }
   }
 
   fun finish() {
     finished = true
+    job.cancel()
   }
 
   private suspend fun dispatchVoteRequest() {
@@ -97,9 +97,9 @@ class ElectionScheduler private constructor(
           voteRequest,
           /* Raft uses majority, so we'll just hard-code this strategy for now. */
           MajorityElectionStrategy(),
+          clusterMessenger,
           onSuccess,
-          onFailure,
-          clusterMessenger
+          onFailure
       )
     }
   }

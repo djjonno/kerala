@@ -13,9 +13,10 @@ class ElectionTally(val expectedVotes: Int) {
   private var upVotes = 0
   private var downVotes = 0
 
-  fun totalVotes() = votes.size
-  fun totalUpVotes() = upVotes
-  fun totalDownVotes() = downVotes
+  val totalVotes
+    get() = votes.size
+  val totalUpVotes
+    get() = upVotes
 
   fun recordUpVote(id: String) {
     if (checkAndIncrement(id)) {
@@ -29,7 +30,7 @@ class ElectionTally(val expectedVotes: Int) {
     }
   }
 
-  fun checkAndIncrement(id: String): Boolean {
+  @Synchronized private fun checkAndIncrement(id: String): Boolean {
     val isNew = !(id in votes)
     (votes as MutableSet).add(id)
     return isNew

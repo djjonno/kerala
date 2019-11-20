@@ -17,10 +17,10 @@ package org.kerala.core.consensus.states.candidate.election
  */
 class MajorityElectionStrategy : ElectionStrategy {
   override fun isComplete(electionTally: ElectionTally): Boolean {
-    return electionTally.totalVotes() > (electionTally.expectedVotes / 2)
+    return electionTally.totalVotes > (electionTally.expectedVotes / 2)
   }
 
   override fun isSuccessful(electionTally: ElectionTally): Boolean {
-    return electionTally.totalUpVotes() > (electionTally.expectedVotes / 2)
+    return electionTally.totalUpVotes > (electionTally.expectedVotes / 2)
   }
 }
