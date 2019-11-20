@@ -20,7 +20,7 @@ class DeleteTopicCommand : CliktCommand(name = "delete-topic") {
       )
       when (response.status) {
         ClientACK.Codes.OK.id -> echo(response.response)
-        ClientACK.Codes.ERROR.id -> throw Exception("`delete-topic` call failed -> ${response.response}")
+        ClientACK.Codes.ERROR.id -> throw Exception(response.response)
       }
     } catch (e: Exception) {
       echo(e.message, err = true)

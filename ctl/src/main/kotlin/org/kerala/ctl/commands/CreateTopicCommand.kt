@@ -20,7 +20,7 @@ class CreateTopicCommand : CliktCommand(name = "create-topic") {
       )
       when (response.status) {
         ClientACK.Codes.OK.id -> echo(response.response)
-        ClientACK.Codes.ERROR.id -> throw Exception("`create-topic` call failed -> ${response.response}")
+        ClientACK.Codes.ERROR.id -> throw Exception(response.response)
       }
     } catch (e: Exception) {
       echo(e.message, err = true)
