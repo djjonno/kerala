@@ -38,13 +38,13 @@ data class CtlReadTopics(val topics: List<CtlTopicMeta>) : CtlResponse() {
  * Describes state of cluster to a client.
  */
 data class CtlNode(val id: String, val host: String, val port: Int, val leader: Boolean = false)
-data class CtlClusterDescription(val ctlNodes: List<CtlNode>) : CtlResponse() {
+data class CtlClusterDescription(val nodes: List<CtlNode>) : CtlResponse() {
 
   /**
    * toString() defines the way this is printed in the console.
    */
-  override fun toString() = "${ctlNodes.size} node(s)\n-\n" + ctlNodes.mapIndexed { index, node ->
-    "host\t${node.id}${if (node.leader) "/leader" else ""} ${if (node === ctlNodes.last()) "" else "\n"}"
+  override fun toString() = "${nodes.size} node(s)\n-\n" + nodes.map { node ->
+    "host\t${node.id}${if (node.leader) "/leader" else ""} ${if (node === nodes.last()) "" else "\n"}"
   }.reduce { acc, s -> acc + s }
 }
 

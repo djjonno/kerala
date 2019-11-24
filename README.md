@@ -118,5 +118,5 @@ There are numerous uses for event-streaming, here are just a few thing you could
 
 ## Other things to checkout
 
-- [Release Roadmap](RELEASES.md)
+- [Release Roadmap](docs/RELEASES.md)
 - [Docs]() - Coming Soon
