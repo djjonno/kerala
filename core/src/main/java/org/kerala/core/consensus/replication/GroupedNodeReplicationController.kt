@@ -1,12 +1,8 @@
 package org.kerala.core.consensus.replication
 
-import kotlin.coroutines.CoroutineContext
-import kotlin.math.max
-import kotlin.system.measureTimeMillis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.apache.log4j.Logger
 import org.kerala.core.concurrency.Pools
 import org.kerala.core.concurrency.asCoroutineScope
 import org.kerala.core.consensus.Raft
@@ -15,7 +11,11 @@ import org.kerala.core.log.LogChangeReason
 import org.kerala.core.log.commands.CommitCommand
 import org.kerala.core.runtime.topic.Topic
 import org.kerala.core.server.cluster.ClusterSet
+import org.kerala.shared.logger
 import org.kerala.shared.util.findMajority
+import kotlin.coroutines.CoroutineContext
+import kotlin.math.max
+import kotlin.system.measureTimeMillis
 
 class GroupedNodeReplicationController(
     private val raft: Raft,
@@ -26,7 +26,7 @@ class GroupedNodeReplicationController(
 ) : CoroutineScope by Pools.replicationPool.asCoroutineScope(context) {
 
   fun launchController() = launch {
-    LOGGER.info("launching replication for $topic")
+    logger("launching replication for $topic")
     val leaderContext = LeaderContext(clusterSet.nodes, topic.logFacade.log.lastIndex)
 
     clusterSet.nodes.forEach {
@@ -55,15 +55,11 @@ class GroupedNodeReplicationController(
 
     states.findMajority()?.apply {
       if (this > topic.logFacade.log.commitIndex && topic.logFacade.log.read(this)?.term == raft.raftContext.currentTerm) {
-        LOGGER.info("committing index=$this")
+        logger("committing index=$this")
         topic.logFacade.commandExecutor.execute(CommitCommand.build(this, LogChangeReason.REPLICATION))
       }
     }
 
-    LOGGER.info("$topic replication $states ${if (states.distinct().size == 1) "synchronized" else "propagating"}")
-  }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(GroupedNodeReplicationController::class.java)
+    logger("$topic replication $states ${if (states.distinct().size == 1) "synchronized" else "propagating"}")
   }
 }

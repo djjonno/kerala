@@ -2,8 +2,6 @@ package org.kerala.core.consensus
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
-import java.util.concurrent.ExecutorService
-import org.apache.log4j.Logger
 import org.kerala.core.concurrency.Pools
 import org.kerala.core.consensus.messages.AppendEntriesRequest
 import org.kerala.core.consensus.messages.AppendEntriesResponse
@@ -15,6 +13,7 @@ import org.kerala.core.consensus.states.RaftStateFactory
 import org.kerala.core.consensus.states.State
 import org.kerala.core.runtime.NotificationsHub
 import org.kerala.shared.annotations.Mockable
+import java.util.concurrent.ExecutorService
 
 /**
  * RaftDelegator delegates model to the correct internal raft state [follower, candidate, leader]
@@ -82,7 +81,6 @@ class RaftDelegator(
     preHook()
     delegate = newDelegate.apply { on() }
     postHook()
-    LOGGER.info("-> $state")
     if (oldDelegate != newDelegate) {
       NotificationsHub.pub(NotificationsHub.Channel.CONSENSUS_CHANGE)
     }
@@ -136,9 +134,5 @@ class RaftDelegator(
     } else {
       block()
     }
-  }
-
-  private companion object {
-    var LOGGER: Logger = Logger.getLogger(RaftDelegator::class.java)
   }
 }

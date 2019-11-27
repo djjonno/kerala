@@ -4,12 +4,12 @@ import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
-import org.apache.log4j.Logger
 import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.log.exceptions.Event
 import org.kerala.core.log.exceptions.LogChangeException
 import org.kerala.core.server.client.RpcProducerResponse
 import org.kerala.shared.client.ProducerACK
+import org.kerala.shared.logger
 import java.io.Closeable
 import java.time.Duration
 
@@ -29,14 +29,14 @@ class Producer(
 ) : CoroutineScope by coroutineScope, Closeable {
 
   override fun close() {
-    LOGGER.info("shutting down producer vm")
+    logger("shutting down producer vm")
     coroutineContext.cancel()
   }
 
   fun streamObserver(responseObserver: StreamObserver<RpcProducerResponse>): StreamObserver<ProducerRecord> =
       object : StreamObserver<ProducerRecord> {
         override fun onNext(value: ProducerRecord) {
-          LOGGER.info("ingesting ${value.kvs.size} KVs -> ${value.topic}")
+          logger("ingesting ${value.kvs.size} KVs -> ${value.topic}")
 
           /* Dispatching record to Topic is essentially guaranteed,
            * provided:
@@ -52,7 +52,7 @@ class Producer(
           runBlocking(coroutineContext) {
             try {
               consensusFacade.writeToTopic(value.topic, value.kvs, Duration.ofSeconds(1))
-              LOGGER.info("committed ✓")
+              logger("committed ✓")
               responseObserver.onNext(ProducerACK.Rpcs.OK)
             } catch (e: LogChangeException) {
               responseObserver.onNext(when (e.event) {
@@ -72,8 +72,4 @@ class Producer(
           responseObserver.onCompleted()
         }
       }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(Producer::class.java)
-  }
 }

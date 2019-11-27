@@ -3,7 +3,6 @@ package org.kerala.core.consensus.states.candidate.election
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.apache.log4j.Logger
 import org.kerala.core.concurrency.Pools
 import org.kerala.core.concurrency.asCoroutineScope
 import org.kerala.core.consensus.messages.RequestVoteRequest
@@ -73,11 +72,9 @@ class ElectionScheduler private constructor(
     if (!finished && electionStrategy.isComplete(electionTally)) {
       when (electionStrategy.isSuccessful(electionTally)) {
         true -> {
-          LOGGER.info("election won")
           onSuccess()
         }
         false -> {
-          LOGGER.info("election lost")
           onFailure()
         }
       }
@@ -86,7 +83,6 @@ class ElectionScheduler private constructor(
   }
 
   companion object {
-    private val LOGGER = Logger.getLogger(ElectionScheduler::class.java.name)
     @JvmStatic fun create(
         voteRequest: RequestVoteRequest,
         onSuccess: () -> Unit,

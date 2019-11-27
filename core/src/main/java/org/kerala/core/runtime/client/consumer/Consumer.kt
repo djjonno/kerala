@@ -1,16 +1,15 @@
 package org.kerala.core.runtime.client.consumer
 
 import io.grpc.stub.StreamObserver
-import java.io.Closeable
-import java.lang.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
-import org.apache.log4j.Logger
 import org.kerala.core.consensus.ConsensusFacade
-import org.kerala.shared.client.ConsumerACK
 import org.kerala.core.server.client.RpcConsumerResponse
 import org.kerala.core.server.converters.KVConverters
+import org.kerala.shared.client.ConsumerACK
+import org.kerala.shared.logger
+import java.io.Closeable
 
 class Consumer(
     val consensusFacade: ConsensusFacade,
@@ -26,7 +25,7 @@ class Consumer(
   fun streamObserver(responseObserver: StreamObserver<RpcConsumerResponse>): StreamObserver<ConsumerRequest> =
       object : StreamObserver<ConsumerRequest> {
         override fun onNext(value: ConsumerRequest) {
-          LOGGER.info("consuming <- $value")
+          logger("consuming <- $value")
 
           /* @Note
            *
@@ -62,8 +61,4 @@ class Consumer(
           responseObserver.onCompleted()
         }
       }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(Consumer::class.java)
-  }
 }

@@ -13,6 +13,7 @@ import org.kerala.core.log.LogChangeReason
 import org.kerala.core.log.commands.AppendCommand
 import org.kerala.core.runtime.client.ctl.CtlCommand
 import org.kerala.core.runtime.client.ctl.CtlCommandType
+import org.kerala.shared.logger
 
 class RaftLeaderState(private val raft: Raft) : RaftState {
   private var replicator: Replicator? = null
@@ -23,6 +24,7 @@ class RaftLeaderState(private val raft: Raft) : RaftState {
     replicator = Replicator(raft).apply {
       launch()
     }
+    logger { i("leader initialized") }
   }
 
   override fun off() {

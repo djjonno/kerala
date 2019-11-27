@@ -1,18 +1,22 @@
 package org.kerala.ctl.commands
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.requireObject
 import com.github.ajalt.clikt.parameters.arguments.argument
 import org.kerala.core.server.client.RpcArgPair
 import org.kerala.ctl.Context
+import org.kerala.ctl.asChannel
+import org.kerala.ctl.leader
 import org.kerala.ctl.sendCommand
 import org.kerala.shared.client.ClientACK
 
 class DeleteTopicCommand : CliktCommand(name = "delete-topic") {
-  val namespace by argument("namespace", help = "namespace of the new topic")
+  private val namespace by argument("namespace", help = "namespace of the new topic")
+  private val ctx by requireObject<Context>()
 
   override fun run() {
     try {
-      val response = sendCommand(Context.channel!!, "delete-topic", listOf(
+      val response = sendCommand(ctx.cluster!!.leader()!!.asChannel(), "delete-topic", listOf(
           RpcArgPair.newBuilder()
               .setArg("namespace")
               .setParam(namespace)

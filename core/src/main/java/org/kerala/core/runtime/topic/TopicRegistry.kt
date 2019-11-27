@@ -1,7 +1,7 @@
 package org.kerala.core.runtime.topic
 
+import org.kerala.shared.logger
 import java.util.concurrent.Executor
-import org.apache.log4j.Logger
 
 class TopicRegistry {
   private val registryById: MutableMap<String, Topic> = mutableMapOf()
@@ -13,19 +13,19 @@ class TopicRegistry {
 
   fun add(topic: Topic) {
     if (getByTopic(topic) != null) {
-      LOGGER.warn("$topic already exists - ignoring")
+      logger { d("$topic already exists - ignoring") }
       return
     }
     set(topic)
     notifyChange(topic, Listener.Event.ADDED)
-    LOGGER.info("topic registered $topic")
+    logger("topic registered $topic")
   }
 
   fun remove(topic: Topic) {
     getByTopic(topic)?.apply {
       unset(this)
       notifyChange(this, Listener.Event.REMOVED)
-      LOGGER.info("topic removed $topic")
+      logger("topic removed $topic")
     }
   }
 
@@ -66,9 +66,5 @@ class TopicRegistry {
     }
 
     fun onChange(topic: Topic, event: Event)
-  }
-
-  companion object {
-    private var LOGGER = Logger.getLogger(TopicRegistry::class.java)
   }
 }

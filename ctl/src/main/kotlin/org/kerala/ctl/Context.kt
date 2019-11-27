@@ -1,11 +1,21 @@
 package org.kerala.ctl
 
 import io.grpc.ManagedChannel
+import io.grpc.ManagedChannelBuilder
+import org.kerala.shared.client.CtlClusterDescription
+import org.kerala.shared.client.CtlNode
 
-object Context {
-  /**
-   * Channel is configured by `Tool`, making it available to subcommands downstream.
-   * Subcommands can guarantee that this value is set/non-nullable
-   */
-  var channel: ManagedChannel? = null
+data class Context(var cluster: CtlClusterDescription? = null)
+
+fun CtlClusterDescription.any(): CtlNode {
+  return nodes.first()
 }
+
+fun CtlClusterDescription.leader(): CtlNode? {
+  return nodes.find { it.leader }
+}
+
+fun CtlNode.asChannel(): ManagedChannel = ManagedChannelBuilder
+    .forAddress(host, port)
+    .usePlaintext()
+    .build()

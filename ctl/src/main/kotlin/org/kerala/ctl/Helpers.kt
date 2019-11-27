@@ -9,7 +9,7 @@ import org.kerala.core.server.client.RpcCommandResponse
 fun sendCommand(
     channel: ManagedChannel,
     command: String,
-    argPairs: List<RpcArgPair>
+    argPairs: List<RpcArgPair> = emptyList()
 ): RpcCommandResponse {
   val stub = ClientServiceGrpc.newFutureStub(channel)
   return stub.clientCommand(RpcCommandRequest.newBuilder()

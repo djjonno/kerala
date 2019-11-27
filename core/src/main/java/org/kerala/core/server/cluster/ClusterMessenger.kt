@@ -1,13 +1,9 @@
 package org.kerala.core.server.cluster
 
-import java.lang.Exception
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
-import org.apache.log4j.Logger
 import org.kerala.core.consensus.messages.AppendEntriesRequest
 import org.kerala.core.consensus.messages.AppendEntriesResponse
 import org.kerala.core.consensus.messages.RequestVoteRequest
@@ -17,10 +13,13 @@ import org.kerala.core.server.converters.AppendEntriesConverters
 import org.kerala.core.server.converters.ConverterRegistry
 import org.kerala.core.server.converters.RequestVoteConverters
 import org.kerala.shared.annotations.Mockable
+import org.kerala.shared.logger
+import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
 @Mockable
 class ClusterMessenger(
-    private val clusterConnectionPool: org.kerala.core.server.cluster.ClusterConnectionPool,
+    private val clusterConnectionPool: ClusterConnectionPool,
     private val converterRegistry: ConverterRegistry = ConverterRegistry.instance
 ) : CoroutineScope {
   val clusterSet: ClusterSet
@@ -45,7 +44,7 @@ class ClusterMessenger(
       }
     } catch (e: Exception) {
       /* cluster messaging is best effort */
-      LOGGER.warn("node unreachable: $node")
+      logger { t("node unreachable: $node") }
       onFailure(e)
     }
   }
@@ -66,16 +65,12 @@ class ClusterMessenger(
       }
     } catch (e: Exception) {
       /* cluster messaging is best effort */
-      LOGGER.warn("node unreachable: $node")
+      logger { t("node unreachable: $node") }
       onFailure(e)
     }
   }
 
-  private fun getChannel(node: Node): org.kerala.core.server.cluster.ClusterConnectionPool.Channel {
+  private fun getChannel(node: Node): ClusterConnectionPool.Channel {
     return (clusterConnectionPool.getChannel(node) ?: throw NodeNotFoundException())
-  }
-
-  private companion object {
-    val LOGGER: Logger = Logger.getLogger(ClusterMessenger::class.java)
   }
 }

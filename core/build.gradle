@@ -15,7 +15,6 @@ dependencies {
     compile project(":lib")
 
     compile group: "commons-cli", name: "commons-cli", version: "1.4"
-    compile "log4j:log4j:1.2.17"
 
     testCompile "org.hamcrest:hamcrest-junit:2.+"
     testCompile group: "com.nhaarman.mockitokotlin2", name: "mockito-kotlin", version: "2.2.0"

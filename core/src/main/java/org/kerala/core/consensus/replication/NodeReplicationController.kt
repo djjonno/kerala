@@ -1,9 +1,6 @@
 package org.kerala.core.consensus.replication
 
-import kotlin.math.max
-import kotlin.system.measureTimeMillis
 import kotlinx.coroutines.delay
-import org.apache.log4j.Logger
 import org.kerala.core.consensus.Raft
 import org.kerala.core.consensus.messages.AppendEntriesRequest
 import org.kerala.core.consensus.messages.AppendEntriesResponse
@@ -11,6 +8,9 @@ import org.kerala.core.consensus.states.leader.LeaderContext
 import org.kerala.core.runtime.topic.Topic
 import org.kerala.core.server.cluster.Node
 import org.kerala.shared.annotations.Mockable
+import org.kerala.shared.logger
+import kotlin.math.max
+import kotlin.system.measureTimeMillis
 
 /**
  * NodeReplicationController replicates the given raft state to the target {$link Node}.
@@ -28,7 +28,7 @@ class NodeReplicationController(
     private val replicatorStrategy: ReplicatorStrategy = ReplicatorStrategy(topic, raft)
 ) {
   init {
-    LOGGER.info("replicating $topic -> $target")
+    logger("replicating $topic -> $target")
   }
 
   suspend fun start() {
@@ -73,9 +73,5 @@ class NodeReplicationController(
           leaderCommit = log.commitIndex)
       raft.clusterMessenger.dispatchAppendEntries(target, message)
     }
-  }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(NodeReplicationController::class.java)
   }
 }

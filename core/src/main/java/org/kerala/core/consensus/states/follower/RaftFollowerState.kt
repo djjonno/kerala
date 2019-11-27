@@ -2,7 +2,6 @@ package org.kerala.core.consensus.states.follower
 
 import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
-import org.apache.log4j.Logger
 import org.kerala.core.Environment
 import org.kerala.core.config.Config
 import org.kerala.core.consensus.EntryTermMismatch
@@ -26,8 +25,8 @@ import org.kerala.core.log.LogChangeReason
 import org.kerala.core.log.commands.AppendFromCommand
 import org.kerala.core.log.commands.CommitCommand
 import org.kerala.core.runtime.topic.Topic
+import org.kerala.shared.logger
 import org.kerala.shared.math.randomizeNumberPoint
-import kotlin.concurrent.timerTask
 import kotlin.math.min
 
 class RaftFollowerState @VisibleForTesting
@@ -40,7 +39,7 @@ constructor(
   constructor(raft: Raft) : this(
       raft,
       TimeoutAlarm {
-        LOGGER.info("follower timeout reached.")
+        logger("follower timeout reached.")
         raft.delegator.transitionRequest(State.CANDIDATE)
       }
   )
@@ -108,10 +107,10 @@ constructor(
       raft.raftContext.votedFor = request.candidateId
       raft.raftContext.currentTerm = request.term
       replyRequestVote(raft.raftContext, true, stream)
-      LOGGER.info("yes vote to ${raft.raftContext.votedFor}")
+      logger("yes vote to ${raft.raftContext.votedFor}")
     } else {
       replyRequestVote(raft.raftContext, false, stream)
-      LOGGER.info("no vote to ${raft.raftContext.votedFor}")
+      logger("no vote to ${raft.raftContext.votedFor}")
     }
   }
 
@@ -170,9 +169,5 @@ constructor(
   private fun resetTimeout() {
     val newTimeout = randomizeNumberPoint(timeout, 0.4).toULong()
     timeoutAlarm.reset(newTimeout)
-  }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(RaftFollowerState::class.java.name)
   }
 }

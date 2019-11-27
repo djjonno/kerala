@@ -1,7 +1,6 @@
 package org.kerala.core.consensus.states.candidate
 
 import io.grpc.stub.StreamObserver
-import org.apache.log4j.Logger
 import org.kerala.core.Environment
 import org.kerala.core.config.Config
 import org.kerala.core.consensus.OpCategory
@@ -16,6 +15,7 @@ import org.kerala.core.consensus.states.RaftState
 import org.kerala.core.consensus.states.State
 import org.kerala.core.consensus.states.candidate.election.ElectionScheduler
 import org.kerala.shared.annotations.Mockable
+import org.kerala.shared.logger
 
 @Mockable
 class RaftCandidateState(
@@ -28,7 +28,7 @@ class RaftCandidateState(
   constructor(raft: Raft) : this(
       raft,
       TimeoutAlarm {
-        LOGGER.info("election timeout reached. restarting election.")
+        logger { i("election timeout reached. restarting election.") }
         raft.delegator.transitionRequest(State.CANDIDATE)
       }
   )
@@ -96,9 +96,5 @@ class RaftCandidateState(
           )
         }
     )
-  }
-
-  companion object {
-    private val LOGGER = Logger.getLogger(RaftCandidateState::class.java.name)
   }
 }

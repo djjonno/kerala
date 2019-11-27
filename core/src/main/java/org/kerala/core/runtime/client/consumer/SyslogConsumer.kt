@@ -1,6 +1,5 @@
 package org.kerala.core.runtime.client.consumer
 
-import org.apache.log4j.Logger
 import org.kerala.core.consensus.messages.Entry
 import org.kerala.core.runtime.client.broker.ClusterSetInfo
 import org.kerala.core.runtime.client.ctl.CtlCommand
@@ -8,6 +7,7 @@ import org.kerala.core.runtime.client.ctl.CtlCommandType
 import org.kerala.core.runtime.client.ctl.asCommand
 import org.kerala.core.runtime.topic.TopicModule
 import org.kerala.core.server.cluster.Node
+import org.kerala.shared.logger
 import org.kerala.shared.schemes.URI
 
 /**
@@ -38,26 +38,22 @@ class SyslogConsumer(private val topicModule: TopicModule,
       CtlCommandType.CONSENSUS_CHANGE -> try {
         clusterSetInfo.leader = Node(URI.parseURIString(command.LeaderChangeCtlCommand().leaderNode))
       } catch (e: Exception) { }
-      else -> LOGGER.info("Nothing to do for $command")
+      else -> logger("Nothing to do for $command")
     }
   }
 
   private fun createTopic(command: CtlCommand.CreateTopicCtlCommand) {
     topicModule.topicRegistry.getByNamespace(command.namespace)?.let {
-      LOGGER.info("topic creation ignored `${command.namespace}` already exists")
+      logger("topic creation ignored `${command.namespace}` already exists")
     } ?: run {
       val newTopic = topicModule.provisionTopic(command.id, command.namespace)
-      LOGGER.info("topic provisioned $newTopic")
+      logger("topic provisioned $newTopic")
     }
   }
 
   private fun deleteTopic(command: CtlCommand.DeleteTopicCtlCommand) {
     topicModule.topicRegistry.getByNamespace(command.namespace)?.let {
       topicModule.topicRegistry.remove(it)
-    } ?: LOGGER.info("topic deletion ignored `${command.namespace}` does not exist.")
-  }
-
-  companion object {
-    private var LOGGER = Logger.getLogger(SyslogConsumer::class.java)
+    } ?: logger("topic deletion ignored `${command.namespace}` does not exist.")
   }
 }

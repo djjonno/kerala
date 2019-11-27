@@ -1,8 +1,8 @@
 package org.kerala.core.config
 
 import com.google.common.annotations.VisibleForTesting
-import org.apache.log4j.Logger
 import org.kerala.core.Environment
+import org.kerala.shared.logger
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -23,8 +23,10 @@ constructor(private val configFilePath: String = Environment.getHomePath(CONFIG_
         }.toMap()
       }
     } catch (e: Exception) {
-      LOG.error("using default $CONFIG_NAME")
-      LOG.debug(e.message)
+      logger {
+        e("using default $CONFIG_NAME")
+        d(e.message)
+      }
       emptyMap()
     }
   }
@@ -38,6 +40,5 @@ constructor(private val configFilePath: String = Environment.getHomePath(CONFIG_
 
   companion object {
     const val CONFIG_NAME = "kerala.properties"
-    private val LOG = Logger.getLogger(ConfigPropertiesFileSource::class.java)
   }
 }
