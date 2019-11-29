@@ -8,7 +8,7 @@
 - `in-memory` log storage engine ✅
 - Consume from Topics (`consume-topic`) ✅
 
-#### 0.2.0-alpha (November ‘19)
+#### [0.2.0-alpha](https://github.com/djjonno/kerala/releases/tag/0.2.0-alpha) Released
 
 - Client-Service contracts ✅
 - Broker service (expose `cluster` to clients) ✅
@@ -19,34 +19,40 @@
     - `> kerala-ctl --broker <broker-host> console-producer <topic>` ✅
     - `> kerala-ctl --broker <broker-host> console-consumer <topic> [-i,--index <index>]` ✅
 
-#### 0.3.0-alpha
+#### 0.3.0-alpha January 2020
 
 - Kotlin client
     - Standard client configuration
         - bootstrap broker
         - timeout
+    - Serializers/Deserializers
+        - std serializers/deserializers for primitive types (ints, longs, floats, doubles, strings, 
+        - produce/consume Objects
     - Producer
         - max message size
         - error handling
         - std serializers/deserializers for primitive types
-        - custom serializers/deserializers
-            - support for producing your own objects
     - Consumer
         - process streams
-        - basic api for stateless functional processing (map/reduce/group/filter/etc)
+        - basic api for stateless functional processing (map/reduce/filter/etc)
+        - topological processing
         - produce to stream
-- Docs
+- Client Docs
 
 #### 0.4.0-alpha
 
-- `file` log storage engine
+- stateful `Consumer` operations
+    - windowing
+    - joining
+    - aggregations
+- `produce` strategies
+    - `full` - ensures KV is committed and replicated. 
+    - `partial` - ensures KV is appended but not committed (could be replaced).  This provides more production throughput where the data is not as critical.
 
 #### 0.5.0-alpha
 
-- `snapshot` log compaction
-- Production strategies
-    - `full` - ensures KV is committed and replicated. 
-    - `partial` - ensures KV is appended but not committed (could be replaced).  This provides more production throughput where the data is not as critical.
+- `file` log storage engine
+- log reduction schemes
 
 #### 0.6.0-alpha
 
@@ -55,10 +61,6 @@
 - Dynamic cluster configuration
     - clients will have the ability to add/remove nodes from the cluster at runtime   
 
-#### Future Roadmap Items
+#### Future Roadmap
 
 - `Consumer` Groups
-- stateful `Consumer` operations
-    - windowing
-    - joining
-    - aggregations
