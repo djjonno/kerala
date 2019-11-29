@@ -4,6 +4,8 @@
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/djjonno/kerala?include_prereleases)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/djjonno/kerala/blob/master/LICENSE)
 
+![Kerala Ctl Demo](https://kerala-data.s3.amazonaws.com/kerala-ctl-console.gif)
+
 **Kerala** is a distributed event-streaming server built for the modern day.  It is robust, lightweight and super fast!
 - **Produce/Consume** - create Topics, then produce and consume them.
 - **Process** - create processors that transform or aggregate event data, and project new Streams with the outputs.

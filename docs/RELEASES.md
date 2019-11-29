@@ -10,9 +10,9 @@
 
 #### 0.2.0-alpha (November ‘19)
 
-- Client-Service contracts
+- Client-Service contracts ✅
 - Broker service (expose `cluster` to clients) ✅
-- `kerala-ctl` cli tool *(provides interaction with **Kerala** node from a command-line)*
+- `kerala-ctl` cli tool *(provides interaction with **Kerala** node from a command-line)* ✅
     - `> kerala-ctl --broker <broker-host> cluster` ✅
     - `> kerala-ctl --broker <broker-host> topics` ✅
     - `> kerala-ctl --broker <broker-host> create-topic <topic>` ✅

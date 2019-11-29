@@ -16,6 +16,7 @@ class DeleteTopicCommand : CliktCommand(name = "delete-topic") {
 
   override fun run() {
     try {
+      echo("deleting topic -> $namespace")
       val response = sendCommand(ctx.cluster!!.leader()!!.asChannel(), "delete-topic", listOf(
           RpcArgPair.newBuilder()
               .setArg("namespace")

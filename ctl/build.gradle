@@ -7,7 +7,7 @@ dependencies {
     implementation("com.github.ajalt:clikt:2.3.0")
 }
 
-mainClassName = "org.kerala.ctl.KeralaCtlKt"
+mainClassName = "org.kerala.ctl.CtlKt"
 
 applicationDistribution.into("bin") {
     fileMode = 0755

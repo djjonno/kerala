@@ -17,6 +17,7 @@ class CreateTopicCommand : CliktCommand(name = "create-topic") {
 
   override fun run() {
     try {
+      echo("creating topic -> $namespace")
       val response = sendCommand(ctx.cluster!!.leader()!!.asChannel(), "create-topic", listOf(
           RpcArgPair.newBuilder()
               .setArg("namespace")

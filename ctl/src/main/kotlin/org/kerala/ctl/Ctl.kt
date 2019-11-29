@@ -40,13 +40,13 @@ class Tool : CliktCommand(name = "kerala-ctl") {
   }
 
   private fun bootstrapCluster() {
-    val uri = URI.parseURIString(broker)
-    val channel = ManagedChannelBuilder
-        .forAddress(uri.host, uri.port)
-        .usePlaintext()
-        .build()
-    val response = sendCommand(channel, "cluster")
     try {
+      val uri = URI.parseURIString(broker)
+      val channel = ManagedChannelBuilder
+          .forAddress(uri.host, uri.port)
+          .usePlaintext()
+          .build()
+      val response = sendCommand(channel, "cluster")
       when(response.status) {
         ClientACK.Codes.OK.id -> ctx.cluster = GsonUtils.buildGson().fromJson(response.response, CtlClusterDescription::class.java)
         ClientACK.Codes.ERROR.id -> throw Exception("could not bootstrap cluster (${response.response})")
