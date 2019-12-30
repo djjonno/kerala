@@ -80,11 +80,11 @@ To consume a Topic, the client needs to connect to the `ClientService/TopicConsu
 ```proto
 message RpcConsumerRequest {
     string topic = 1; // namespace of Topic to consume
-    uint64 index = 2; // index/location to start consuming from
+    uint64 index = 2; // index to start consuming from
 }
 ```
 
-The consumer dictates its location within the Topic.  If the consumer wants to consumer everything on the Topic so far, it can specify a value of `0`.  If the consumer just wants to start consuming from the end of the Topic, it can leave the `index` unset e.g `null`.  The server will assume the next topic, and place the consumer into a `long-poll` state.  As a consumer, keep the connection established.  The server will respond with data as soon as it exists in the Topic.
+The consumer dictates its location within the Topic. To consume everything from beginning of Topic, specify a value of `1`. Alternatively, set to `-1` to start consuming from the end which the server will assume the next KV produced to the topic.  Note that this will place the consumer into a `long-poll` state so make sure to set your polling timeout accordingly.  As a consumer, keep the connection established.  The server will respond with data as soon as it is committed to the Topic.
 
 ```proto
 message RpcConsumerResponse {

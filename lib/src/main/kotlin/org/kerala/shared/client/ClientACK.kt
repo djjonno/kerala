@@ -1,6 +1,6 @@
 package org.kerala.shared.client
 
-import org.kerala.core.server.client.RpcCommandResponse
+import org.kerala.core.server.client.KeralaCommandResponse
 
 object ClientACK {
   enum class Codes(val id: Int) {
@@ -9,7 +9,7 @@ object ClientACK {
   }
 
   object Rpcs {
-    fun ok(message: String): RpcCommandResponse = RpcCommandResponse.newBuilder().setStatus(Codes.OK.id).setResponse(message).build()
-    fun error(message: String, status: Int): RpcCommandResponse = RpcCommandResponse.newBuilder().setStatus(status).setResponse(message).build()
+    fun ok(message: String): KeralaCommandResponse = KeralaCommandResponse.newBuilder().setStatus(Codes.OK.id).setResponse(message).build()
+    fun error(message: String, status: Int): KeralaCommandResponse = KeralaCommandResponse.newBuilder().setStatus(status).setResponse(message).build()
   }
 }

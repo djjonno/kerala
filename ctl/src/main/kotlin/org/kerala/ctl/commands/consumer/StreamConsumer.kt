@@ -5,16 +5,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import org.kerala.core.server.client.ClientServiceGrpc
-import org.kerala.core.server.client.RpcConsumerRequest
-import org.kerala.core.server.client.RpcConsumerResponse
+import org.kerala.core.server.client.KeralaClientServiceGrpc
+import org.kerala.core.server.client.KeralaConsumerRequest
+import org.kerala.core.server.client.KeralaConsumerResponse
 import org.kerala.shared.client.ConsumerACK
 
-class StreamConsumer(stub: ClientServiceGrpc.ClientServiceStub) {
+class StreamConsumer(stub: KeralaClientServiceGrpc.KeralaClientServiceStub) {
 
-  val channel = Channel<RpcConsumerResponse>()
-  private val consumer = stub.topicConsumer(object : StreamObserver<RpcConsumerResponse>, CoroutineScope by GlobalScope {
-    override fun onNext(value: RpcConsumerResponse) {
+  val channel = Channel<KeralaConsumerResponse>()
+  private val consumer = stub.keralaTopicConsumer(object : StreamObserver<KeralaConsumerResponse>, CoroutineScope by GlobalScope {
+    override fun onNext(value: KeralaConsumerResponse) {
       launch {
         channel.send(value)
       }
@@ -35,6 +35,6 @@ class StreamConsumer(stub: ClientServiceGrpc.ClientServiceStub) {
   })
 
   fun batch(topic: String, index: Long) {
-    consumer.onNext(RpcConsumerRequest.newBuilder().setTopic(topic).setIndex(index).build())
+    consumer.onNext(KeralaConsumerRequest.newBuilder().setTopic(topic).setOffset(index).build())
   }
 }

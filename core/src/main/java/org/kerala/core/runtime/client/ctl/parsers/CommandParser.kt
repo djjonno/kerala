@@ -2,11 +2,11 @@ package org.kerala.core.runtime.client.ctl.parsers
 
 import org.kerala.core.runtime.client.ctl.CtlCommand
 import org.kerala.core.runtime.client.ctl.CtlCommandType
-import org.kerala.core.server.client.RpcCommandRequest
+import org.kerala.core.server.client.KeralaCommandRequest
 
 abstract class CommandParser {
   @Throws(Exception::class)
-  open operator fun invoke(type: CtlCommandType, request: RpcCommandRequest): CtlCommand {
+  open operator fun invoke(type: CtlCommandType, request: KeralaCommandRequest): CtlCommand {
     return parse(type, request).also {
       validate(it)
     }
@@ -20,15 +20,15 @@ abstract class CommandParser {
     }
   }
 
-  abstract fun parse(type: CtlCommandType, request: RpcCommandRequest): CtlCommand
+  abstract fun parse(type: CtlCommandType, request: KeralaCommandRequest): CtlCommand
   abstract fun rules(): List<ValidationRule>
 }
 
 class DefaultCommandParser : CommandParser() {
-  override fun parse(type: CtlCommandType, request: RpcCommandRequest): CtlCommand {
+  override fun parse(type: CtlCommandType, request: KeralaCommandRequest): CtlCommand {
     return CtlCommand.builder(type) {
       request.argsList.forEach { pair ->
-        arg(pair.arg, pair.param)
+        arg(pair.param, pair.arg)
       }
     }
   }

@@ -11,8 +11,8 @@ import org.kerala.core.runtime.client.stream.ClientStreamHandler
 class ClientService(
     private val ctlCommandHandler: CtlCommandHandler,
     private val clientStreamHandler: ClientStreamHandler
-) : ClientServiceGrpc.ClientServiceImplBase() {
-  override fun clientCommand(request: RpcCommandRequest, responseObserver: StreamObserver<RpcCommandResponse>) {
+) : KeralaClientServiceGrpc.KeralaClientServiceImplBase() {
+  override fun keralaClientCommand(request: KeralaCommandRequest, responseObserver: StreamObserver<KeralaCommandResponse>) {
     /**
      * Client commands are executed in-serial to ensure appropriate
      * execution order, preventing race conditions.
@@ -20,11 +20,11 @@ class ClientService(
     ctlCommandHandler.handle(request, responseObserver)
   }
 
-  override fun topicConsumer(responseObserver: StreamObserver<RpcConsumerResponse>): StreamObserver<RpcConsumerRequest> {
+  override fun keralaTopicConsumer(responseObserver: StreamObserver<KeralaConsumerResponse>): StreamObserver<KeralaConsumerRequest> {
     return clientStreamHandler.establishConsumerStream(responseObserver)
   }
 
-  override fun topicProducer(responseObserver: StreamObserver<RpcProducerResponse>): StreamObserver<RpcProducerRequest> {
+  override fun keralaTopicProducer(responseObserver: StreamObserver<KeralaProducerResponse>): StreamObserver<KeralaProducerRequest> {
     return clientStreamHandler.establishProducerStream(responseObserver)
   }
 }

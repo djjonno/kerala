@@ -4,20 +4,18 @@ import io.grpc.stub.StreamObserver
 import org.kerala.shared.client.ConsumerACK
 import org.kerala.core.runtime.client.consumer.ConsumerRequest
 import org.kerala.core.runtime.topic.TopicModule
-import org.kerala.core.server.client.RpcConsumerRequest
-import org.kerala.core.server.client.RpcConsumerResponse
+import org.kerala.core.server.client.KeralaConsumerRequest
+import org.kerala.core.server.client.KeralaConsumerResponse
 
 class ConsumerEnrichmentStreamObserver(
     private val next: StreamObserver<ConsumerRequest>,
-    private val back: StreamObserver<RpcConsumerResponse>,
+    private val back: StreamObserver<KeralaConsumerResponse>,
     private val topicModule: TopicModule
-) : StreamObserver<RpcConsumerRequest> {
-  override fun onNext(value: RpcConsumerRequest) {
+) : StreamObserver<KeralaConsumerRequest> {
+  override fun onNext(value: KeralaConsumerRequest) {
     topicModule.topicRegistry.getByNamespace(value.topic)?.apply {
-
       /* Construct ConsumerRequest */
-      val field = RpcConsumerRequest.getDescriptor().findFieldByName("index")
-      next.onNext(ConsumerRequest(this, if (value.hasField(field)) value.index else null))
+      next.onNext(ConsumerRequest(this, if (value.offset == -1L) null else value.offset))
     } ?: back.onNext(ConsumerACK.Rpcs.TOPIC_UNKNOWN)
   }
 

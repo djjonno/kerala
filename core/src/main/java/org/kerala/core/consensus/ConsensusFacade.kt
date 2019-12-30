@@ -7,11 +7,14 @@ import org.kerala.core.log.LogChangeReason
 import org.kerala.core.log.LogChangeRegistry
 import org.kerala.core.log.commands.AppendCommand
 import org.kerala.core.runtime.topic.Topic
+import org.kerala.shared.logger
 import java.time.Duration
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
+data class ReadResult(val offset: Long, val entries: List<Entry>)
 
 class ConsensusFacade(private val raft: Raft) {
 
@@ -45,7 +48,7 @@ class ConsensusFacade(private val raft: Raft) {
     }
   }
 
-  suspend fun readFromTopic(topic: Topic, index: Long?): List<Entry> {
+  suspend fun readFromTopic(topic: Topic, index: Long?): ReadResult {
     return suspendCoroutine { cont ->
       /**
        * readBlock used to synchronize all external log activity,
@@ -57,7 +60,7 @@ class ConsensusFacade(private val raft: Raft) {
 
           if (i <= commitIndex) {
             read(i)?.let {
-              cont.resume(listOf(it))
+              cont.resume(ReadResult(offset = i, entries = listOf(it)))
             } ?: cont.resumeWithException(Exception("wtf - log misread"))
           } else {
             /* If requested index is not yet committed, perform a readAhead */
@@ -71,10 +74,11 @@ class ConsensusFacade(private val raft: Raft) {
   /**
    * Allow client to make a readAhead request.
    */
-  private fun readAhead(topic: Topic, i: Long, cont: Continuation<List<Entry>>) {
-    topic.logFacade.changeRegistry.register(i, LogChangeEvent.COMMIT, {
-      topic.logFacade.log.read(i)?.let {
-        cont.resume(listOf(it))
+  private fun readAhead(topic: Topic, index: Long, cont: Continuation<ReadResult>) {
+    logger("reading ahead since $index does not yet exist on $topic")
+    topic.logFacade.changeRegistry.register(index, LogChangeEvent.COMMIT, {
+      topic.logFacade.log.read(index)?.let {
+        cont.resume(ReadResult(offset = index, entries = listOf(it)))
       } ?: cont.resumeWithException(Exception("wtf - log misread"))
     },
         {

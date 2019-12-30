@@ -11,15 +11,15 @@ import org.kerala.core.server.converters.StreamConverterDecorator
 class ClusterService(
     private val raftDelegate: RaftDelegate,
     private val converterRegistry: ConverterRegistry
-) : ClusterServiceGrpc.ClusterServiceImplBase() {
+) : KeralaClusterServiceGrpc.KeralaClusterServiceImplBase() {
 
   init {
     LOGGER.info("cluster service ready")
   }
 
-  override fun appendEntries(
-      request: RpcAppendEntriesRequest,
-      responseObserver: StreamObserver<RpcAppendEntriesResponse>
+  override fun keralaAppendEntries(
+      request: KeralaAppendEntriesRequest,
+      responseObserver: StreamObserver<KeralaAppendEntriesResponse>
   ) {
     try {
       raftDelegate.delegateAppendEntries(
@@ -33,9 +33,9 @@ class ClusterService(
     }
   }
 
-  override fun requestVote(
-      request: RpcRequestVoteRequest,
-      responseObserver: StreamObserver<RpcRequestVoteResponse>
+  override fun keralaRequestVote(
+      request: KeralaRequestVoteRequest,
+      responseObserver: StreamObserver<KeralaRequestVoteResponse>
   ) {
     try {
       raftDelegate.delegateRequestVote(

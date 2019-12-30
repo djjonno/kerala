@@ -3,13 +3,13 @@ package org.kerala.core.runtime.client.ctl.parsers
 import org.kerala.core.runtime.client.ctl.CtlCommand
 import org.kerala.core.runtime.client.ctl.CtlCommandType
 import org.kerala.core.runtime.topic.Topic
-import org.kerala.core.server.client.RpcCommandRequest
+import org.kerala.core.server.client.KeralaCommandRequest
 
 class CreateTopicCommandParser : CommandParser() {
-  override fun parse(type: CtlCommandType, request: RpcCommandRequest): CtlCommand {
+  override fun parse(type: CtlCommandType, request: KeralaCommandRequest): CtlCommand {
     return CtlCommand.builder(type) {
       request.argsList.forEach { pair ->
-        arg(pair.arg, pair.param)
+        arg(pair.param, pair.arg)
       }
       /* A topic requires a UUID */
       arg("id", Topic.generateId())
@@ -19,6 +19,6 @@ class CreateTopicCommandParser : CommandParser() {
   override fun rules() = listOf(
       PropertyExists("id"),
       PropertyExists("namespace"),
-      PropertyRegex("namespace", "^[0-9a-zA-Z_]{1,32}$")
+      PropertyRegex("namespace", Topic.TOPIC_NAMESPACE_REGEX)
   )
 }

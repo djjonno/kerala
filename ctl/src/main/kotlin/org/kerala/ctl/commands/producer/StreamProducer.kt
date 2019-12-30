@@ -5,17 +5,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import org.kerala.core.server.client.ClientServiceGrpc
-import org.kerala.core.server.client.RpcKV
-import org.kerala.core.server.client.RpcProducerRequest
-import org.kerala.core.server.client.RpcProducerResponse
+import org.kerala.core.server.client.KeralaClientServiceGrpc
+import org.kerala.core.server.client.KeralaKV
+import org.kerala.core.server.client.KeralaProducerRequest
+import org.kerala.core.server.client.KeralaProducerResponse
 import org.kerala.shared.client.ProducerACK
 
-class StreamProducer(stub: ClientServiceGrpc.ClientServiceStub) {
+class StreamProducer(stub: KeralaClientServiceGrpc.KeralaClientServiceStub) {
 
-  private val channel = Channel<RpcProducerResponse>()
-  private val produce = stub.topicProducer(object : StreamObserver<RpcProducerResponse>, CoroutineScope by GlobalScope {
-    override fun onNext(value: RpcProducerResponse) {
+  private val channel = Channel<KeralaProducerResponse>()
+  private val produce = stub.keralaTopicProducer(object : StreamObserver<KeralaProducerResponse>, CoroutineScope by GlobalScope {
+    override fun onNext(value: KeralaProducerResponse) {
       launch {
         channel.send(value)
       }
@@ -35,8 +35,8 @@ class StreamProducer(stub: ClientServiceGrpc.ClientServiceStub) {
     }
   })
 
-  suspend fun batch(topic: String, kvs: List<RpcKV>): RpcProducerResponse {
-    produce.onNext(RpcProducerRequest
+  suspend fun batch(topic: String, kvs: List<KeralaKV>): KeralaProducerResponse {
+    produce.onNext(KeralaProducerRequest
         .newBuilder()
         .setTopic(topic)
         .addAllKvs(kvs)

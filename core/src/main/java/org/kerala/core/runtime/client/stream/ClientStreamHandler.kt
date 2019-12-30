@@ -13,10 +13,10 @@ import org.kerala.shared.client.ProducerACK
 import org.kerala.core.runtime.client.consumer.Consumer
 import org.kerala.core.runtime.client.producer.Producer
 import org.kerala.core.runtime.topic.TopicModule
-import org.kerala.core.server.client.RpcConsumerRequest
-import org.kerala.core.server.client.RpcConsumerResponse
-import org.kerala.core.server.client.RpcProducerRequest
-import org.kerala.core.server.client.RpcProducerResponse
+import org.kerala.core.server.client.KeralaConsumerRequest
+import org.kerala.core.server.client.KeralaConsumerResponse
+import org.kerala.core.server.client.KeralaProducerRequest
+import org.kerala.core.server.client.KeralaProducerResponse
 import org.kerala.core.server.converters.KVConverters
 
 class ClientStreamHandler(
@@ -35,7 +35,7 @@ class ClientStreamHandler(
     }
   }
 
-  fun establishConsumerStream(responseObserver: StreamObserver<RpcConsumerResponse>): StreamObserver<RpcConsumerRequest> {
+  fun establishConsumerStream(responseObserver: StreamObserver<KeralaConsumerResponse>): StreamObserver<KeralaConsumerRequest> {
     val consumer = Consumer(consensusFacade, Pools.createPool("consumer").asCoroutineScope())
 
     return StreamObserverDecorator(
@@ -62,7 +62,7 @@ class ClientStreamHandler(
     )
   }
 
-  fun establishProducerStream(responseObserver: StreamObserver<RpcProducerResponse>): StreamObserver<RpcProducerRequest> {
+  fun establishProducerStream(responseObserver: StreamObserver<KeralaProducerResponse>): StreamObserver<KeralaProducerRequest> {
     val producer = Producer(consensusFacade, Pools.createPool("producer").asCoroutineScope()).apply {
       registerProducer(this)
     }

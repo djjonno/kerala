@@ -16,5 +16,7 @@ data class Topic(
 
   companion object {
     fun generateId() = UUID.randomUUID().toString()
+
+    const val TOPIC_NAMESPACE_REGEX = "^[0-9a-zA-Z_-]{1,32}$"
   }
 }

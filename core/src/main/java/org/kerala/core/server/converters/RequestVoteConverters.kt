@@ -3,18 +3,18 @@ package org.kerala.core.server.converters
 import org.kerala.core.consensus.messages.RequestVoteRequest
 import org.kerala.core.consensus.messages.RequestVoteResponse
 import org.kerala.core.consensus.messages.TopicTail
-import org.kerala.core.server.cluster.RpcLogTail
-import org.kerala.core.server.cluster.RpcRequestVoteRequest
-import org.kerala.core.server.cluster.RpcRequestVoteResponse
+import org.kerala.core.server.cluster.KeralaLogTail
+import org.kerala.core.server.cluster.KeralaRequestVoteRequest
+import org.kerala.core.server.cluster.KeralaRequestVoteResponse
 
 class RequestVoteConverters {
-  class ToRpcRequest : Converter<RequestVoteRequest, RpcRequestVoteRequest> {
-    override fun convert(source: RequestVoteRequest): RpcRequestVoteRequest {
-      return RpcRequestVoteRequest.newBuilder()
+  class ToRpcRequest : Converter<RequestVoteRequest, KeralaRequestVoteRequest> {
+    override fun convert(source: RequestVoteRequest): KeralaRequestVoteRequest {
+      return KeralaRequestVoteRequest.newBuilder()
           .setTerm(source.term)
           .setCandidateId(source.candidateId)
           .addAllLogTails(source.topicTails.map {
-            RpcLogTail.newBuilder()
+            KeralaLogTail.newBuilder()
                 .setTopicId(it.topicId)
                 .setLastLogIndex(it.lastLogIndex)
                 .setLastLogTerm(it.lastLogTerm)
@@ -24,8 +24,8 @@ class RequestVoteConverters {
     }
   }
 
-  class FromRpcRequest : Converter<RpcRequestVoteRequest, RequestVoteRequest> {
-    override fun convert(source: RpcRequestVoteRequest): RequestVoteRequest {
+  class FromRpcRequest : Converter<KeralaRequestVoteRequest, RequestVoteRequest> {
+    override fun convert(source: KeralaRequestVoteRequest): RequestVoteRequest {
       return RequestVoteRequest(
           term = source.term,
           candidateId = source.candidateId,
@@ -40,17 +40,17 @@ class RequestVoteConverters {
     }
   }
 
-  class ToRpcResponse : Converter<RequestVoteResponse, RpcRequestVoteResponse> {
-    override fun convert(source: RequestVoteResponse): RpcRequestVoteResponse {
-      return RpcRequestVoteResponse.newBuilder()
+  class ToRpcResponse : Converter<RequestVoteResponse, KeralaRequestVoteResponse> {
+    override fun convert(source: RequestVoteResponse): KeralaRequestVoteResponse {
+      return KeralaRequestVoteResponse.newBuilder()
           .setTerm(source.term)
           .setVoteGranted(source.isVoteGranted)
           .build()
     }
   }
 
-  class FromRpcResponse : Converter<RpcRequestVoteResponse, RequestVoteResponse> {
-    override fun convert(source: RpcRequestVoteResponse): RequestVoteResponse {
+  class FromRpcResponse : Converter<KeralaRequestVoteResponse, RequestVoteResponse> {
+    override fun convert(source: KeralaRequestVoteResponse): RequestVoteResponse {
       return RequestVoteResponse(source.term, source.voteGranted)
     }
   }

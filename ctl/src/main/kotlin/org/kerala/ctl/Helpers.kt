@@ -1,18 +1,18 @@
 package org.kerala.ctl
 
 import io.grpc.ManagedChannel
-import org.kerala.core.server.client.ClientServiceGrpc
-import org.kerala.core.server.client.RpcArgPair
-import org.kerala.core.server.client.RpcCommandRequest
-import org.kerala.core.server.client.RpcCommandResponse
+import org.kerala.core.server.client.KeralaClientServiceGrpc
+import org.kerala.core.server.client.KeralaArgPair
+import org.kerala.core.server.client.KeralaCommandRequest
+import org.kerala.core.server.client.KeralaCommandResponse
 
 fun sendCommand(
     channel: ManagedChannel,
     command: String,
-    argPairs: List<RpcArgPair> = emptyList()
-): RpcCommandResponse {
-  val stub = ClientServiceGrpc.newFutureStub(channel)
-  return stub.clientCommand(RpcCommandRequest.newBuilder()
+    argPairs: List<KeralaArgPair> = emptyList()
+): KeralaCommandResponse {
+  val stub = KeralaClientServiceGrpc.newFutureStub(channel)
+  return stub.keralaClientCommand(KeralaCommandRequest.newBuilder()
       .setCommand(command)
       .addAllArgs(argPairs)
       .build()).get()

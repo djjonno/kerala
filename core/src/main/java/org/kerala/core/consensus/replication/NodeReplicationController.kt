@@ -47,11 +47,11 @@ class NodeReplicationController(
     val nextIndex = leaderContext.getNextIndex(target)
     val request = replicatorStrategy.generateRequest(nextIndex)
     raft.clusterMessenger.dispatchAppendEntries(target, request, onSuccess = { response ->
-      handleResponse(request, response, nextIndex)
+      handleResponse(request, response)
     })
   }
 
-  private fun handleResponse(request: AppendEntriesRequest, response: AppendEntriesResponse, nextIndex: Long) {
+  private fun handleResponse(request: AppendEntriesRequest, response: AppendEntriesResponse) {
     if (response.isSuccessful) {
       with(leaderContext) {
         updateMatchIndex(target, request.prevLogIndex + request.entries.size)

@@ -61,7 +61,7 @@ class LogChangeRegistry<E : LogEntry> constructor(
   }
 
   /**
-   * Monitoring, if events take too long to laps, the registry cancels them.
+   * Monitoring, if events take too long to lapse, the registry cancels them.
    */
   private fun initMonitor() {
     launch {

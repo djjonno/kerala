@@ -7,7 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.kerala.core.consensus.ConsensusFacade
 import org.kerala.core.log.exceptions.Event
 import org.kerala.core.log.exceptions.LogChangeException
-import org.kerala.core.server.client.RpcProducerResponse
+import org.kerala.core.server.client.KeralaProducerResponse
 import org.kerala.shared.client.ProducerACK
 import org.kerala.shared.logger
 import java.io.Closeable
@@ -33,7 +33,7 @@ class Producer(
     coroutineContext.cancel()
   }
 
-  fun streamObserver(responseObserver: StreamObserver<RpcProducerResponse>): StreamObserver<ProducerRecord> =
+  fun streamObserver(responseObserver: StreamObserver<KeralaProducerResponse>): StreamObserver<ProducerRecord> =
       object : StreamObserver<ProducerRecord> {
         override fun onNext(value: ProducerRecord) {
           logger("ingesting ${value.kvs.size} KVs -> ${value.topic}")

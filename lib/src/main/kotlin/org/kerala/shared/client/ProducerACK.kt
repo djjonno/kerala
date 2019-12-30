@@ -1,6 +1,6 @@
 package org.kerala.shared.client
 
-import org.kerala.core.server.client.RpcProducerResponse
+import org.kerala.core.server.client.KeralaProducerResponse
 
 object ProducerACK {
   enum class Codes(val id: Int) {
@@ -13,11 +13,11 @@ object ProducerACK {
   }
 
   object Rpcs {
-    val OK: RpcProducerResponse = RpcProducerResponse.newBuilder().setStatus(Codes.OK.id).build()
-    val GENERIC_ERROR: RpcProducerResponse = RpcProducerResponse.newBuilder().setStatus(Codes.GENERIC_ERROR.id).build()
-    val NETWORK_ERROR: RpcProducerResponse = RpcProducerResponse.newBuilder().setStatus(Codes.NETWORK_ERROR.id).build()
-    val OPERATION_INVALID: RpcProducerResponse = RpcProducerResponse.newBuilder().setStatus(Codes.INVALID_OPERATION.id).build()
-    val TOPIC_UNKNOWN: RpcProducerResponse = RpcProducerResponse.newBuilder().setStatus(Codes.TOPIC_UNKNOWN.id).build()
-    val OPERATION_TIMEOUT: RpcProducerResponse = RpcProducerResponse.newBuilder().setStatus(Codes.OPERATION_TIMEOUT.id).build()
+    val OK: KeralaProducerResponse = KeralaProducerResponse.newBuilder().setStatus(Codes.OK.id).build()
+    val GENERIC_ERROR: KeralaProducerResponse = KeralaProducerResponse.newBuilder().setStatus(Codes.GENERIC_ERROR.id).build()
+    val NETWORK_ERROR: KeralaProducerResponse = KeralaProducerResponse.newBuilder().setStatus(Codes.NETWORK_ERROR.id).build()
+    val OPERATION_INVALID: KeralaProducerResponse = KeralaProducerResponse.newBuilder().setStatus(Codes.INVALID_OPERATION.id).build()
+    val TOPIC_UNKNOWN: KeralaProducerResponse = KeralaProducerResponse.newBuilder().setStatus(Codes.TOPIC_UNKNOWN.id).build()
+    val OPERATION_TIMEOUT: KeralaProducerResponse = KeralaProducerResponse.newBuilder().setStatus(Codes.OPERATION_TIMEOUT.id).build()
   }
 }

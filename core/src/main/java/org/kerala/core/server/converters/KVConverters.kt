@@ -1,18 +1,21 @@
 package org.kerala.core.server.converters
 
+import com.google.protobuf.ByteString
 import org.kerala.core.consensus.messages.KV
-import org.kerala.core.server.client.RpcKV
+import org.kerala.core.server.client.KeralaKV
 
 class KVConverters {
-  class ToRpc : Converter<KV, RpcKV> {
-    override fun convert(source: KV): RpcKV =
-        RpcKV.newBuilder()
-            .setKey(source.key)
-            .setValue(source.`val`).build()
+  class ToRpc : Converter<KV, KeralaKV> {
+    override fun convert(source: KV): KeralaKV =
+        KeralaKV.newBuilder()
+            .setKey(ByteString.copyFrom(source.key))
+            .setValue(ByteString.copyFrom(source.value))
+            .setTimestamp(source.timestamp)
+            .build()
   }
 
-  class FromRpc : Converter<RpcKV, KV> {
-    override fun convert(source: RpcKV): KV =
-        KV(source.key, source.value)
+  class FromRpc : Converter<KeralaKV, KV> {
+    override fun convert(source: KeralaKV): KV =
+        KV(source.key.toByteArray(), source.value.toByteArray(), source.timestamp)
   }
 }

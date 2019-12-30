@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.kerala.core.server.client.ClientServiceGrpc
+import org.kerala.core.server.client.KeralaClientServiceGrpc
 import org.kerala.ctl.Context
 import org.kerala.ctl.any
 import org.kerala.ctl.asChannel
@@ -27,7 +27,7 @@ class ConsoleConsumerCommand : CliktCommand(name = "console-consumer"),
     echo("consuming <- Topic($topic) @ $index")
     echo("-")
 
-    val streamConsumer = StreamConsumer(ClientServiceGrpc.newStub(ctx.cluster!!.any().asChannel()))
+    val streamConsumer = StreamConsumer(KeralaClientServiceGrpc.newStub(ctx.cluster!!.any().asChannel()))
     var increment = index
     loop@do {
       streamConsumer.batch(topic, increment)
@@ -35,7 +35,7 @@ class ConsoleConsumerCommand : CliktCommand(name = "console-consumer"),
       when (response.status) {
         ConsumerACK.Codes.OK.id -> {
           response.kvsList.forEach {
-            echo("${it.key}/${it.value}")
+            echo("${it.key}/${it.value} - ${it.timestamp}")
           }
           ++increment
         }

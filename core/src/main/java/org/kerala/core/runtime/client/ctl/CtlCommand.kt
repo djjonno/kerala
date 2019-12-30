@@ -13,7 +13,7 @@ open class CtlCommand(val args: Map<String, String>) {
 
   val command: String by args
   val kvs by lazy {
-    args.map { KV(it.key, it.value) }.toList()
+    args.map { KV(it.key.toByteArray(), it.value.toByteArray()) }.toList()
   }
 
   fun asEntry(term: Int): Entry {
@@ -81,5 +81,5 @@ open class CtlCommand(val args: Map<String, String>) {
  * created via `asEntry(term: Int)`.
  */
 fun Entry.asCommand(): CtlCommand {
-  return CtlCommand(kvs.map { it.key to it.`val` }.toMap())
+  return CtlCommand(kvs.map { String(it.key) to String(it.value) }.toMap())
 }

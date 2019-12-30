@@ -3,7 +3,7 @@ package org.kerala.core.server.cluster
 import com.google.common.util.concurrent.ListenableFuture
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
-import org.kerala.core.server.cluster.ClusterServiceGrpc.ClusterServiceFutureStub
+import org.kerala.core.server.cluster.KeralaClusterServiceGrpc.KeralaClusterServiceFutureStub
 import org.kerala.shared.logger
 
 class ClusterConnectionPool(val clusterSet: ClusterSet) {
@@ -25,14 +25,14 @@ class ClusterConnectionPool(val clusterSet: ClusterSet) {
   }
 
   class Channel internal constructor(managedChannel: ManagedChannel,
-                                     private val stub: ClusterServiceFutureStub = ClusterServiceGrpc.newFutureStub(managedChannel)) {
+                                     private val stub: KeralaClusterServiceFutureStub = KeralaClusterServiceGrpc.newFutureStub(managedChannel)) {
 
-    fun appendEntries(request: RpcAppendEntriesRequest): ListenableFuture<RpcAppendEntriesResponse> {
-      return stub.appendEntries(request)
+    fun appendEntries(request: KeralaAppendEntriesRequest): ListenableFuture<KeralaAppendEntriesResponse> {
+      return stub.keralaAppendEntries(request)
     }
 
-    fun requestVote(request: RpcRequestVoteRequest): ListenableFuture<RpcRequestVoteResponse> {
-      return stub.requestVote(request)
+    fun requestVote(request: KeralaRequestVoteRequest): ListenableFuture<KeralaRequestVoteResponse> {
+      return stub.keralaRequestVote(request)
     }
   }
 }

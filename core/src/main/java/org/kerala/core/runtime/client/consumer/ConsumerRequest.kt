@@ -4,5 +4,5 @@ import org.kerala.core.runtime.topic.Topic
 
 data class ConsumerRequest(
     val topic: Topic,
-    val index: Long?
+    val offset: Long?
 )

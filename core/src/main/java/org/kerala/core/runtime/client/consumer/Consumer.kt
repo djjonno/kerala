@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
 import org.kerala.core.consensus.ConsensusFacade
-import org.kerala.core.server.client.RpcConsumerResponse
+import org.kerala.core.server.client.KeralaConsumerResponse
 import org.kerala.core.server.converters.KVConverters
 import org.kerala.shared.client.ConsumerACK
 import org.kerala.shared.logger
@@ -22,7 +22,7 @@ class Consumer(
     coroutineContext.cancel()
   }
 
-  fun streamObserver(responseObserver: StreamObserver<RpcConsumerResponse>): StreamObserver<ConsumerRequest> =
+  fun streamObserver(responseObserver: StreamObserver<KeralaConsumerResponse>): StreamObserver<ConsumerRequest> =
       object : StreamObserver<ConsumerRequest> {
         override fun onNext(value: ConsumerRequest) {
           logger("consuming <- $value")
@@ -36,18 +36,20 @@ class Consumer(
            */
           runBlocking(coroutineContext) {
             try {
-              val kvs = consensusFacade.readFromTopic(value.topic, value.index)
-                  .map {
-                    it.kvs.map { kv ->
+              val readResult = consensusFacade.readFromTopic(value.topic, value.offset)
+              val kvs = readResult.entries
+                  .map { it.kvs.map { kv ->
                       kvConverter.convert(kv)
-                    }
-                  }
+                  } }
                   .flatten()
-              responseObserver.onNext(RpcConsumerResponse.newBuilder()
+              responseObserver.onNext(KeralaConsumerResponse.newBuilder()
+                  .setTopic(value.topic.namespace)
+                  .setOffset(readResult.offset)
                   .addAllKvs(kvs)
-                  .setStatus(ConsumerACK.Codes.OK.id).build())
+                  .setStatus(ConsumerACK.Codes.OK.id)
+                  .build())
             } catch (e: Exception) {
-              responseObserver.onNext(RpcConsumerResponse.newBuilder()
+              responseObserver.onNext(KeralaConsumerResponse.newBuilder()
                   .setStatus(ConsumerACK.Codes.INVALID_OPERATION.id).build())
             }
           }

@@ -34,8 +34,7 @@ class BaseReadCommand<T>(private val command: String,
     if (json) {
       echo(response)
     } else {
-      val readTopics: T = jsonTransformer(response)
-      echo(readTopics)
+      echo(jsonTransformer(response))
     }
   }
 }

@@ -5,47 +5,47 @@ option java_package = "org.kerala.core.server.cluster";
 
 import "client-service.proto";
 
-service ClusterService {
-    rpc AppendEntries (RpcAppendEntriesRequest) returns (RpcAppendEntriesResponse) {}
-    rpc RequestVote (RpcRequestVoteRequest) returns (RpcRequestVoteResponse) {}
+service KeralaClusterService {
+    rpc KeralaAppendEntries (KeralaAppendEntriesRequest) returns (KeralaAppendEntriesResponse) {}
+    rpc KeralaRequestVote (KeralaRequestVoteRequest) returns (KeralaRequestVoteResponse) {}
 }
 
-message RpcAppendEntriesRequest {
+message KeralaAppendEntriesRequest {
     uint32 term = 1;
     string topicId = 2;
     string leaderId = 3;
     uint64 prevLogIndex = 4;
     uint32 prevLogTerm = 5;
-    repeated RpcEntry entries = 6;
+    repeated KeralaEntry entries = 6;
     uint64 leaderCommit = 7;
 }
 
-message RpcAppendEntriesResponse {
+message KeralaAppendEntriesResponse {
     uint32 term = 1;
     bool success = 2;
     uint64 prevLogIndex = 3;
 }
 
-message RpcEntry {
+message KeralaEntry {
     string uuid = 1;
     uint32 term = 2;
     string topic = 3;
-    repeated RpcKV kv = 4;
+    repeated KeralaKV kv = 4;
 }
 
-message RpcRequestVoteRequest {
+message KeralaRequestVoteRequest {
     uint32 term = 1;
     string candidateId = 2;
-    repeated RpcLogTail logTails = 3;
+    repeated KeralaLogTail logTails = 3;
 }
 
-message RpcLogTail {
+message KeralaLogTail {
     string topicId = 1;
     uint64 lastLogIndex = 2;
     uint32 lastLogTerm = 3;
 }
 
-message RpcRequestVoteResponse {
+message KeralaRequestVoteResponse {
     uint32 term = 1;
     bool voteGranted = 2;
 }

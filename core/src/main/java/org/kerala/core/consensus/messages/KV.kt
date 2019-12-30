@@ -23,13 +23,12 @@ package org.kerala.core.consensus.messages
  * entirely client driven and the platform does not inspect the fields at
  * all, it simply ensures they're delivered, in the correct order.
  */
-data class KV(
-    /* private to enforce opaqueness */
-    val key: String,
-    /* private to enforce opaqueness */
-    val `val`: String
+class KV(
+    val key: ByteArray,
+    val value: ByteArray,
+    val timestamp: Long = System.currentTimeMillis()
 ) {
   override fun toString(): String {
-    return "KV($key, $`val`)"
+    return "KV($key, $value, $timestamp)"
   }
 }

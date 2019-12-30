@@ -4,8 +4,8 @@ import io.grpc.stub.StreamObserver
 import org.kerala.core.concurrency.Pools
 import org.kerala.core.consensus.OpCategory
 import org.kerala.shared.client.ClientACK
-import org.kerala.core.server.client.RpcCommandRequest
-import org.kerala.core.server.client.RpcCommandResponse
+import org.kerala.core.server.client.KeralaCommandRequest
+import org.kerala.core.server.client.KeralaCommandResponse
 import org.kerala.shared.client.CtlErrorResponse
 import org.kerala.shared.json.GsonUtils
 
@@ -16,7 +16,7 @@ class CtlCommandHandler(
     private val ctlCommandExecutor: CtlCommandExecutor
 ) {
 
-  fun handle(request: RpcCommandRequest, response: StreamObserver<RpcCommandResponse>) =
+  fun handle(request: KeralaCommandRequest, response: StreamObserver<KeralaCommandResponse>) =
       Pools.clientRequestPool.execute {
         val opCategory = if (request.command in CtlCommandType.writeCommands) OpCategory.WRITE else OpCategory.READ
         commandHandler(opCategory, request, response)
@@ -25,7 +25,7 @@ class CtlCommandHandler(
   /**
    * Write Commands are executed on @syslog
    */
-  private fun commandHandler(opCategory: OpCategory, request: RpcCommandRequest, response: StreamObserver<RpcCommandResponse>) {
+  private fun commandHandler(opCategory: OpCategory, request: KeralaCommandRequest, response: StreamObserver<KeralaCommandResponse>) {
     try {
       ctlCommandExecutor.execute(CtlCommandPack(
           opCategory = opCategory,
@@ -42,12 +42,12 @@ class CtlCommandHandler(
     }
   }
 
-  private fun returnError(response: StreamObserver<RpcCommandResponse>, message: String, status: Int = ClientACK.Codes.ERROR.id) {
+  private fun returnError(response: StreamObserver<KeralaCommandResponse>, message: String, status: Int = ClientACK.Codes.ERROR.id) {
     response.onNext(ClientACK.Rpcs.error(GsonUtils.buildGson().toJson(CtlErrorResponse(message)), status))
     response.onCompleted()
   }
 
-  private fun parseCommand(request: RpcCommandRequest): CtlCommand {
+  private fun parseCommand(request: KeralaCommandRequest): CtlCommand {
     val type = CtlCommandType.fromId(request.command) ?: throw CtlCommandUnknownException(request.command)
     return type.parser(type, request)
   }
