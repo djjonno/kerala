@@ -7,7 +7,6 @@ import org.kerala.core.consensus.messages.AppendEntriesResponse
 import org.kerala.core.consensus.states.leader.LeaderContext
 import org.kerala.core.runtime.topic.Topic
 import org.kerala.core.server.cluster.Node
-import org.kerala.shared.annotations.Mockable
 import org.kerala.shared.logger
 import kotlin.math.max
 import kotlin.system.measureTimeMillis
@@ -18,7 +17,6 @@ import kotlin.system.measureTimeMillis
  * @see Node
  * @see Replicator
  */
-@Mockable
 class NodeReplicationController(
     val raft: Raft,
     val topic: Topic,
@@ -67,7 +65,7 @@ class NodeReplicationController(
       val message = AppendEntriesRequest(
           term = raft.raftContext.currentTerm,
           topicId = topic.id,
-          prevLogTerm = log.lastEntry.term,
+          prevLogTerm = log.lastEntry?.term ?: 0,
           prevLogIndex = log.lastIndex,
           leaderId = raft.clusterSet.selfNode.id,
           leaderCommit = log.commitIndex)

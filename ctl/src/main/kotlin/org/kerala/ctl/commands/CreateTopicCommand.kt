@@ -5,7 +5,6 @@ import com.github.ajalt.clikt.core.requireObject
 import com.github.ajalt.clikt.parameters.arguments.argument
 import org.kerala.core.server.client.KeralaArgPair
 import org.kerala.ctl.Context
-import org.kerala.ctl.any
 import org.kerala.ctl.asChannel
 import org.kerala.ctl.leader
 import org.kerala.ctl.sendCommand
@@ -24,7 +23,7 @@ class CreateTopicCommand : CliktCommand(name = "create-topic") {
               .setArg(namespace)
               .build())
       )
-      when (response.status) {
+      when (response.responseCode) {
         ClientACK.Codes.OK.id -> echo(response.response)
         ClientACK.Codes.ERROR.id -> throw Exception(response.response)
       }

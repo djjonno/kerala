@@ -54,7 +54,7 @@ Once the server replicates this production, the server will respond to the clien
   
 ```proto
 message RpcProducerResponse {
-    uint32 status = 1;
+    uint32 response_code = 1;
 }
 ```
 The `status` property corresponds to a Producer ACK code and has a specific reason.  See Producer ACK Codes for how to handle producer status codes.
@@ -87,17 +87,18 @@ message RpcConsumerRequest {
 The consumer dictates its location within the Topic. To consume everything from beginning of Topic, specify a value of `1`. Alternatively, set to `-1` to start consuming from the end which the server will assume the next KV produced to the topic.  Note that this will place the consumer into a `long-poll` state so make sure to set your polling timeout accordingly.  As a consumer, keep the connection established.  The server will respond with data as soon as it is committed to the Topic.
 
 ```proto
-message RpcConsumerResponse {
+message KeralaConsumerResponse {
     string topic = 1;
-    repeated RpcKV kvs = 3;
-    uint32 status = 4;
+    uint64 offset = 2;
+    repeated KeralaKV kvs = 3;
+    uint32 response_code = 4;
 }
 ```
 
 `status` represents a Consumer ACK Code, see below for how to handle consumer status codes.
 
 ##### Consumer ACK Codes
-| Code | Reason | Behavior |
+| Response Code | Reason | Behavior |
 |---|---|---|
 | 0 | ok | Success. |
 | 1 | generic error | Retry operation. |
@@ -106,7 +107,7 @@ message RpcConsumerResponse {
 | 4 | topic unknown | Create the topic via `create-topic` command prior to consumption. |
 
 ##### Producer ACK Codes
-| Code | Reason | Behavior |
+| Response Code | Reason | Behavior |
 |---|---|---|
 | 0 | ok | Success. |
 | 1 | generic error | Retry operation. |

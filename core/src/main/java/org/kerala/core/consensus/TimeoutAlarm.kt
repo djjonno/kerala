@@ -4,7 +4,7 @@ import java.util.Timer
 import java.util.TimerTask
 import kotlin.concurrent.timerTask
 
-class TimeoutAlarm(val action: TimerTask.() -> Unit) {
+class TimeoutAlarm(private val action: TimerTask.() -> Unit) {
 
   private var timer: Timer? = null
   private var timerFactory = TimerFactory()

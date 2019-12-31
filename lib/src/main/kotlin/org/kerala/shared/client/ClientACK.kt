@@ -9,7 +9,7 @@ object ClientACK {
   }
 
   object Rpcs {
-    fun ok(message: String): KeralaCommandResponse = KeralaCommandResponse.newBuilder().setStatus(Codes.OK.id).setResponse(message).build()
-    fun error(message: String, status: Int): KeralaCommandResponse = KeralaCommandResponse.newBuilder().setStatus(status).setResponse(message).build()
+    fun ok(message: String): KeralaCommandResponse = KeralaCommandResponse.newBuilder().setResponseCode(Codes.OK.id).setResponse(message).build()
+    fun error(message: String, status: Int): KeralaCommandResponse = KeralaCommandResponse.newBuilder().setResponseCode(status).setResponse(message).build()
   }
 }

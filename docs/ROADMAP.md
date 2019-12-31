@@ -1,4 +1,4 @@
-### Releases Roadmap 📦
+### Roadmap 📦
 
 #### [0.1.0-alpha](https://github.com/djjonno/kerala/releases/tag/0.1.0-alpha) Released
 

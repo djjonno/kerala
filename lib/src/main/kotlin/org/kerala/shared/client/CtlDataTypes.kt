@@ -18,7 +18,7 @@ data class CtlTopicMeta(
     val namespace: String,
     val index: Long
 ) : CtlResponse() {
-  override fun toString() = "topic(${id})\t${namespace}/$index"
+  override fun toString() = "topic(${id})\t${namespace}/${if (index == -1L) "empty" else index}"
 }
 
 /**
@@ -37,7 +37,7 @@ data class CtlReadTopics(val topics: List<CtlTopicMeta>) : CtlResponse() {
  *
  * Describes state of cluster to a client.
  */
-data class CtlNode(val id: String, val host: String, val port: Int, val leader: Boolean = false)
+data class CtlNode(val id: String, val host: String, val port: Int, val leader: Boolean)
 data class CtlClusterDescription(val nodes: List<CtlNode>) : CtlResponse() {
 
   /**

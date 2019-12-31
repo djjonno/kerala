@@ -3,6 +3,7 @@ package org.kerala.ctl
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.findObject
 import com.github.ajalt.clikt.core.subcommands
+import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.validate
@@ -21,7 +22,7 @@ import kotlin.system.exitProcess
 
 class Tool : CliktCommand(name = "kerala-ctl") {
   private val quiet by option("--quiet", "-q", help = "run command w/out ceremony").flag()
-  private val broker by option("-b", "--broker", metavar = "host:port", help = "broker to run command against").validate { option ->
+  private val broker by option("-b", "--broker", metavar = "host:port", help = "broker to run command against").default("localhost:9191").validate { option ->
     require(option.split(":").size == 2) { "--broker requires format `hostname:port`" }
   }
   private val ctx by findObject { Context() }
@@ -47,7 +48,7 @@ class Tool : CliktCommand(name = "kerala-ctl") {
           .usePlaintext()
           .build()
       val response = sendCommand(channel, "cluster")
-      when(response.status) {
+      when(response.responseCode) {
         ClientACK.Codes.OK.id -> ctx.cluster = GsonUtils.buildGson().fromJson(response.response, CtlClusterDescription::class.java)
         ClientACK.Codes.ERROR.id -> throw Exception("could not bootstrap cluster (${response.response})")
       }

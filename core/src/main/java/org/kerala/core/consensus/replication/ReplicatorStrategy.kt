@@ -1,12 +1,12 @@
 package org.kerala.core.consensus.replication
 
-import kotlin.math.min
 import org.kerala.core.consensus.Raft
 import org.kerala.core.consensus.messages.AppendEntriesRequest
 import org.kerala.core.consensus.messages.Entry
 import org.kerala.core.log.ds.Log
 import org.kerala.core.log.ds.LogSnapshot
 import org.kerala.core.runtime.topic.Topic
+import kotlin.math.min
 
 /**
  * ReplicatorStrategy will provide the necessary AppendEntriesRequest object
@@ -31,32 +31,28 @@ class ReplicatorStrategy(val topic: Topic, val raft: Raft) {
   /*
    * Build AppendEntriesRequest with given entry list.
    */
-  private fun createRequest(snapshot: LogSnapshot<Entry>): AppendEntriesRequest {
-    return AppendEntriesRequest(
-        term = raft.raftContext.currentTerm,
-        topicId = topic.id,
-        prevLogTerm = snapshot.prevLogTerm,
-        prevLogIndex = snapshot.prevLogIndex,
-        leaderId = raft.clusterSet.selfNode.id,
-        leaderCommit = snapshot.commitIndex,
-        entries = snapshot.entries
-    )
-  }
+  private fun createRequest(snapshot: LogSnapshot<Entry>) = AppendEntriesRequest(
+      term = raft.raftContext.currentTerm,
+      topicId = topic.id,
+      prevLogTerm = snapshot.prevLogTerm,
+      prevLogIndex = snapshot.prevLogIndex,
+      leaderId = raft.clusterSet.selfNode.id,
+      leaderCommit = snapshot.commitIndex,
+      entries = snapshot.entries
+  )
 
-  private fun createEmptyRequest(): AppendEntriesRequest {
-    return AppendEntriesRequest(
-        term = raft.raftContext.currentTerm,
-        topicId = topic.id,
-        prevLogTerm = log.lastEntry.term,
-        prevLogIndex = log.lastIndex,
-        leaderId = raft.clusterSet.selfNode.id,
-        leaderCommit = log.commitIndex,
-        entries = emptyList()
-    )
-  }
+  private fun createEmptyRequest() = AppendEntriesRequest(
+      term = raft.raftContext.currentTerm,
+      topicId = topic.id,
+      prevLogTerm = log.lastEntry?.term ?: 0,
+      prevLogIndex = log.lastIndex,
+      leaderId = raft.clusterSet.selfNode.id,
+      leaderCommit = log.commitIndex,
+      entries = emptyList()
+  )
 
   private fun entriesReady(nextIndex: Long): Boolean {
-    return log.lastIndex > 0 && log.lastIndex >= nextIndex
+    return !log.isEmpty && log.lastIndex >= nextIndex
   }
 
   private companion object {

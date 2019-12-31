@@ -30,14 +30,14 @@ message KeralaArgPair {
 message KeralaCommandResponse {
     /* response string contains a json object that the client can parse */
     string response = 1;
-    uint32 status = 2;
+    uint32 response_code = 2;
 }
 
 // --------------------------------------------------------------------------------------
 // Producer Contract
 
 message KeralaProducerResponse {
-    uint32 status = 1;
+    uint32 response_code = 1;
 }
 
 message KeralaProducerRequest {
@@ -63,5 +63,5 @@ message KeralaConsumerResponse {
     string topic = 1;
     uint64 offset = 2;
     repeated KeralaKV kvs = 3;
-    uint32 status = 4;
+    uint32 response_code = 4;
 }

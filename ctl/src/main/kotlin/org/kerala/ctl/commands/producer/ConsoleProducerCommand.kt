@@ -29,7 +29,7 @@ class ConsoleProducerCommand : CliktCommand(name = "console-producer"),
     loop@do {
       val prompt = TermUi.prompt("> ")
       val response = producer.batch(topic, listOf(KeralaKV.newBuilder().setValue(ByteString.copyFrom(prompt?.toByteArray())).setTimestamp(System.currentTimeMillis()).build()))
-      when (response.status) {
+      when (response.responseCode) {
         ProducerACK.Codes.OK.id -> echo("committed ✓")
         else -> {
           echo("error status=$response")

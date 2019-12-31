@@ -18,8 +18,11 @@ class LogInvoker<E : LogEntry>(private val log: Log<E>) : Log<E> {
   override val lastIndex: Long
     get() = log.lastIndex
 
-  override val lastEntry: E
+  override val lastEntry: E?
     get() = log.lastEntry
+
+  override val isEmpty: Boolean
+    get() = log.isEmpty
 
   override fun append(entry: E): Long {
     val index = log.append(entry)

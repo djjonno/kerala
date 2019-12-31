@@ -21,7 +21,7 @@ class BaseReadCommand<T>(private val command: String,
   override fun run() {
     try {
       val response = sendCommand(ctx.cluster!!.any().asChannel(), command, emptyList())
-      when (response.status) {
+      when (response.responseCode) {
         ClientACK.Codes.OK.id -> display(response.response)
         ClientACK.Codes.ERROR.id -> throw Exception(response.response)
       }

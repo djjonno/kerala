@@ -4,21 +4,8 @@ import com.google.common.annotations.VisibleForTesting
 import io.grpc.stub.StreamObserver
 import org.kerala.core.Environment
 import org.kerala.core.config.Config
-import org.kerala.core.consensus.EntryTermMismatch
-import org.kerala.core.consensus.NoPreviousEntryException
-import org.kerala.core.consensus.ObsoleteTermException
-import org.kerala.core.consensus.OpCategory
-import org.kerala.core.consensus.Raft
-import org.kerala.core.consensus.RaftException
-import org.kerala.core.consensus.TimeoutAlarm
-import org.kerala.core.consensus.UnknownTopicException
-import org.kerala.core.consensus.messages.AppendEntriesRequest
-import org.kerala.core.consensus.messages.AppendEntriesResponse
-import org.kerala.core.consensus.messages.RequestVoteRequest
-import org.kerala.core.consensus.messages.RequestVoteResponse
-import org.kerala.core.consensus.messages.TopicTail
-import org.kerala.core.consensus.messages.replyAppendEntries
-import org.kerala.core.consensus.messages.replyRequestVote
+import org.kerala.core.consensus.*
+import org.kerala.core.consensus.messages.*
 import org.kerala.core.consensus.states.RaftState
 import org.kerala.core.consensus.states.State
 import org.kerala.core.log.LogChangeReason
@@ -125,7 +112,7 @@ constructor(
       it to raft.topicModule.topicRegistry.getById(it.topicId)!!
     }.map {
       it.second.logFacade.log.lastIndex <= it.first.lastLogIndex &&
-          it.second.logFacade.log.lastEntry.term <= it.first.lastLogTerm
+          it.second.logFacade.log.lastEntry?.term ?: 0 <= it.first.lastLogTerm
     }
 
     return if (results.isEmpty()) {
@@ -143,22 +130,25 @@ constructor(
     val topic = raft.topicModule.topicRegistry.getById(request.topicId) ?: throw UnknownTopicException()
 
     /*
-     * Request term must equal to or greater than raftContext.currentTerm, invalid.
+     * Request term must be equal to or greater than raftContext.currentTerm, else invalid.
      */
     if (request.term < raft.raftContext.currentTerm) {
       throw ObsoleteTermException()
     }
 
-    /*
-     * If no entry at previous index, we are missing an entry and this is invalid.
-     */
-    val prevEntry = topic.logFacade.log.read(request.prevLogIndex) ?: throw NoPreviousEntryException()
+    /* Validate previous entry if not first entry */
+    if (request.prevLogIndex != -1L) {
+      /*
+       * If no entry at previous index, we are missing an entry and this is invalid.
+       */
+      val prevEntry = topic.logFacade.log.read(request.prevLogIndex) ?: throw NoPreviousEntryException()
 
-    /*
-     * If previous entry of command term does not match this logs' previous entry term, invalid.
-     */
-    if (request.prevLogTerm != prevEntry.term) {
-      throw EntryTermMismatch()
+      /*
+       * If previous entry of command term does not match this logs' previous entry term, invalid.
+       */
+      if (request.prevLogTerm != prevEntry.term) {
+        throw EntryTermMismatch()
+      }
     }
   }
 

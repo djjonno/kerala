@@ -1,19 +1,17 @@
 package org.kerala.core.consensus.states.leader
 
 import com.google.common.base.Preconditions
-import java.util.*
-import kotlin.math.max
 import org.kerala.core.server.cluster.Node
-import org.kerala.shared.annotations.Mockable
+import java.util.HashMap
+import kotlin.math.max
 
-@Mockable
-class LeaderContext(nodes: Set<Node>, lastLogIndex: Long) {
+class LeaderContext(nodes: Set<Node>, lastIndex: Long) {
   private val nextIndex = HashMap<Node, Long>()
   private val matchIndex = HashMap<Node, Long>()
 
   init {
     nodes.forEach { node ->
-      nextIndex[node] = lastLogIndex + 1
+      nextIndex[node] = lastIndex + 1
       matchIndex[node] = DEFAULT_MATCH_INDEX
     }
   }
@@ -51,7 +49,7 @@ class LeaderContext(nodes: Set<Node>, lastLogIndex: Long) {
   }
 
   companion object {
-    const val MIN_NEXT_INDEX = 1L
-    const val DEFAULT_MATCH_INDEX = 0L
+    const val MIN_NEXT_INDEX = 0L
+    const val DEFAULT_MATCH_INDEX = -1L
   }
 }

@@ -46,11 +46,11 @@ class Consumer(
                   .setTopic(value.topic.namespace)
                   .setOffset(readResult.offset)
                   .addAllKvs(kvs)
-                  .setStatus(ConsumerACK.Codes.OK.id)
+                  .setResponseCode(ConsumerACK.Codes.OK.id)
                   .build())
             } catch (e: Exception) {
               responseObserver.onNext(KeralaConsumerResponse.newBuilder()
-                  .setStatus(ConsumerACK.Codes.INVALID_OPERATION.id).build())
+                  .setResponseCode(ConsumerACK.Codes.INVALID_OPERATION.id).build())
             }
           }
         }

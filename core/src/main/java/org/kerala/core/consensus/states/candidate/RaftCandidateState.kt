@@ -92,7 +92,7 @@ class RaftCandidateState(
           TopicTail(
               topicId = it.id,
               lastLogIndex = it.logFacade.log.lastIndex,
-              lastLogTerm = it.logFacade.log.lastEntry.term
+              lastLogTerm = it.logFacade.log.lastEntry?.term ?: 0
           )
         }
     )

@@ -23,7 +23,7 @@ class DeleteTopicCommand : CliktCommand(name = "delete-topic") {
               .setArg(namespace)
               .build())
       )
-      when (response.status) {
+      when (response.responseCode) {
         ClientACK.Codes.OK.id -> echo(response.response)
         ClientACK.Codes.ERROR.id -> throw Exception(response.response)
       }

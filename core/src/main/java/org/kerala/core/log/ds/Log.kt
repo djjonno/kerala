@@ -7,7 +7,8 @@ interface Log<E : LogEntry> {
   val id: String
   val commitIndex: Long
   val lastIndex: Long
-  val lastEntry: E
+  val lastEntry: E?
+  val isEmpty: Boolean
 
   fun append(entry: E): Long
 

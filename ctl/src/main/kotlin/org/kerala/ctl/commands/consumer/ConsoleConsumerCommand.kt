@@ -19,7 +19,7 @@ import org.kerala.shared.client.ConsumerACK
 class ConsoleConsumerCommand : CliktCommand(name = "console-consumer"),
     CoroutineScope by MainScope() {
 
-  private val index: Long by option("-i", "--index").long().default(0)
+  private val index: Long by option("-i", "--index").long().default(-1)
   private val topic: String by argument(name = "namespace", help = "namespace of topic to consume from")
   private val ctx by requireObject<Context>()
 
@@ -32,7 +32,7 @@ class ConsoleConsumerCommand : CliktCommand(name = "console-consumer"),
     loop@do {
       streamConsumer.batch(topic, increment)
       val response = streamConsumer.channel.receive()
-      when (response.status) {
+      when (response.responseCode) {
         ConsumerACK.Codes.OK.id -> {
           response.kvsList.forEach {
             echo("${it.key}/${it.value} - ${it.timestamp}")
@@ -40,7 +40,7 @@ class ConsoleConsumerCommand : CliktCommand(name = "console-consumer"),
           ++increment
         }
         else -> {
-          echo("error status=${response.status}")
+          echo("responseCode=${response.responseCode}")
           break@loop
         }
       }
