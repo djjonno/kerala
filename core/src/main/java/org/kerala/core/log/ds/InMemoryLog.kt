@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions.checkNotNull
 import com.google.common.base.Preconditions.checkState
 import org.kerala.core.log.CommitResult
 import org.kerala.core.log.LogEntry
-import org.kerala.shared.logger
 import java.util.UUID
 
 class InMemoryLog<E : LogEntry> : Log<E> {
@@ -58,14 +57,12 @@ class InMemoryLog<E : LogEntry> : Log<E> {
     val entries = read(from, to)
     val previousEntry = read(from - 1)
 
-    val logSnapshot = LogSnapshot(
+    return LogSnapshot(
         prevLogTerm = previousEntry?.term ?: 0,
         prevLogIndex = from - 1,
         commitIndex = commitIndex,
         entries = entries
     )
-    logger("reading snapshot $logSnapshot")
-    return logSnapshot
   }
 
   override fun commit(index: Long): CommitResult<E> {
