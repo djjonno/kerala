@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import java.net.InetAddress;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for manipulating, parsing, referencing URIs.
@@ -32,7 +33,7 @@ public class URI {
   private final int mPort;
 
   URI(final String host, final int port) {
-    Preconditions.checkState(host != null || !host.isEmpty());
+    Preconditions.checkState(host != null && !host.isEmpty() && isValidIPAddress(host), "host");
     Preconditions.checkState(port > 0, "port");
 
     mHost = normalizeHost(host);
@@ -102,5 +103,16 @@ public class URI {
       default:
         return host;
     }
+  }
+
+  private static boolean isValidIPAddress(final String ip) {
+    String IPV4_PATTERN = "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
+                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
+                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
+                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+
+    Pattern pattern = Pattern.compile(IPV4_PATTERN);
+
+    return pattern.matcher(ip).matches();
   }
 }
