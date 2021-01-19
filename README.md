@@ -1,10 +1,13 @@
-# Kerala
+![Kerala](docs/kerala.png)
+
 
 [![Actions Status](https://github.com/djjonno/kerala/workflows/Java%20CI/badge.svg)](https://github.com/djjonno/kerala/actions)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/djjonno/kerala?include_prereleases)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/djjonno/kerala/blob/master/LICENSE)
 
 ![Kerala Ctl Demo](https://kerala-data.s3.amazonaws.com/kerala-ctl-console.gif)
+
+# Kerala
 
 **Kerala** is a distributed event-streaming server built for the modern day.  It is robust, lightweight and super fast!
 - **Produce/Consume** - create Topics, then produce and consume them.
